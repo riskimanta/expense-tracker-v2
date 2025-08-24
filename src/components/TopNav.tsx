@@ -55,14 +55,14 @@ export function TopNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur border-b border-border">
+    <nav className="sticky top-0 z-50 bg-[var(--surface)] border-b border-[var(--border)]">
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="flex items-center h-16">
           {/* Logo/Brand */}
           <div className="flex-shrink-0 mr-8">
             <Link 
               href="/dashboard" 
-              className="text-xl font-bold text-foreground hover:text-[var(--primary)] transition-colors"
+              className="text-xl font-bold text-[var(--txt-high)] hover:text-[var(--primary)] transition-colors"
             >
               ExpenseTracker
             </Link>
@@ -70,7 +70,7 @@ export function TopNav() {
 
           {/* Navigation Links */}
           <div className="flex-1 overflow-x-auto">
-            <div className="flex items-center space-x-2 min-w-max">
+            <div className="flex items-center space-x-3 min-w-max">
               {navigationItems.map((item) => {
                 const isActive = pathname === item.href
                 const Icon = item.icon
@@ -80,11 +80,11 @@ export function TopNav() {
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      "flex items-center space-x-2 px-4 py-2 rounded-xl border transition-all duration-200",
-                      "hover:text-[var(--txt-high)]",
+                      "group flex items-center space-x-2 px-4 py-2.5 rounded-xl border transition-all duration-200",
+                      "hover:scale-105",
                       isActive
-                        ? "border-[var(--primary)] bg-card text-[var(--primary)]"
-                        : "border-border bg-card text-[var(--txt-med)] hover:border-[var(--primary)]/50"
+                        ? "border-[var(--primary)] bg-[var(--surface2)] text-[var(--primary)] shadow-sm"
+                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--txt-med)] hover:border-[var(--primary)]/50 hover:bg-[var(--surface2)]"
                     )}
                   >
                     <Icon 
