@@ -1,4 +1,4 @@
-import { apiGet, apiCallWithMock } from './http'
+import { apiGet } from './http'
 import { mockMonthlyData, mockCategoryBreakdown } from '@/mock/reports'
 
 export interface MonthlyReport {
@@ -96,7 +96,14 @@ export async function getDashboardSummary(filters: ReportFilters): Promise<{
     if (filters.accountId) queryParams.append('accountId', filters.accountId)
 
     const endpoint = `/api/reports/dashboard?${queryParams.toString()}`
-    const response = await apiGet<any>(endpoint)
+    const response = await apiGet<{
+      totalIncome: number
+      totalExpense: number
+      netIncome: number
+      savingsRate: number
+      topCategory: string
+      topCategoryAmount: number
+    }>(endpoint)
     return response.data
   } catch (error) {
     console.warn('API call failed, using mock data:', error)
@@ -135,7 +142,11 @@ export async function getCashFlowData(filters: ReportFilters): Promise<{
     if (filters.accountId) queryParams.append('accountId', filters.accountId)
 
     const endpoint = `/api/reports/cashflow?${queryParams.toString()}`
-    const response = await apiGet<any[]>(endpoint)
+    const response = await apiGet<{
+      date: string
+      income: number
+      expense: number
+    }[]>(endpoint)
     return response.data
   } catch (error) {
     console.warn('API call failed, using mock data:', error)

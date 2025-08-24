@@ -17,7 +17,7 @@ import {
 import { useToast } from '@/components/ToastProvider'
 
 export default function IncomePage() {
-  const [selectedMonth, setSelectedMonth] = useState('2025-01')
+  const [selectedMonth] = useState('2025-01')
   const [formData, setFormData] = useState({
     date: '2025-01-18',
     account: '',

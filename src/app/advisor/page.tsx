@@ -90,7 +90,11 @@ export default function AdvisorPage() {
 
   const handleAnalysis = () => {
     if (!monthlyIncome || !monthlyExpense) {
-      showToast('error', 'Mohon isi pendapatan dan pengeluaran bulanan')
+      showToast({
+        title: 'Error',
+        description: 'Mohon isi pendapatan dan pengeluaran bulanan',
+        variant: 'destructive'
+      })
       return
     }
     
@@ -100,11 +104,23 @@ export default function AdvisorPage() {
     const savingsRate = (savings / income) * 100
 
     if (savingsRate < 0) {
-      showToast('error', 'Pengeluaran melebihi pendapatan! Perlu evaluasi budget.')
+      showToast({
+        title: 'Error',
+        description: 'Pengeluaran melebihi pendapatan! Perlu evaluasi budget.',
+        variant: 'destructive'
+      })
     } else if (savingsRate < 20) {
-      showToast('warning', 'Tingkat tabungan rendah. Pertimbangkan untuk mengurangi pengeluaran.')
+      showToast({
+        title: 'Warning',
+        description: 'Tingkat tabungan rendah. Pertimbangkan untuk mengurangi pengeluaran.',
+        variant: 'warning'
+      })
     } else {
-      showToast('success', 'Keuangan sehat! Tingkat tabungan yang baik.')
+      showToast({
+        title: 'Success',
+        description: 'Keuangan sehat! Tingkat tabungan yang baik.',
+        variant: 'success'
+      })
     }
   }
 

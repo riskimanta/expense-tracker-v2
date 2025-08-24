@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 
 interface FilterBarProps {
@@ -36,17 +36,18 @@ export function FilterBar({
           
           <div className="space-y-2">
             <label className="text-sm text-muted-foreground">Filter Kategori</label>
-            <Select
-              value={selectedCategory}
-              onChange={(e) => onCategoryChange(e.target.value)}
-              className="h-11"
-            >
-              <option value="">Semua Kategori</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
+            <Select value={selectedCategory} onValueChange={onCategoryChange}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Semua Kategori" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Semua Kategori</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
           

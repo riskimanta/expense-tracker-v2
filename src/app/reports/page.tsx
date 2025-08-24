@@ -131,7 +131,7 @@ export default function ReportsPage() {
                     paddingAngle={2}
                     dataKey="amount"
                   >
-                    {mockCategoryBreakdown.map((entry: any, index: number) => (
+                    {mockCategoryBreakdown.map((entry, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -139,7 +139,7 @@ export default function ReportsPage() {
               </div>
               
               <div className="flex-1 space-y-2">
-                                 {mockCategoryBreakdown.map((category: any, index: number) => (
+                                 {mockCategoryBreakdown.map((category, index: number) => (
                    <div key={index} className="flex items-center justify-between">
                      <div className="flex items-center space-x-2">
                        <div 

@@ -4,7 +4,7 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { formatMonthYear } from "@/lib/format"
 
@@ -29,11 +29,16 @@ export function Topbar() {
         </div>
 
         {/* Account Filter */}
-        <Select defaultValue="all" className="w-40">
-          <option value="all">Semua Akun</option>
-          <option value="checking">Giro</option>
-          <option value="savings">Tabungan</option>
-          <option value="credit">Kartu Kredit</option>
+        <Select defaultValue="all">
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Akun</SelectItem>
+            <SelectItem value="checking">Giro</SelectItem>
+            <SelectItem value="savings">Tabungan</SelectItem>
+            <SelectItem value="credit">Kartu Kredit</SelectItem>
+          </SelectContent>
         </Select>
       </div>
 

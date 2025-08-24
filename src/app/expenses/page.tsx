@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { PieChart, Pie, Cell } from 'recharts'
 import { formatIDR } from '@/lib/format'
-import { getCurrencyOptions, formatCurrency } from '@/lib/currency'
+import { getCurrencyOptions } from '@/lib/currency'
 import { formatDateID } from '@/lib/format'
 import { 
   mockExpenseKPIs, 
@@ -64,13 +64,7 @@ export default function ExpensesPage() {
     })
   }
 
-  const COLORS = {
-    needs: 'var(--needs)',
-    wants: 'var(--wants)',
-    savings: 'var(--savings)',
-    invest: 'var(--invest)',
-    coins: 'var(--coins)'
-  }
+
 
   return (
     <main className="mx-auto max-w-[1200px] p-6 space-y-6">

@@ -11,7 +11,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public data?: any
+    public data?: unknown
   ) {
     super(message)
     this.name = 'ApiError'
@@ -69,7 +69,7 @@ export async function apiGet<T>(endpoint: string): Promise<ApiResponse<T>> {
 
 export async function apiPost<T>(
   endpoint: string, 
-  data: any
+  data: unknown
 ): Promise<ApiResponse<T>> {
   return apiRequest<T>(endpoint, {
     method: 'POST',
@@ -79,7 +79,7 @@ export async function apiPost<T>(
 
 export async function apiPut<T>(
   endpoint: string, 
-  data: any
+  data: unknown
 ): Promise<ApiResponse<T>> {
   return apiRequest<T>(endpoint, {
     method: 'PUT',

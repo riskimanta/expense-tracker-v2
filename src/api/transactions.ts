@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiCallWithMock } from './http'
+import { apiGet, apiPost } from './http'
 import { mockExpenseTransactions } from '@/mock/expenses'
 import { mockIncomeTransactions } from '@/mock/income'
 import { mockTransferTransactions } from '@/mock/transfer'
@@ -66,9 +66,20 @@ export async function getTransactions(filters: TransactionFilters = {}): Promise
     
     if (!filters.type || filters.type === 'EXPENSE') {
       allTransactions.push(...mockExpenseTransactions.map(t => ({
-        ...t,
+        id: t.id,
         type: 'EXPENSE' as const,
+        accountId: t.accountId,
+        categoryId: t.category,
+        amount: t.amount,
         currency: 'IDR',
+        description: t.description,
+        date: t.date,
+        splits: t.splits?.map(split => ({
+          id: split.id,
+          categoryId: split.category,
+          amount: split.amount,
+          description: split.description
+        })),
         createdAt: t.date,
         updatedAt: t.date
       })))
@@ -76,19 +87,28 @@ export async function getTransactions(filters: TransactionFilters = {}): Promise
     
     if (!filters.type || filters.type === 'INCOME') {
       allTransactions.push(...mockIncomeTransactions.map(t => ({
-        ...t,
+        id: t.id,
         type: 'INCOME' as const,
+        accountId: t.account,
+        categoryId: t.source,
+        amount: t.amount,
         currency: 'IDR',
+        description: t.description,
+        date: t.date,
         createdAt: t.date,
         updatedAt: t.date
       })))
     }
     
     if (!filters.type || filters.type === 'TRANSFER') {
-      allTransactions.push(...mockTransferTransactions.map(t => ({
-        ...t,
-        type: 'TRANSFER' as const,
+      allTransactions.push(      ...mockTransferTransactions.map(t => ({ 
+        id: t.id,
+        type: 'TRANSFER' as const, 
+        accountId: t.fromAccount,
+        amount: t.amount,
         currency: 'IDR',
+        description: t.description,
+        date: t.date,
         createdAt: t.date,
         updatedAt: t.date
       })))
@@ -124,9 +144,47 @@ export async function getTransactionById(id: string): Promise<Transaction | null
     
     // Search in all mock data
     const allTransactions = [
-      ...mockExpenseTransactions.map(t => ({ ...t, type: 'EXPENSE' as const, currency: 'IDR' })),
-      ...mockIncomeTransactions.map(t => ({ ...t, type: 'INCOME' as const, currency: 'IDR' })),
-      ...mockTransferTransactions.map(t => ({ ...t, type: 'TRANSFER' as const, currency: 'IDR' }))
+      ...mockExpenseTransactions.map(t => ({ 
+        id: t.id,
+        type: 'EXPENSE' as const, 
+        accountId: t.accountId,
+        categoryId: t.category,
+        amount: t.amount,
+        currency: 'IDR',
+        description: t.description,
+        date: t.date,
+        splits: t.splits?.map(split => ({
+          id: split.id,
+          categoryId: split.category,
+          amount: split.amount,
+          description: split.description
+        })),
+        createdAt: t.date,
+        updatedAt: t.date
+      })),
+      ...mockIncomeTransactions.map(t => ({ 
+        id: t.id,
+        type: 'INCOME' as const, 
+        accountId: t.account,
+        categoryId: t.source,
+        amount: t.amount,
+        currency: 'IDR',
+        description: t.description,
+        date: t.date,
+        createdAt: t.date,
+        updatedAt: t.date
+      })),
+      ...mockTransferTransactions.map(t => ({ 
+        id: t.id,
+        type: 'TRANSFER' as const, 
+        accountId: t.fromAccount,
+        amount: t.amount,
+        currency: 'IDR',
+        description: t.description,
+        date: t.date,
+        createdAt: t.date,
+        updatedAt: t.date
+      }))
     ]
     
     const transaction = allTransactions.find(t => t.id === id)
@@ -152,6 +210,12 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
     const newTransaction: Transaction = {
       id: Date.now().toString(),
       ...data,
+      splits: data.splits?.map((split, index) => ({
+        id: `${Date.now()}-split-${index}`,
+        categoryId: split.categoryId,
+        amount: split.amount,
+        description: split.description
+      })),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
