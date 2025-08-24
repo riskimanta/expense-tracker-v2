@@ -1,66 +1,92 @@
-import { formatIDR } from '@/lib/format'
-import { Wallet, CreditCard, Smartphone } from 'lucide-react'
+"use client"
 
-interface Account {
-  id: string
-  name: string
-  type: string
-  balance: number
-  currency: string
-}
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatIDR } from '@/lib/format'
+import { cn } from '@/lib/cn'
 
 interface AccountBalanceProps {
-  accounts: Account[]
-  className?: string
+  data: Array<{
+    id: string
+    name: string
+    type: 'cash' | 'bank' | 'ewallet'
+    balance: number
+    currency: string
+    icon: string
+  }>
 }
 
-const getAccountIcon = (type: string) => {
-  switch (type) {
-    case 'cash':
-      return <Wallet className="h-5 w-5" />
-    case 'bank':
-      return <CreditCard className="h-5 w-5" />
-    case 'wallet':
-      return <Smartphone className="h-5 w-5" />
-    default:
-      return <Wallet className="h-5 w-5" />
+export function AccountBalance({ data }: AccountBalanceProps) {
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'cash':
+        return 'border-[var(--success)] bg-[var(--success)]/10'
+      case 'bank':
+        return 'border-[var(--primary)] bg-[var(--primary)]/10'
+      case 'ewallet':
+        return 'border-[var(--warning)] bg-[var(--warning)]/10'
+      default:
+        return 'border-border bg-muted'
+    }
   }
-}
 
-export function AccountBalance({ accounts, className }: AccountBalanceProps) {
-  const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0)
-  
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'cash':
+        return 'Cash'
+      case 'bank':
+        return 'Bank'
+      case 'ewallet':
+        return 'E-Wallet'
+      default:
+        return 'Unknown'
+    }
+  }
+
   return (
-    <div className={className}>
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Account Balance</h3>
-        <p className="text-sm text-muted-foreground">Total saldo: {formatIDR(totalBalance)}</p>
-      </div>
-      
-      <div className="space-y-3">
-        {accounts.map((account) => (
-          <div
-            key={account.id}
-            className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-muted text-[var(--primary)]">
-                {getAccountIcon(account.type)}
-              </div>
-              <div>
-                <div className="font-medium text-foreground">{account.name}</div>
-                <div className="text-xs text-[var(--txt-low)] capitalize">{account.type}</div>
+    <Card className="rounded-xl border border-border bg-card p-4">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-semibold text-foreground">
+          Saldo Akun
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Total saldo: {formatIDR(data.reduce((sum, acc) => sum + acc.balance, 0))}
+        </p>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {data.map((account) => (
+            <div
+              key={account.id}
+              className={cn(
+                "flex items-center space-x-3 p-3 rounded-lg border",
+                getTypeColor(account.type)
+              )}
+            >
+              <div className="text-2xl">{account.icon}</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {account.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {getTypeLabel(account.type)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-foreground">
+                      {formatIDR(account.balance)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {account.currency}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="font-semibold text-foreground">
-                {formatIDR(account.balance)}
-              </div>
-              <div className="text-xs text-[var(--txt-low)]">{account.currency}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }

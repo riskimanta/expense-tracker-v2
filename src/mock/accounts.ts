@@ -1,41 +1,45 @@
-import type { Account } from "@/components/AccountCard"
+import type { Account } from '@/api/accounts'
 
 export const mockAccounts: Account[] = [
   {
-    id: "1",
-    name: "BCA Giro",
-    type: "checking",
-    balance: 15000000,
-    currency: "IDR",
+    id: '1',
+    name: 'Cash',
+    type: 'cash',
+    balance: 2500000,
+    currency: 'IDR',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z'
   },
   {
-    id: "2",
-    name: "BCA Tabungan",
-    type: "savings",
-    balance: 50000000,
-    currency: "IDR",
+    id: '2',
+    name: 'BCA',
+    type: 'bank',
+    balance: 8500000,
+    currency: 'IDR',
+    accountNumber: '1234567890',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z'
   },
   {
-    id: "3",
-    name: "BCA Kartu Kredit",
-    type: "credit",
-    balance: -2500000,
-    currency: "IDR",
+    id: '3',
+    name: 'OVO',
+    type: 'ewallet',
+    balance: 1500000,
+    currency: 'IDR',
+    accountNumber: '08123456789',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z'
   },
   {
-    id: "4",
-    name: "Tunai",
-    type: "cash",
-    balance: 500000,
-    currency: "IDR",
-  },
-  {
-    id: "5",
-    name: "Reksadana",
-    type: "investment",
-    balance: 25000000,
-    currency: "IDR",
-  },
+    id: '4',
+    name: 'GoPay',
+    type: 'ewallet',
+    balance: 800000,
+    currency: 'IDR',
+    accountNumber: '08123456789',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z'
+  }
 ]
 
 export const mockAccountOptions = mockAccounts.map((a) => ({

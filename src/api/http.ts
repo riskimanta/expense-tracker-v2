@@ -1,54 +1,106 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
+export interface ApiResponse<T> {
+  data: T
+  success: boolean
+  message?: string
+  error?: string
+}
+
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    message: string,
+    public status: number,
+    public data?: any
+  ) {
     super(message)
     this.name = 'ApiError'
   }
 }
 
-async function httpRequest<T>(
+export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
-): Promise<T> {
-  const url = API_BASE_URL ? `${API_BASE_URL}${endpoint}` : endpoint
-  
-  const config: RequestInit = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
+): Promise<ApiResponse<T>> {
+  // If no API URL is configured, throw error to trigger mock fallback
+  if (!API_BASE_URL) {
+    throw new ApiError('No API URL configured', 0)
   }
 
+  const url = `${API_BASE_URL}${endpoint}`
+  
   try {
-    const response = await fetch(url, config)
-    
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    })
+
     if (!response.ok) {
-      throw new ApiError(response.status, `HTTP error! status: ${response.status}`)
+      throw new ApiError(
+        `HTTP error! status: ${response.status}`,
+        response.status
+      )
     }
-    
+
     const data = await response.json()
-    return data
+    return {
+      data,
+      success: true,
+      message: 'Success'
+    }
   } catch (error) {
     if (error instanceof ApiError) {
       throw error
     }
-    throw new ApiError(0, `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    
+    throw new ApiError(
+      error instanceof Error ? error.message : 'Network error',
+      0
+    )
   }
 }
 
-export const http = {
-  get: <T>(endpoint: string) => httpRequest<T>(endpoint),
-  post: <T>(endpoint: string, data?: Record<string, unknown>) => httpRequest<T>(endpoint, {
+export async function apiGet<T>(endpoint: string): Promise<ApiResponse<T>> {
+  return apiRequest<T>(endpoint, { method: 'GET' })
+}
+
+export async function apiPost<T>(
+  endpoint: string, 
+  data: any
+): Promise<ApiResponse<T>> {
+  return apiRequest<T>(endpoint, {
     method: 'POST',
-    body: data ? JSON.stringify(data) : undefined,
-  }),
-  put: <T>(endpoint: string, data?: Record<string, unknown>) => httpRequest<T>(endpoint, {
+    body: JSON.stringify(data),
+  })
+}
+
+export async function apiPut<T>(
+  endpoint: string, 
+  data: any
+): Promise<ApiResponse<T>> {
+  return apiRequest<T>(endpoint, {
     method: 'PUT',
-    body: data ? JSON.stringify(data) : undefined,
-  }),
-  delete: <T>(endpoint: string) => httpRequest<T>(endpoint, {
-    method: 'DELETE',
-  }),
+    body: JSON.stringify(data),
+  })
+}
+
+export async function apiDelete<T>(endpoint: string): Promise<ApiResponse<T>> {
+  return apiRequest<T>(endpoint, { method: 'DELETE' })
+}
+
+// Helper to handle API calls with mock fallback
+export async function apiCallWithMock<T>(
+  apiCall: () => Promise<ApiResponse<T>>,
+  mockData: T
+): Promise<T> {
+  try {
+    const response = await apiCall()
+    return response.data
+  } catch (error) {
+    console.warn('API call failed, using mock data:', error)
+    return mockData
+  }
 }

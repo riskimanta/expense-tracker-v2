@@ -1,60 +1,224 @@
-import type { DashboardData } from '@/api/dashboard'
+import { formatIDR } from '@/lib/format'
 
-export const mockDashboardData: DashboardData = {
-  kpis: {
-    totalIncome: 8500000,
-    totalExpenses: 3200000,
-    safeToSpend: 2800000,
-    balance: 5300000,
-    savingsRate: 62.4,
-    budgetCompliance: 87.2,
-  },
-  charts: {
-    incomeExpense: [
-      { date: '2025-08-01', income: 8500000, expenses: 0 },
-      { date: '2025-08-05', income: 0, expenses: 800000 },
-      { date: '2025-08-10', income: 0, expenses: 1200000 },
-      { date: '2025-08-15', income: 0, expenses: 900000 },
-      { date: '2025-08-20', income: 0, expenses: 300000 },
-      { date: '2025-08-25', income: 0, expenses: 0 },
-    ],
-    categoryBreakdown: [
-      { category: 'Makanan', amount: 1200000, percentage: 37.5, color: 'var(--needs)' },
-      { category: 'Transport', amount: 800000, percentage: 25.0, color: 'var(--wants)' },
-      { category: 'Belanja', amount: 600000, percentage: 18.8, color: 'var(--invest)' },
-      { category: 'Hiburan', amount: 400000, percentage: 12.5, color: 'var(--coins)' },
-      { category: 'Lainnya', amount: 200000, percentage: 6.2, color: 'var(--savings)' },
-    ],
-    budgetAllocation: [
-      { category: 'Needs', actual: 1200000, target: 1600000, percentage: 75.0, color: 'var(--needs)' },
-      { category: 'Wants', actual: 800000, target: 800000, percentage: 100.0, color: 'var(--wants)' },
-      { category: 'Savings', actual: 400000, target: 800000, percentage: 50.0, color: 'var(--savings)' },
-      { category: 'Invest', actual: 600000, target: 1200000, percentage: 50.0, color: 'var(--invest)' },
-      { category: 'Coins', actual: 200000, target: 400000, percentage: 50.0, color: 'var(--coins)' },
-    ],
-  },
-  accounts: [
-    { id: '1', name: 'Cash', type: 'cash', balance: 500000, currency: 'IDR' },
-    { id: '2', name: 'BCA Giro', type: 'bank', balance: 3500000, currency: 'IDR' },
-    { id: '3', name: 'OVO', type: 'wallet', balance: 800000, currency: 'IDR' },
-    { id: '4', name: 'GoPay', type: 'wallet', balance: 500000, currency: 'IDR' },
-  ],
-  recentTransactions: [
-    { id: '1', date: '2025-08-24', category: 'Makanan', amount: 75000, note: 'Lunch di warung', type: 'expense' },
-    { id: '2', date: '2025-08-23', category: 'Transport', amount: 25000, note: 'Gojek ke kantor', type: 'expense' },
-    { id: '3', date: '2025-08-22', category: 'Belanja', amount: 150000, note: 'Beli baju', type: 'expense' },
-    { id: '4', date: '2025-08-21', category: 'Gaji', amount: 8500000, note: 'Gaji bulanan', type: 'income' },
-    { id: '5', date: '2025-08-20', category: 'Investasi', amount: 500000, note: 'Reksadana', type: 'expense' },
-  ],
-  advisor: {
-    message: 'Pengeluaran bulan ini sudah 87% dari target. Pertimbangkan untuk mengurangi belanja hiburan.',
-    type: 'warning',
-    action: 'Lihat detail budget',
-  },
+export interface DashboardKPI {
+  label: string
+  value: string
+  change: string
+  changeType: 'increase' | 'decrease' | 'neutral'
+  icon: string
 }
 
-export const getMockDashboardData = (): Promise<DashboardData> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(mockDashboardData), 500)
-  })
+export interface AccountBalance {
+  id: string
+  name: string
+  type: 'cash' | 'bank' | 'ewallet'
+  balance: number
+  currency: string
+  icon: string
+}
+
+export interface RecentTransaction {
+  id: string
+  date: string
+  description: string
+  amount: number
+  type: 'income' | 'expense' | 'transfer'
+  account: string
+  category?: string
+}
+
+export interface BudgetCompliance {
+  category: string
+  target: number
+  actual: number
+  percentage: number
+  status: 'on-track' | 'over-budget' | 'under-budget'
+}
+
+export const mockDashboardKPIs: DashboardKPI[] = [
+  {
+    label: 'Sisa Aman',
+    value: formatIDR(2500000),
+    change: '+15% dari bulan lalu',
+    changeType: 'increase',
+    icon: '💰'
+  },
+  {
+    label: 'Pemasukan Bulan Ini',
+    value: formatIDR(8000000),
+    change: '+8% dari bulan lalu',
+    changeType: 'increase',
+    icon: '📈'
+  },
+  {
+    label: 'Pengeluaran Bulan Ini',
+    value: formatIDR(5500000),
+    change: '-5% dari bulan lalu',
+    changeType: 'decrease',
+    icon: '📉'
+  },
+  {
+    label: 'Saldo Akhir',
+    value: formatIDR(15000000),
+    change: '+12% dari bulan lalu',
+    changeType: 'increase',
+    icon: '🏦'
+  }
+]
+
+export const mockAccountBalances: AccountBalance[] = [
+  {
+    id: '1',
+    name: 'Cash',
+    type: 'cash',
+    balance: 2500000,
+    currency: 'IDR',
+    icon: '💵'
+  },
+  {
+    id: '2',
+    name: 'BCA',
+    type: 'bank',
+    balance: 8500000,
+    currency: 'IDR',
+    icon: '🏦'
+  },
+  {
+    id: '3',
+    name: 'OVO',
+    type: 'ewallet',
+    balance: 1500000,
+    currency: 'IDR',
+    icon: '📱'
+  },
+  {
+    id: '4',
+    name: 'GoPay',
+    type: 'ewallet',
+    balance: 800000,
+    currency: 'IDR',
+    icon: '📱'
+  }
+]
+
+export const mockRecentTransactions: RecentTransaction[] = [
+  {
+    id: '1',
+    date: '2025-01-18',
+    description: 'Gaji Januari',
+    amount: 8000000,
+    type: 'income',
+    account: 'BCA'
+  },
+  {
+    id: '2',
+    date: '2025-01-18',
+    description: 'Belanja bulanan',
+    amount: -300000,
+    type: 'expense',
+    account: 'Cash',
+    category: 'Makanan & Minuman'
+  },
+  {
+    id: '3',
+    date: '2025-01-17',
+    description: 'Transfer ke tabungan',
+    amount: -1000000,
+    type: 'transfer',
+    account: 'BCA'
+  },
+  {
+    id: '4',
+    date: '2025-01-16',
+    description: 'Bonus project',
+    amount: 2000000,
+    type: 'income',
+    account: 'BCA'
+  },
+  {
+    id: '5',
+    date: '2025-01-15',
+    description: 'Baju kerja',
+    amount: -150000,
+    type: 'expense',
+    account: 'BCA',
+    category: 'Belanja'
+  }
+]
+
+export const mockBudgetCompliance: BudgetCompliance[] = [
+  {
+    category: 'Needs (50%)',
+    target: 50,
+    actual: 48,
+    percentage: 96,
+    status: 'on-track'
+  },
+  {
+    category: 'Wants (25%)',
+    target: 25,
+    actual: 28,
+    percentage: 112,
+    status: 'over-budget'
+  },
+  {
+    category: 'Savings (5%)',
+    target: 5,
+    actual: 6,
+    percentage: 120,
+    status: 'under-budget'
+  },
+  {
+    category: 'Invest (15%)',
+    target: 15,
+    actual: 14,
+    percentage: 93,
+    status: 'on-track'
+  },
+  {
+    category: 'Coins (5%)',
+    target: 5,
+    actual: 4,
+    percentage: 80,
+    status: 'on-track'
+  }
+]
+
+export const mockCashFlowData = [
+  { date: '01/01', income: 8000000, expense: 0 },
+  { date: '02/01', income: 0, expense: 150000 },
+  { date: '03/01', income: 0, expense: 250000 },
+  { date: '04/01', income: 0, expense: 300000 },
+  { date: '05/01', income: 0, expense: 180000 },
+  { date: '06/01', income: 0, expense: 220000 },
+  { date: '07/01', income: 0, expense: 350000 },
+  { date: '08/01', income: 0, expense: 280000 },
+  { date: '09/01', income: 0, expense: 320000 },
+  { date: '10/01', income: 0, expense: 190000 },
+  { date: '11/01', income: 0, expense: 240000 },
+  { date: '12/01', income: 0, expense: 310000 },
+  { date: '13/01', income: 0, expense: 270000 },
+  { date: '14/01', income: 0, expense: 500000 },
+  { date: '15/01', income: 0, expense: 150000 },
+  { date: '16/01', income: 0, expense: 25000 },
+  { date: '17/01', income: 0, expense: 50000 },
+  { date: '18/01', income: 0, expense: 300000 }
+]
+
+export const mockCategoryExpenses = [
+  { name: 'Makanan & Minuman', value: 35, color: 'var(--needs)' },
+  { name: 'Transportasi', value: 20, color: 'var(--needs)' },
+  { name: 'Belanja', value: 15, color: 'var(--wants)' },
+  { name: 'Tagihan', value: 12, color: 'var(--needs)' },
+  { name: 'Hiburan', value: 8, color: 'var(--wants)' },
+  { name: 'Kesehatan', value: 5, color: 'var(--needs)' },
+  { name: 'Lainnya', value: 5, color: 'var(--txt-med)' }
+]
+
+export const mockAdvisorResult = {
+  canAfford: true,
+  message: 'Aman! Kamu bisa beli ini.',
+  reason: 'Sisa aman bulan ini: Rp 2.500.000',
+  recommendation: 'Beli sekarang atau tunggu promo',
+  safeDate: '2025-01-20'
 }
