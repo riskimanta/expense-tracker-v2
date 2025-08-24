@@ -1,0 +1,70 @@
+import { AreaChart as RechartsAreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { formatIDR, formatDateShort } from '@/lib/format'
+
+interface ChartData {
+  date: string
+  income: number
+  expenses: number
+}
+
+interface AreaChartProps {
+  data: ChartData[]
+  className?: string
+}
+
+export function AreaChart({ data, className }: AreaChartProps) {
+  return (
+    <div className={className}>
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-foreground">Income vs Expenses</h3>
+        <p className="text-sm text-muted-foreground">Trend bulanan pemasukan dan pengeluaran</p>
+      </div>
+      
+      <ResponsiveContainer width="100%" height={300}>
+        <RechartsAreaChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+          <XAxis 
+            dataKey="date" 
+            tickFormatter={formatDateShort}
+            stroke="var(--txt-med)"
+            fontSize={12}
+          />
+          <YAxis 
+            stroke="var(--txt-med)"
+            fontSize={12}
+            tickFormatter={(value) => formatIDR(value).replace('IDR', '')}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              color: 'var(--txt-high)',
+            }}
+            formatter={(value: number, name: string) => [
+              formatIDR(value),
+              name === 'income' ? 'Income' : 'Expenses'
+            ]}
+            labelFormatter={formatDateShort}
+          />
+          <Area
+            type="monotone"
+            dataKey="income"
+            stackId="1"
+            stroke="var(--success)"
+            fill="var(--success)"
+            fillOpacity={0.3}
+          />
+          <Area
+            type="monotone"
+            dataKey="expenses"
+            stackId="1"
+            stroke="var(--danger)"
+            fill="var(--danger)"
+            fillOpacity={0.3}
+          />
+        </RechartsAreaChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}

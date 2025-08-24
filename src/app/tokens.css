@@ -1,0 +1,9 @@
+:root, .light {
+  --bg:#0B1220; --surface:#0F172A; --surface2:#111827; --border:#1F2937;
+  --txt-high:#E5E7EB; --txt-med:#9CA3AF; --txt-low:#6B7280;
+  --primary:#3B82F6; --success:#10B981; --danger:#EF4444; --warning:#F59E0B;
+  --needs:#60A5FA; --wants:#F59E0B; --savings:#34D399; --invest:#22D3EE; --coins:#A78BFA;
+  --radius:12px;
+}
+html{ color-scheme: dark; }
+body{ background: var(--bg); color: var(--txt-high); }
