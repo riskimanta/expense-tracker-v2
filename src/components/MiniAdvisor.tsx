@@ -2,9 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useState } from 'react'
-import { formatIDR } from '@/lib/format'
+import { formatIDR } from '@/lib/currency'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { formatDateID } from '@/lib/format'
 
 interface MiniAdvisorProps {
@@ -13,7 +13,7 @@ interface MiniAdvisorProps {
 }
 
 export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
-  const [price, setPrice] = useState('')
+  const [priceNumber, setPriceNumber] = useState<number>(0)
   const [result, setResult] = useState<{
     canAfford: boolean
     message: string
@@ -22,17 +22,20 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
     safeDate?: string
   } | null>(null)
 
-  const handleCheck = () => {
-    const priceNum = parseInt(price.replace(/\D/g, ''))
-    if (isNaN(priceNum) || priceNum <= 0) return
 
-    const canAfford = priceNum <= safeToSpend
+
+
+
+  const handleCheck = () => {
+    if (priceNumber <= 0) return
+
+    const canAfford = priceNumber <= safeToSpend
     const newResult = {
       canAfford,
       message: canAfford ? 'Aman! Kamu bisa beli ini.' : 'Tunda dulu, belum aman.',
       reason: canAfford 
         ? `Sisa aman bulan ini: ${formatIDR(safeToSpend)}`
-        : `Kurang ${formatIDR(priceNum - safeToSpend)} dari sisa aman`,
+        : `Kurang ${formatIDR(priceNumber - safeToSpend)} dari sisa aman`,
       recommendation: canAfford 
         ? 'Beli sekarang atau tunggu promo'
         : 'Tunggu gaji berikutnya atau kurangi pengeluaran lain',
@@ -40,7 +43,7 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
     }
     
     setResult(newResult)
-    onCheck?.(priceNum)
+    onCheck?.(priceNumber)
   }
 
   return (
@@ -55,16 +58,16 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex space-x-2">
-          <Input
-            type="text"
-            placeholder="Masukkan harga (contoh: 500000)"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+          <CurrencyInput
+            value={priceNumber}
+            onValueChange={(value) => setPriceNumber(value || 0)}
+            placeholder="Masukkan harga (contoh: 500.000)"
             className="flex-1"
+            data-testid="canbuy-input"
           />
-          <Button onClick={handleCheck} disabled={!price.trim()}>
-            Cek
-          </Button>
+                  <Button onClick={handleCheck} disabled={priceNumber <= 0} data-testid="canbuy-submit">
+          Cek
+        </Button>
         </div>
 
         {result && (
@@ -72,7 +75,7 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
             result.canAfford 
               ? 'border-[var(--success)] bg-[var(--success)]/10' 
               : 'border-[var(--danger)] bg-[var(--danger)]/10'
-          }`}>
+          }`} data-testid="canbuy-result">
             <div className="flex items-start space-x-3">
               <div className="text-2xl">
                 {result.canAfford ? '✅' : '❌'}

@@ -1,111 +1,91 @@
 "use client"
 
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { X } from "lucide-react"
+import { X, CheckCircle, AlertCircle, Info } from "lucide-react"
 import { cn } from "@/lib/cn"
 
-const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-  {
-    variants: {
-      variant: {
-        default: "border-border bg-card text-foreground",
-        destructive:
-          "destructive border-[var(--danger)] bg-[var(--danger)] text-[var(--txt-high)]",
-        success:
-          "border-[var(--success)] bg-[var(--success)] text-[var(--txt-high)]",
-        warning:
-          "border-[var(--warning)] bg-[var(--warning)] text-[var(--txt-high)]",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+export interface ToastProps {
+  id: string
+  title: string
+  description?: string
+  variant?: "default" | "destructive" | "success"
+  onDismiss: (id: string) => void
+}
 
-const Toast = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+export function Toast({ id, title, description, variant = "default", onDismiss }: ToastProps) {
+  const getIcon = () => {
+    switch (variant) {
+      case "success":
+        return <CheckCircle className="w-4 h-4 text-[var(--success)]" />
+      case "destructive":
+        return <AlertCircle className="w-4 h-4 text-[var(--danger)]" />
+      default:
+        return <Info className="w-4 h-4 text-[var(--primary)]" />
+    }
+  }
+
+  const getVariantClasses = () => {
+    switch (variant) {
+      case "success":
+        return "border-[var(--success)]/20 bg-[var(--success)]/10"
+      case "destructive":
+        return "border-[var(--danger)]/20 bg-[var(--danger)]/10"
+      default:
+        return "border-[var(--border)] bg-[var(--surface)]"
+    }
+  }
+
   return (
     <div
-      ref={ref}
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    />
+      className={cn(
+        "relative w-full max-w-sm rounded-lg border p-4 shadow-lg transition-all duration-300 ease-in-out",
+        getVariantClasses()
+      )}
+    >
+      <div className="flex items-start gap-3">
+        {getIcon()}
+        <div className="flex-1">
+          <h4 className="text-sm font-medium text-[var(--txt-high)]">{title}</h4>
+          {description && (
+            <p className="mt-1 text-sm text-[var(--txt-med)]">{description}</p>
+          )}
+        </div>
+        <button
+          onClick={() => onDismiss(id)}
+          className="rounded-md p-1 text-[var(--txt-low)] hover:text-[var(--txt-high)] transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
   )
-})
-Toast.displayName = "Toast"
+}
 
-const ToastAction = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
-      className
-    )}
-    {...props}
-  />
-))
-ToastAction.displayName = "ToastAction"
+export interface ToastContainerProps {
+  toasts: Array<{
+    id: string
+    title: string
+    description?: string
+    variant?: "default" | "destructive" | "success"
+  }>
+  onDismiss: (id: string) => void
+}
 
-const ToastClose = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
-      className
-    )}
-    toast-close=""
-    {...props}
-  >
-    <X className="h-4 w-4" />
-  </button>
-))
-ToastClose.displayName = "ToastClose"
+export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
+  if (toasts.length === 0) return null
 
-const ToastTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm font-semibold", className)}
-    {...props}
-  />
-))
-ToastTitle.displayName = "ToastTitle"
-
-const ToastDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm opacity-90", className)}
-    {...props}
-  />
-))
-ToastDescription.displayName = "ToastDescription"
-
-type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
-
-type ToastActionElement = React.ReactElement<typeof ToastAction>
-
-export {
-  type ToastProps,
-  type ToastActionElement,
-  Toast,
-  ToastAction,
-  ToastClose,
-  ToastTitle,
-  ToastDescription,
+  return (
+    <div className="fixed top-4 right-4 z-50 space-y-2">
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          id={toast.id}
+          title={toast.title}
+          description={toast.description}
+          variant={toast.variant}
+          onDismiss={onDismiss}
+        />
+      ))}
+    </div>
+  )
 }

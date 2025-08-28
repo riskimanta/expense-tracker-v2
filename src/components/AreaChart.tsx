@@ -4,7 +4,7 @@ import { formatIDR, formatDateShort } from '@/lib/format'
 interface ChartData {
   date: string
   income: number
-  expenses: number
+  expense: number
 }
 
 interface AreaChartProps {
@@ -33,6 +33,8 @@ export function AreaChart({ data, className }: AreaChartProps) {
             stroke="var(--txt-med)"
             fontSize={12}
             tickFormatter={(value) => formatIDR(value).replace('IDR', '')}
+            domain={[0, 'dataMax + 1000000']}
+            tickCount={6}
           />
           <Tooltip
             contentStyle={{
@@ -43,7 +45,7 @@ export function AreaChart({ data, className }: AreaChartProps) {
             }}
             formatter={(value: number, name: string) => [
               formatIDR(value),
-              name === 'income' ? 'Income' : 'Expenses'
+              name === 'income' ? 'Income' : 'Expense'
             ]}
             labelFormatter={formatDateShort}
           />
@@ -53,15 +55,17 @@ export function AreaChart({ data, className }: AreaChartProps) {
             stackId="1"
             stroke="var(--success)"
             fill="var(--success)"
-            fillOpacity={0.3}
+            fillOpacity={0.2}
+            strokeWidth={2}
           />
           <Area
             type="monotone"
-            dataKey="expenses"
+            dataKey="expense"
             stackId="1"
             stroke="var(--danger)"
             fill="var(--danger)"
-            fillOpacity={0.3}
+            fillOpacity={0.2}
+            strokeWidth={2}
           />
         </RechartsAreaChart>
       </ResponsiveContainer>

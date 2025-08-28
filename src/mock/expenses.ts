@@ -126,3 +126,99 @@ export const mockMonthlyExpenses = [
   { month: 'Nov', amount: 1060000 },
   { month: 'Dec', amount: 960000 }
 ]
+
+// Helper functions for filtering
+export function getCategories() {
+  return mockExpenseCategories
+}
+
+export function getExpenses({ from, to, categoryId }: { from: string; to: string; categoryId: string }) {
+  const filteredTransactions = mockExpenseTransactions.filter(transaction => {
+    const transactionDate = transaction.date
+    const isInDateRange = transactionDate >= from && transactionDate <= to
+    
+    if (categoryId === 'all') {
+      return isInDateRange
+    }
+    
+    // Find category by ID
+    const category = mockExpenseCategories.find(cat => cat.id === categoryId)
+    if (!category) return false
+    
+    return isInDateRange && transaction.category === category.name
+  })
+  
+  return filteredTransactions
+}
+
+// Calculate KPIs based on filtered data
+export function calculateKPIs(expenses: ExpenseTransaction[]) {
+  const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0)
+  const monthlyBudget = 5000000 // This could be dynamic
+  const remainingBudget = monthlyBudget - totalSpent
+  
+  // Group by category to find top category
+  const categoryTotals = expenses.reduce((acc, expense) => {
+    acc[expense.category] = (acc[expense.category] || 0) + expense.amount
+    return acc
+  }, {} as Record<string, number>)
+  
+  const topCategory = Object.entries(categoryTotals)
+    .sort(([,a], [,b]) => b - a)[0] || ['', 0]
+  
+  return {
+    totalSpent,
+    monthlyBudget,
+    remainingBudget,
+    topCategory: topCategory[0],
+    topCategoryAmount: topCategory[1],
+    averageDaily: expenses.length > 0 ? totalSpent / expenses.length : 0,
+    daysRemaining: 13 // This could be calculated dynamically
+  }
+}
+
+// Calculate budget allocation based on filtered data
+export function calculateBudgetAllocation(expenses: ExpenseTransaction[]) {
+  const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0)
+  
+  if (totalSpent === 0) return mockBudgetAllocation
+  
+  // Group by category and calculate percentages
+  const categoryTotals = expenses.reduce((acc, expense) => {
+    acc[expense.category] = (acc[expense.category] || 0) + expense.amount
+    return acc
+  }, {} as Record<string, number>)
+  
+  // Map categories to budget types
+  const budgetMapping: Record<string, string> = {
+    'Makanan & Minuman': 'Needs',
+    'Makanan': 'Needs', // Add mapping for actual database category
+    'Transportasi': 'Needs',
+    'Transport': 'Needs', // Add mapping for actual database category
+    'Tagihan': 'Needs',
+    'Kesehatan': 'Needs',
+    'Belanja': 'Wants',
+    'Hiburan': 'Wants',
+    'Investasi': 'Invest',
+    'Tabungan': 'Savings'
+  }
+  
+  const allocation = mockBudgetAllocation.map(item => {
+    const relevantCategories = Object.entries(budgetMapping)
+      .filter(([, budgetType]) => budgetType === item.name)
+      .map(([categoryName]) => categoryName)
+    
+    const categoryTotal = relevantCategories.reduce((sum, category) => {
+      return sum + (categoryTotals[category] || 0)
+    }, 0)
+    
+    const percentage = totalSpent > 0 ? (categoryTotal / totalSpent) * 100 : 0
+    
+    return {
+      ...item,
+      value: Math.round(percentage)
+    }
+  })
+  
+  return allocation
+}

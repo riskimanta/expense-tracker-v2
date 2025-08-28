@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query"
-import { fakeFetcher } from "@/lib/fake-fetcher"
 import { mockAccounts, mockAccountOptions, mockCategoryOptions, mockIncomeSources } from "@/mock/accounts"
 import { mockTransactions, mockExpenseTransactions, mockIncomeTransactions, mockTransferTransactions, mockKPIData } from "@/mock/transactions"
 import { mockCategoryBreakdown, mockMonthlyData, mockBudgetData } from "@/mock/reports"
@@ -8,7 +7,7 @@ import { mockCategoryBreakdown, mockMonthlyData, mockBudgetData } from "@/mock/r
 export const useAccounts = () => {
   return useQuery({
     queryKey: ["accounts"],
-    queryFn: () => fakeFetcher(mockAccounts),
+    queryFn: () => Promise.resolve(mockAccounts),
     initialData: mockAccounts,
     staleTime: Infinity, // Prevent refetching
   })
@@ -17,7 +16,7 @@ export const useAccounts = () => {
 export const useAccountOptions = () => {
   return useQuery({
     queryKey: ["accountOptions"],
-    queryFn: () => fakeFetcher(mockAccountOptions),
+    queryFn: () => Promise.resolve(mockAccountOptions),
     initialData: mockAccountOptions,
     staleTime: Infinity,
   })
@@ -26,7 +25,7 @@ export const useAccountOptions = () => {
 export const useCategoryOptions = () => {
   return useQuery({
     queryKey: ["categoryOptions"],
-    queryFn: () => fakeFetcher(mockCategoryOptions),
+    queryFn: () => Promise.resolve(mockCategoryOptions),
     initialData: mockCategoryOptions,
     staleTime: Infinity,
   })
@@ -35,7 +34,7 @@ export const useCategoryOptions = () => {
 export const useIncomeSources = () => {
   return useQuery({
     queryKey: ["incomeSources"],
-    queryFn: () => fakeFetcher(mockIncomeSources),
+    queryFn: () => Promise.resolve(mockIncomeSources),
     initialData: mockIncomeSources,
     staleTime: Infinity,
   })
@@ -45,7 +44,7 @@ export const useIncomeSources = () => {
 export const useTransactions = () => {
   return useQuery({
     queryKey: ["transactions"],
-    queryFn: () => fakeFetcher(mockTransactions),
+    queryFn: () => Promise.resolve(mockTransactions),
     initialData: mockTransactions,
     staleTime: Infinity,
   })
@@ -54,7 +53,7 @@ export const useTransactions = () => {
 export const useExpenseTransactions = () => {
   return useQuery({
     queryKey: ["expenseTransactions"],
-    queryFn: () => fakeFetcher(mockExpenseTransactions),
+    queryFn: () => Promise.resolve(mockExpenseTransactions),
     initialData: mockExpenseTransactions,
     staleTime: Infinity,
   })
@@ -63,7 +62,7 @@ export const useExpenseTransactions = () => {
 export const useIncomeTransactions = () => {
   return useQuery({
     queryKey: ["incomeTransactions"],
-    queryFn: () => fakeFetcher(mockIncomeTransactions),
+    queryFn: () => Promise.resolve(mockIncomeTransactions),
     initialData: mockIncomeTransactions,
     staleTime: Infinity,
   })
@@ -72,7 +71,7 @@ export const useIncomeTransactions = () => {
 export const useTransferTransactions = () => {
   return useQuery({
     queryKey: ["transferTransactions"],
-    queryFn: () => fakeFetcher(mockTransferTransactions),
+    queryFn: () => Promise.resolve(mockTransferTransactions),
     initialData: mockTransferTransactions,
     staleTime: Infinity,
   })
@@ -81,7 +80,7 @@ export const useTransferTransactions = () => {
 export const useKPIData = () => {
   return useQuery({
     queryKey: ["kpiData"],
-    queryFn: () => fakeFetcher(mockKPIData),
+    queryFn: () => Promise.resolve(mockKPIData),
     initialData: mockKPIData,
     staleTime: Infinity,
   })
@@ -91,7 +90,7 @@ export const useKPIData = () => {
 export const useCategoryData = () => {
   return useQuery({
     queryKey: ["categoryData"],
-    queryFn: () => fakeFetcher(mockCategoryBreakdown),
+    queryFn: () => Promise.resolve(mockCategoryBreakdown),
     initialData: mockCategoryBreakdown,
     staleTime: Infinity,
   })
@@ -100,7 +99,7 @@ export const useCategoryData = () => {
 export const useMonthlyData = () => {
   return useQuery({
     queryKey: ["monthlyData"],
-    queryFn: () => fakeFetcher(mockMonthlyData),
+    queryFn: () => Promise.resolve(mockMonthlyData),
     initialData: mockMonthlyData,
     staleTime: Infinity,
   })
@@ -109,7 +108,7 @@ export const useMonthlyData = () => {
 export const useBudgetData = () => {
   return useQuery({
     queryKey: ["budgetData"],
-    queryFn: () => fakeFetcher(mockBudgetData),
+    queryFn: () => Promise.resolve(mockBudgetData),
     initialData: mockBudgetData,
     staleTime: Infinity,
   })

@@ -1,0 +1,73 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Setup test database
+      run: |
+        node scripts/reset-test-db.ts
+        echo "Test database setup complete"
+    
+    - name: Run unit tests
+      run: npm run test
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+    
+    - name: Start test server
+      run: |
+        npm run test:serve &
+        npx wait-on http://localhost:3000
+      env:
+        DATABASE_URL: file:./test-expenses.db
+    
+    - name: Run E2E tests
+      run: npx playwright test
+      env:
+        DATABASE_URL: file:./test-expenses.db
+        PLAYWRIGHT_BASE_URL: http://localhost:3000
+    
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          test-results/
+          coverage/
+        retention-days: 30

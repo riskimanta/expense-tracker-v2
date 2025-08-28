@@ -2,66 +2,204 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { PieChart, Pie, Cell } from 'recharts'
-import { formatIDR } from '@/lib/format'
+import { formatIDR } from '@/lib/currency'
+import { CurrencyInput } from '@/components/ui/currency-input'
+import { DateInput } from '@/components/ui/date-input'
 import { getCurrencyOptions } from '@/lib/currency'
-import { formatDateID } from '@/lib/format'
-import { 
-  mockExpenseKPIs, 
-  mockExpenseCategories, 
-  mockExpenseTransactions,
-  mockBudgetAllocation
-} from '@/mock/expenses'
+
+import { FilterBar } from '@/components/expenses/FilterBar'
+import { useExpenses, useExpenseCategories, useCreateExpense, useAccounts, useUpdateTransaction, useDeleteTransaction } from '@/hooks/useExpenses'
+import { TransactionsTable } from '@/components/TransactionsTable'
+import { EditTransactionDialog } from '@/components/EditTransactionDialog'
+import { calculateKPIs, calculateBudgetAllocation } from '@/mock/expenses'
 import { useToast } from '@/components/ToastProvider'
 
 export default function ExpensesPage() {
-  const [selectedMonth, setSelectedMonth] = useState('2025-01')
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [month, setMonth] = useState<Date | null>(() => {
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), 1)
+  })
+  const [categoryId, setCategoryId] = useState('all')
+  const [accountId, setAccountId] = useState('all')
   const [isSplitMode, setIsSplitMode] = useState(false)
+  const [editingTransaction, setEditingTransaction] = useState<{
+    id: string;
+    date: string;
+    amount: number;
+    description?: string;
+    type?: string;
+    category_id?: string;
+    category_name?: string;
+    account_id?: string;
+    account_name?: string;
+  } | null>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [formData, setFormData] = useState({
-    date: '2025-01-18',
+    date: new Date(),
     category: '',
-    amount: '',
+    amountNumber: 0,
     description: '',
     account: '1',
     currency: 'IDR'
   })
+  const [formErrors, setFormErrors] = useState({
+    category: false,
+    amountNumber: false,
+    description: false
+  })
+  
   const { showToast } = useToast()
+  
+  // Fetch data using hooks
+  const { data: expenses = [], isLoading: expensesLoading } = useExpenses({
+    userId: '1',
+    month,
+    categoryId,
+    accountId
+  })
+  
+  const { data: categories = [], isLoading: categoriesLoading } = useExpenseCategories()
+  const { data: accounts = [], isLoading: accountsLoading } = useAccounts('1')
+  
+  // Create expense mutation
+  const createExpenseMutation = useCreateExpense()
+  const updateTransactionMutation = useUpdateTransaction()
+  const deleteTransactionMutation = useDeleteTransaction()
+  
+  // Calculate KPIs and budget allocation based on filtered data
+  const kpis = calculateKPIs(expenses)
+  const budgetAllocation = calculateBudgetAllocation(expenses)
+  
+  // Loading states
+  if (expensesLoading || categoriesLoading || accountsLoading) {
+    return (
+      <main className="mx-auto max-w-[1200px] p-6 space-y-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-semibold text-foreground">Pengeluaran</h1>
+          <p className="mt-1 text-muted-foreground">Kelola pengeluaran dan budget bulanan</p>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </main>
+    )
+  }
+
+  const validateForm = () => {
+    const errors = {
+      category: !formData.category,
+      amountNumber: formData.amountNumber <= 0,
+      description: false // Description is optional
+    }
+    setFormErrors(errors)
+    return !Object.values(errors).some(error => error)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.category || !formData.amount || !formData.description) {
+    if (!validateForm()) {
       showToast({
         title: 'Error',
-        description: 'Semua field harus diisi',
+        description: 'Semua field wajib harus diisi dan jumlah harus lebih dari 0',
         variant: 'destructive'
       })
       return
     }
 
-    // Mock submission
-    showToast({
-      title: 'Sukses!',
-      description: 'Pengeluaran berhasil ditambahkan',
-      variant: 'success'
-    })
+    try {
+      await createExpenseMutation.mutateAsync({
+        date: formData.date.toISOString().split('T')[0], // Convert Date to YYYY-MM-DD format
+        categoryId: formData.category,
+        amount: formData.amountNumber,
+        description: formData.description,
+        accountId: formData.account,
+        userId: '1'
+      })
 
-    // Reset form
-    setFormData({
-      date: '2025-01-18',
-      category: '',
-      amount: '',
-      description: '',
-      account: '1',
-      currency: 'IDR'
-    })
+      showToast({
+        title: 'Sukses!',
+        description: 'Pengeluaran berhasil ditambahkan',
+        variant: 'success'
+      })
+
+      // Reset form
+      setFormData({
+        date: new Date(),
+        category: '',
+        amountNumber: 0,
+        description: '',
+        account: '1',
+        currency: 'IDR'
+      })
+      setFormErrors({
+        category: false,
+        amountNumber: false,
+        description: false
+      })
+    } catch (error) {
+      console.error('Failed to create expense:', error)
+      showToast({
+        title: 'Error',
+        description: 'Gagal menambahkan pengeluaran. Silakan coba lagi.',
+        variant: 'destructive'
+      })
+    }
+  }
+
+  const handleEditTransaction = (transaction: {
+    id: string;
+    date: string;
+    amount: number;
+    description?: string;
+    type?: string;
+    category_id?: string;
+    account_id?: string;
+  }) => {
+    setEditingTransaction(transaction)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleDeleteTransaction = async (transactionId: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+      try {
+        await deleteTransactionMutation.mutateAsync(transactionId)
+        showToast({
+          title: 'Sukses!',
+          description: 'Transaksi berhasil dihapus',
+          variant: 'success'
+        })
+      } catch (error) {
+        console.error('Failed to delete transaction:', error)
+        showToast({
+          title: 'Error',
+          description: 'Gagal menghapus transaksi. Silakan coba lagi.',
+          variant: 'destructive'
+        })
+      }
+    }
+  }
+
+  const handleSaveEdit = async (data: {
+    id: string;
+    date: string;
+    categoryId: string;
+    amount: number;
+    description: string;
+    accountId: string;
+    type: string;
+  }) => {
+    await updateTransactionMutation.mutateAsync(data)
+  }
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false)
+    setEditingTransaction(null)
   }
 
 
@@ -74,16 +212,28 @@ export default function ExpensesPage() {
         <p className="mt-1 text-muted-foreground">Kelola pengeluaran dan budget bulanan</p>
       </div>
 
+      {/* Filter Bar */}
+      <FilterBar
+        month={month}
+        categoryId={categoryId}
+        accountId={accountId}
+        categories={categories}
+        accounts={accounts}
+        onMonthChange={setMonth}
+        onCategoryChange={setCategoryId}
+        onAccountChange={setAccountId}
+      />
+
       {/* KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="rounded-xl border border-border bg-card p-5">
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Total Pengeluaran</p>
             <p className="text-2xl font-semibold text-[var(--danger)]">
-              {formatIDR(mockExpenseKPIs.totalSpent)}
+              {formatIDR(kpis.totalSpent)}
             </p>
             <p className="text-xs text-muted-foreground">
-              {mockExpenseKPIs.daysRemaining} hari tersisa
+              {kpis.daysRemaining} hari tersisa
             </p>
           </div>
         </Card>
@@ -92,10 +242,10 @@ export default function ExpensesPage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Budget Bulanan</p>
             <p className="text-2xl font-semibold text-foreground">
-              {formatIDR(mockExpenseKPIs.monthlyBudget)}
+              {formatIDR(kpis.monthlyBudget)}
             </p>
             <p className="text-xs text-muted-foreground">
-              Sisa: {formatIDR(mockExpenseKPIs.remainingBudget)}
+              Sisa: {formatIDR(kpis.remainingBudget)}
             </p>
           </div>
         </Card>
@@ -104,10 +254,10 @@ export default function ExpensesPage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Kategori Teratas</p>
             <p className="text-2xl font-semibold text-[var(--needs)]">
-              {mockExpenseKPIs.topCategory}
+              {kpis.topCategory}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatIDR(mockExpenseKPIs.topCategoryAmount)}
+              {formatIDR(kpis.topCategoryAmount)}
             </p>
           </div>
         </Card>
@@ -116,7 +266,7 @@ export default function ExpensesPage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Rata-rata Harian</p>
             <p className="text-2xl font-semibold text-foreground">
-              {formatIDR(mockExpenseKPIs.averageDaily)}
+              {formatIDR(kpis.averageDaily)}
             </p>
             <p className="text-xs text-muted-foreground">
               Per hari
@@ -124,42 +274,6 @@ export default function ExpensesPage() {
           </div>
         </Card>
       </div>
-
-      {/* Filter Bar */}
-      <Card className="rounded-xl border border-border bg-card p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div>
-              <label className="text-sm text-muted-foreground">Bulan</label>
-              <Input 
-                type="month" 
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                className="w-32" 
-              />
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground">Filter Kategori</label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Semua kategori" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua kategori</SelectItem>
-                  {mockExpenseCategories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <Badge variant="outline" className="text-[var(--txt-low)]">
-            User = 1
-          </Badge>
-        </div>
-      </Card>
 
       {/* Form + Budget Section */}
       <div className="grid grid-cols-12 gap-6">
@@ -184,21 +298,28 @@ export default function ExpensesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-muted-foreground">Tanggal</label>
-                  <Input
-                    type="date"
+                  <DateInput
                     value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    className="h-11"
+                    onChange={(date) => setFormData({...formData, date: date || new Date()})}
+                    placeholder="DD/MM/YYYY"
+                    data-testid="tx-date"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Kategori</label>
-                  <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                    <SelectTrigger className="h-11">
+                  <label className={`text-sm ${formErrors.category ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    Kategori {formErrors.category && <span className="text-red-500">*</span>}
+                  </label>
+                  <Select value={formData.category} onValueChange={(value) => {
+                    setFormData({...formData, category: value})
+                    if (formErrors.category) {
+                      setFormErrors({...formErrors, category: false})
+                    }
+                  }}>
+                    <SelectTrigger className={`h-11 ${formErrors.category ? 'border-red-500 focus:border-red-500' : ''}`} data-testid="tx-category">
                       <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockExpenseCategories.map((cat) => (
+                      {categories.map((cat: { id: string; name: string }) => (
                         <SelectItem key={cat.id} value={cat.id}>
                           {cat.name}
                         </SelectItem>
@@ -210,16 +331,23 @@ export default function ExpensesPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Jumlah</label>
-                  <Input
-                    type="text"
-                    placeholder="50000"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                    className="h-11"
+                  <label className={`text-sm ${formErrors.amountNumber ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    Jumlah {formErrors.amountNumber && <span className="text-red-500">*</span>}
+                  </label>
+                  <CurrencyInput
+                    value={formData.amountNumber}
+                    onValueChange={(value) => {
+                      setFormData({...formData, amountNumber: value || 0})
+                      if (formErrors.amountNumber) {
+                        setFormErrors({...formErrors, amountNumber: false})
+                      }
+                    }}
+                    placeholder="50.000"
+                    className={`h-11 ${formErrors.amountNumber ? 'border-red-500 focus:border-red-500' : ''}`}
+                    data-testid="amount-input"
                   />
                   <p className="text-xs text-[var(--txt-low)] mt-1">
-                    Contoh: 50000 = Rp 50.000
+                    Format otomatis: 50000 → 50.000
                   </p>
                 </div>
                 <div>
@@ -239,46 +367,41 @@ export default function ExpensesPage() {
                 </div>
               </div>
               
-              <div>
-                <label className="text-sm text-muted-foreground">Catatan</label>
-                <Textarea
-                  placeholder="Deskripsi pengeluaran..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="min-h-[88px]"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm text-muted-foreground">Akun</label>
+                  <Select value={formData.account} onValueChange={(value) => setFormData({...formData, account: value})}>
+                    <SelectTrigger className="h-11" data-testid="tx-account">
+                      <SelectValue placeholder="Pilih akun" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accounts.map((acc: { id: string; name: string; type: string; balance: number }) => (
+                        <SelectItem key={acc.id} value={acc.id}>
+                          {acc.name} - {formatIDR(acc.balance)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground">
+                    Catatan (Opsional)
+                  </label>
+                  <Textarea
+                    placeholder="Deskripsi pengeluaran..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    className="min-h-[88px]"
+                    data-testid="tx-note"
+                  />
+                </div>
               </div>
               
-              <Button type="submit" className="w-full h-11">
+              <Button type="submit" className="w-full h-11" data-testid="tx-submit">
                 Simpan
               </Button>
               
-              <div className="grid grid-cols-2 gap-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="h-9"
-                  onClick={() => showToast({
-                    title: 'Loading...',
-                    description: 'Simulasi loading state',
-                    variant: 'default'
-                  })}
-                >
-                  Test Loading
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="h-9"
-                  onClick={() => showToast({
-                    title: 'Error',
-                    description: 'Simulasi error state',
-                    variant: 'destructive'
-                  })}
-                >
-                  Test Error
-                </Button>
-              </div>
+
             </form>
           </CardContent>
         </Card>
@@ -298,7 +421,7 @@ export default function ExpensesPage() {
               <div className="w-[140px] h-[140px]">
                 <PieChart width={140} height={140}>
                   <Pie
-                    data={mockBudgetAllocation}
+                    data={budgetAllocation}
                     cx="50%"
                     cy="50%"
                     innerRadius={42}
@@ -306,14 +429,14 @@ export default function ExpensesPage() {
                     paddingAngle={2}
                     dataKey="value"
                   >
-                    {mockBudgetAllocation.map((entry, index) => (
+                    {budgetAllocation.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                 </PieChart>
               </div>
               <div className="flex-1 space-y-2">
-                {mockBudgetAllocation.slice(0, 3).map((item, index) => (
+                {budgetAllocation.slice(0, 3).map((item, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div 
@@ -337,80 +460,32 @@ export default function ExpensesPage() {
       </div>
 
       {/* Transactions Table */}
-      <Card className="rounded-xl border border-border bg-card p-4">
+      <Card className="rounded-xl border border-border bg-card p-4" data-testid="tx-table">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-semibold text-foreground">
             Daftar Transaksi
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Transaksi bulan {selectedMonth}
+            Transaksi bulan {month ? month.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : 'Semua periode'}
           </p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Tanggal
-                  </th>
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Kategori
-                  </th>
-                  <th className="text-right py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Jumlah
-                  </th>
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Catatan
-                  </th>
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockExpenseTransactions.map((transaction, index) => (
-                  <tr 
-                    key={transaction.id}
-                    className={`border-b border-border ${
-                      index % 2 === 0 ? "bg-card" : "bg-muted"
-                    }`}
-                  >
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {formatDateID(transaction.date)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-foreground">
-                          {transaction.category}
-                        </span>
-                        {transaction.splitCount && transaction.splitCount > 1 && (
-                          <Badge variant="outline" className="text-xs">
-                            Split ×{transaction.splitCount}
-                          </Badge>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <span className="text-sm font-medium text-[var(--danger)]">
-                        -{formatIDR(transaction.amount)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {transaction.description}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        🗑️
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <TransactionsTable
+            transactions={expenses}
+            onEdit={handleEditTransaction}
+            onDelete={handleDeleteTransaction}
+            onAccountClick={(accountId) => setAccountId(accountId)}
+          />
         </CardContent>
       </Card>
+
+      {/* Edit Transaction Dialog */}
+      <EditTransactionDialog
+        transaction={editingTransaction}
+        isOpen={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        onSave={handleSaveEdit}
+      />
     </main>
   )
 }

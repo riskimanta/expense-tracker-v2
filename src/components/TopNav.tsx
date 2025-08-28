@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState, useEffect } from "react"
 import { 
   Receipt, 
   TrendingUp, 
@@ -9,100 +10,108 @@ import {
   Wallet, 
   BarChart3, 
   Lightbulb, 
-  Heart 
+  Heart,
+  Shield
 } from "lucide-react"
 import { cn } from "@/lib/cn"
 
-const navigationItems = [
-  {
-    name: "Expenses",
-    href: "/expenses",
-    icon: Receipt,
-  },
-  {
-    name: "Income",
-    href: "/income",
-    icon: TrendingUp,
-  },
-  {
-    name: "Transfer",
-    href: "/transfer",
-    icon: ArrowLeftRight,
-  },
-  {
-    name: "Accounts",
-    href: "/accounts",
-    icon: Wallet,
-  },
-  {
-    name: "Reports",
-    href: "/reports",
-    icon: BarChart3,
-  },
-  {
-    name: "Advisor",
-    href: "/advisor",
-    icon: Lightbulb,
-  },
-  {
-    name: "Wishlist",
-    href: "/wishlist",
-    icon: Heart,
-  },
-]
-
 export function TopNav() {
   const pathname = usePathname()
+  const [showAdmin, setShowAdmin] = useState(false)
+
+  useEffect(() => {
+    setShowAdmin(process.env.NEXT_PUBLIC_SHOW_ADMIN === '1')
+  }, [])
+
+  const navigationItems = [
+    {
+      name: "Expenses",
+      href: "/expenses",
+      icon: Receipt,
+    },
+    {
+      name: "Income",
+      href: "/income",
+      icon: TrendingUp,
+    },
+    {
+      name: "Transfer",
+      href: "/transfer",
+      icon: ArrowLeftRight,
+    },
+    {
+      name: "Accounts",
+      href: "/accounts",
+      icon: Wallet,
+    },
+    {
+      name: "Reports",
+      href: "/reports",
+      icon: BarChart3,
+    },
+    {
+      name: "Advisor",
+      href: "/advisor",
+      icon: Lightbulb,
+    },
+    {
+      name: "Wishlist",
+      href: "/wishlist",
+      icon: Heart,
+    },
+    // Admin link - only show when enabled
+    ...(showAdmin ? [{
+      name: "Admin",
+      href: "/admin",
+      icon: Shield,
+    }] : [])
+  ]
 
   return (
-    <nav className="sticky top-0 z-50 bg-[var(--surface)] border-b border-[var(--border)]">
-      <div className="mx-auto max-w-[1200px] px-6">
-        <div className="flex items-center h-16">
+    <div className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur">
+      <nav className="mx-auto max-w-[1200px] px-4">
+        <ul className="no-scrollbar scroll-fade flex gap-2 overflow-x-auto py-3 snap-x" aria-label="Main navigation">
           {/* Logo/Brand */}
-          <div className="flex-shrink-0 mr-8">
+          <li className="shrink-0 snap-start mr-4">
             <Link 
               href="/dashboard" 
-              className="text-xl font-bold text-[var(--txt-high)] hover:text-[var(--primary)] transition-colors"
+              className="group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition bg-[var(--surface)] border-[var(--border)] text-[var(--txt-high)] hover:border-[var(--primary)] hover:text-[var(--primary)]"
             >
-              ExpenseTracker
+              <span className="text-lg font-bold">ExpenseTracker</span>
             </Link>
-          </div>
+          </li>
 
           {/* Navigation Links */}
-          <div className="flex-1 overflow-x-auto">
-            <div className="flex items-center space-x-3 min-w-max">
-              {navigationItems.map((item) => {
-                const isActive = pathname === item.href
-                const Icon = item.icon
-                
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
+          {navigationItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+            const Icon = item.icon
+            
+            return (
+              <li key={item.name} className="shrink-0 snap-start">
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition bg-[var(--surface)]",
+                    isActive
+                      ? "border-[var(--primary)] text-[var(--txt-high)]"
+                      : "border-[var(--border)] text-[var(--txt-med)] hover:border-[var(--primary)] hover:text-[var(--txt-high)]"
+                  )}
+                >
+                  <Icon 
                     className={cn(
-                      "group flex items-center space-x-2 px-4 py-2.5 rounded-xl border transition-all duration-200",
-                      "hover:scale-105",
-                      isActive
-                        ? "border-[var(--primary)] bg-[var(--surface2)] text-[var(--primary)] shadow-sm"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--txt-med)] hover:border-[var(--primary)]/50 hover:bg-[var(--surface2)]"
-                    )}
-                  >
-                    <Icon 
-                      className={cn(
-                        "w-4 h-4 transition-colors",
-                        isActive 
-                          ? "text-[var(--primary)]" 
-                          : "text-[var(--txt-med)] group-hover:text-[var(--txt-high)]"
-                      )} 
-                    />
-                    <span className="text-sm font-medium">{item.name}</span>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
+                      "w-4 h-4 transition-colors",
+                      isActive 
+                        ? "text-[var(--primary)]" 
+                        : "text-[var(--txt-low)] group-hover:text-[var(--primary)]"
+                    )} 
+                  />
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+    </div>
   )
 }

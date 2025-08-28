@@ -5,55 +5,205 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
+import { DateInput } from '@/components/ui/date-input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { formatIDR } from '@/lib/format'
 import { formatDateID } from '@/lib/format'
-import { 
-  mockIncomeKPIs, 
-  mockIncomeSources, 
-  mockIncomeTransactions
-} from '@/mock/income'
+import { useIncome, useIncomeKPIs, useCreateIncome, useIncomeCategories, useIncomeAccounts, useUpdateIncome, useDeleteIncome } from '@/hooks/useIncome'
 import { useToast } from '@/components/ToastProvider'
+import { EditTransactionDialog } from '@/components/EditTransactionDialog'
 
 export default function IncomePage() {
-  const [selectedMonth] = useState('2025-01')
+  const [selectedMonth] = useState(new Date())
   const [formData, setFormData] = useState({
-    date: '2025-01-18',
+    date: new Date(),
     account: '',
     source: '',
-    amount: '',
+    amount: null as number | null,
     description: ''
   })
+  const [formErrors, setFormErrors] = useState({
+    account: false,
+    source: false,
+    amount: false,
+    description: false
+  })
+  const [editingTransaction, setEditingTransaction] = useState<{
+    id: string;
+    date: string;
+    amount: number;
+    description?: string;
+    type?: string;
+    category_id?: string;
+    category_name?: string;
+    account_id?: string;
+    account_name?: string;
+  } | null>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const { showToast } = useToast()
+
+  // Use hooks for data fetching
+  const { data: incomeTransactions = [], isLoading: isLoadingTransactions } = useIncome({
+    userId: '1',
+    month: selectedMonth
+  })
+  
+  const { data: incomeKPIs = {
+    totalIncome: 0,
+    monthlyTarget: 10000000,
+    averageDaily: 0,
+    topSource: 'N/A',
+    topSourceAmount: 0
+  }, isLoading: isLoadingKPIs } = useIncomeKPIs({
+    userId: '1',
+    month: selectedMonth
+  })
+  
+  const { data: categories = [] } = useIncomeCategories()
+  const { data: accounts = [] } = useIncomeAccounts('1')
+  const createIncomeMutation = useCreateIncome()
+  const updateIncomeMutation = useUpdateIncome()
+  const deleteIncomeMutation = useDeleteIncome()
+
+  const validateForm = () => {
+    const errors = {
+      account: !formData.account,
+      source: !formData.source,
+      amount: formData.amount == null || formData.amount <= 0,
+      description: false // Description is optional
+    }
+    setFormErrors(errors)
+    return !Object.values(errors).some(error => error)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.account || !formData.source || !formData.amount || !formData.description) {
+    if (!validateForm()) {
       showToast({
         title: 'Error',
-        description: 'Semua field harus diisi',
+        description: 'Semua field wajib harus diisi',
         variant: 'destructive'
       })
       return
     }
 
-    // Mock submission
-    showToast({
-      title: 'Sukses!',
-      description: 'Pemasukan berhasil ditambahkan',
-      variant: 'success'
-    })
+    try {
+      await createIncomeMutation.mutateAsync({
+        date: formData.date.toISOString().split('T')[0],
+        categoryId: formData.source,
+        amount: formData.amount || 0,
+        description: formData.description,
+        accountId: formData.account,
+        type: 'INCOME'
+      })
 
-    // Reset form
-    setFormData({
-      date: '2025-01-18',
-      account: '',
-      source: '',
-      amount: '',
-      description: ''
-    })
+      showToast({
+        title: 'Sukses!',
+        description: 'Pemasukan berhasil ditambahkan',
+        variant: 'success'
+      })
+
+      // Reset form
+      setFormData({
+        date: new Date(),
+        account: '',
+        source: '',
+        amount: null,
+        description: ''
+      })
+      setFormErrors({
+        account: false,
+        source: false,
+        amount: false,
+        description: false
+      })
+    } catch (error) {
+      console.error('Error creating income:', error)
+      showToast({
+        title: 'Error',
+        description: 'Gagal menambahkan pemasukan',
+        variant: 'destructive'
+      })
+    }
+  }
+
+  const handleEditTransaction = (transaction: {
+    id: string;
+    date: string;
+    amount: number;
+    description?: string;
+    type?: string;
+    category_id?: string;
+    account_id?: string;
+  }) => {
+    setEditingTransaction(transaction)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleDeleteTransaction = async (transactionId: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus pemasukan ini?')) {
+      try {
+        await deleteIncomeMutation.mutateAsync(transactionId)
+        showToast({
+          title: 'Sukses!',
+          description: 'Pemasukan berhasil dihapus',
+          variant: 'success'
+        })
+      } catch (error) {
+        console.error('Failed to delete income:', error)
+        showToast({
+          title: 'Error',
+          description: 'Gagal menghapus pemasukan. Silakan coba lagi.',
+          variant: 'destructive'
+        })
+      }
+    }
+  }
+
+  const handleSaveEdit = async (data: {
+    id: string;
+    date: string;
+    categoryId: string;
+    amount: number;
+    description: string;
+    accountId: string;
+    type: string;
+  }) => {
+    try {
+      await updateIncomeMutation.mutateAsync({
+        id: data.id,
+        data: {
+          date: data.date,
+          categoryId: data.categoryId,
+          amount: data.amount,
+          description: data.description,
+          accountId: data.accountId,
+          type: data.type
+        }
+      })
+      showToast({
+        title: 'Sukses!',
+        description: 'Pemasukan berhasil diperbarui',
+        variant: 'success'
+      })
+      setIsEditDialogOpen(false)
+      setEditingTransaction(null)
+    } catch (error) {
+      console.error('Failed to update income:', error)
+      showToast({
+        title: 'Error',
+        description: 'Gagal memperbarui pemasukan. Silakan coba lagi.',
+        variant: 'destructive'
+      })
+    }
+  }
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false)
+    setEditingTransaction(null)
   }
 
   return (
@@ -70,7 +220,7 @@ export default function IncomePage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Total Pemasukan</p>
             <p className="text-2xl font-semibold text-[var(--success)]">
-              {formatIDR(mockIncomeKPIs.totalIncome)}
+              {formatIDR(incomeKPIs.totalIncome)}
             </p>
             <p className="text-xs text-muted-foreground">
               Bulan ini
@@ -82,10 +232,10 @@ export default function IncomePage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Target Bulanan</p>
             <p className="text-2xl font-semibold text-foreground">
-              {formatIDR(mockIncomeKPIs.monthlyTarget)}
+              {formatIDR(incomeKPIs.monthlyTarget)}
             </p>
             <p className="text-xs text-muted-foreground">
-              {Math.round((mockIncomeKPIs.totalIncome / mockIncomeKPIs.monthlyTarget) * 100)}% tercapai
+              {Math.round((incomeKPIs.totalIncome / incomeKPIs.monthlyTarget) * 100)}% tercapai
             </p>
           </div>
         </Card>
@@ -94,7 +244,7 @@ export default function IncomePage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Rata-rata Harian</p>
             <p className="text-2xl font-semibold text-[var(--primary)]">
-              {formatIDR(mockIncomeKPIs.averageDaily)}
+              {formatIDR(incomeKPIs.averageDaily)}
             </p>
             <p className="text-xs text-muted-foreground">
               Per hari
@@ -106,10 +256,10 @@ export default function IncomePage() {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Sumber Teratas</p>
             <p className="text-2xl font-semibold text-[var(--warning)]">
-              {mockIncomeKPIs.topSource}
+              {incomeKPIs.topSource}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatIDR(mockIncomeKPIs.topSourceAmount)}
+              {formatIDR(incomeKPIs.topSourceAmount)}
             </p>
           </div>
         </Card>
@@ -132,39 +282,53 @@ export default function IncomePage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-muted-foreground">Tanggal</label>
-                  <Input
-                    type="date"
+                  <DateInput
                     value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    className="h-11"
+                    onChange={(date) => setFormData({...formData, date: date || new Date()})}
+                    placeholder="DD/MM/YYYY"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Akun</label>
-                  <Select value={formData.account} onValueChange={(value) => setFormData({...formData, account: value})}>
-                    <SelectTrigger className="h-11">
+                  <label className={`text-sm ${formErrors.account ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    Akun {formErrors.account && <span className="text-red-500">*</span>}
+                  </label>
+                  <Select value={formData.account} onValueChange={(value) => {
+                    setFormData({...formData, account: value})
+                    if (formErrors.account) {
+                      setFormErrors({...formErrors, account: false})
+                    }
+                  }}>
+                    <SelectTrigger className={`h-11 ${formErrors.account ? 'border-red-500 focus:border-red-500' : ''}`}>
                       <SelectValue placeholder="Pilih akun" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="cash">Cash</SelectItem>
-                      <SelectItem value="bca">BCA</SelectItem>
-                      <SelectItem value="ovo">OVO</SelectItem>
-                      <SelectItem value="gopay">GoPay</SelectItem>
+                      {accounts.map((account: any) => (
+                        <SelectItem key={account.id.toString()} value={account.id.toString()}>
+                          {account.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               
               <div>
-                <label className="text-sm text-muted-foreground">Sumber</label>
-                <Select value={formData.source} onValueChange={(value) => setFormData({...formData, source: value})}>
-                  <SelectTrigger className="h-11">
+                <label className={`text-sm ${formErrors.source ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  Sumber {formErrors.source && <span className="text-red-500">*</span>}
+                </label>
+                <Select value={formData.source} onValueChange={(value) => {
+                  setFormData({...formData, source: value})
+                  if (formErrors.source) {
+                    setFormErrors({...formErrors, source: false})
+                  }
+                }}>
+                  <SelectTrigger className={`h-11 ${formErrors.source ? 'border-red-500 focus:border-red-500' : ''}`}>
                     <SelectValue placeholder="Pilih sumber" />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockIncomeSources.map((source) => (
-                      <SelectItem key={source.id} value={source.id}>
-                        {source.name}
+                    {categories.map((category: any) => (
+                      <SelectItem key={category.id.toString()} value={category.id.toString()}>
+                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -172,21 +336,29 @@ export default function IncomePage() {
               </div>
               
               <div>
-                <label className="text-sm text-muted-foreground">Jumlah</label>
-                <Input
-                  type="text"
-                  placeholder="5000000"
+                <label className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  Jumlah {formErrors.amount && <span className="text-red-500">*</span>}
+                </label>
+                <CurrencyInput
                   value={formData.amount}
-                  onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                  className="h-11"
+                  onValueChange={(value) => {
+                    setFormData({...formData, amount: value})
+                    if (formErrors.amount) {
+                      setFormErrors({...formErrors, amount: false})
+                    }
+                  }}
+                  placeholder="5000000"
+                  className={`h-11 ${formErrors.amount ? 'border-red-500 focus:border-red-500' : ''}`}
                 />
                 <p className="text-xs text-[var(--txt-low)] mt-1">
-                  Contoh: 5000000 = Rp 5.000.000
+                  Contoh: 5000000 = 5.000.000
                 </p>
               </div>
               
               <div>
-                <label className="text-sm text-muted-foreground">Catatan</label>
+                <label className="text-sm text-muted-foreground">
+                  Catatan (Opsional)
+                </label>
                 <Textarea
                   placeholder="Deskripsi pemasukan..."
                   value={formData.description}
@@ -195,8 +367,12 @@ export default function IncomePage() {
                 />
               </div>
               
-              <Button type="submit" className="w-full h-11">
-                Simpan
+              <Button 
+                type="submit" 
+                className="w-full h-11"
+                disabled={createIncomeMutation.isPending}
+              >
+                {createIncomeMutation.isPending ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </form>
           </CardContent>
@@ -209,7 +385,7 @@ export default function IncomePage() {
               Daftar Pemasukan
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Transaksi bulan {selectedMonth}
+              Transaksi bulan {selectedMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
             </p>
           </CardHeader>
           <CardContent>
@@ -224,7 +400,7 @@ export default function IncomePage() {
                       Akun
                     </th>
                     <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                      Sumber
+                      Kategori
                     </th>
                     <th className="text-right py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
                       Jumlah
@@ -232,45 +408,105 @@ export default function IncomePage() {
                     <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
                       Catatan
                     </th>
+                    <th className="text-center py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                      Aksi
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {mockIncomeTransactions.map((transaction, index) => (
-                    <tr 
-                      key={transaction.id}
-                      className={`border-b border-border ${
-                        index % 2 === 0 ? "bg-card" : "bg-muted"
-                      }`}
-                    >
-                      <td className="py-3 px-4 text-sm text-foreground">
-                        {formatDateID(transaction.date)}
-                      </td>
-                      <td className="py-3 px-4">
-                        <Badge variant="outline" className="text-xs">
-                          {transaction.account}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className="text-sm text-foreground">
-                          {transaction.source}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <span className="text-sm font-medium text-[var(--success)]">
-                          +{formatIDR(transaction.amount)}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-sm text-foreground">
-                        {transaction.description}
+                  {isLoadingTransactions ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                        Loading...
                       </td>
                     </tr>
-                  ))}
+                  ) : incomeTransactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                        Belum ada data pemasukan
+                      </td>
+                    </tr>
+                  ) : (
+                    incomeTransactions.map((transaction: any, index: number) => (
+                      <tr 
+                        key={transaction.id}
+                        className={`border-b border-border ${
+                          index % 2 === 0 ? "bg-card" : "bg-muted"
+                        }`}
+                      >
+                        <td className="py-3 px-4 text-sm text-foreground">
+                          {formatDateID(transaction.date)}
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge variant="outline" className="text-xs">
+                            {transaction.accountName}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="text-sm text-foreground">
+                            {transaction.category}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="text-sm font-medium text-[var(--success)]">
+                            +{formatIDR(transaction.amount)}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm text-foreground">
+                          {transaction.description}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <div className="flex items-center justify-center space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                console.log('Income page - Transaction data being sent to edit:', transaction);
+                                console.log('Income page - Transaction fields:', {
+                                  id: transaction.id,
+                                  category_id: transaction.category_id,
+                                  account_id: transaction.account_id,
+                                  category: transaction.category,
+                                  accountName: transaction.accountName,
+                                  type: transaction.type
+                                });
+                                handleEditTransaction(transaction);
+                              }}
+                              className="h-8 w-8 p-0"
+                            >
+                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteTransaction(transaction.id)}
+                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Edit Transaction Dialog */}
+      <EditTransactionDialog
+        transaction={editingTransaction}
+        isOpen={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        onSave={handleSaveEdit}
+      />
     </main>
   )
 }

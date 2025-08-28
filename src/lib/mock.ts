@@ -1,7 +1,6 @@
 import { mockAccounts, mockCategories, mockTransactions } from "@/mock/data"
 
-// Simple delay function
-const delay = (ms: number = 300) => new Promise(resolve => setTimeout(resolve, ms))
+
 
 // Mock data types matching the actual mock data structure
 export interface ExpenseCreate {
@@ -30,24 +29,20 @@ export interface TransferCreate {
 export const mockApi = {
   // Accounts
   async getAccounts() {
-    await delay()
     return mockAccounts
   },
 
   // Categories
   async getCategories() {
-    await delay()
     return mockCategories
   },
 
   // Expenses
   async getExpenses() {
-    await delay()
     return mockTransactions.filter(txn => txn.amount < 0)
   },
 
   async createExpense(data: ExpenseCreate) {
-    await delay()
     const newExpense = {
       id: `expense-${Date.now()}`,
       date: data.date,
@@ -61,13 +56,11 @@ export const mockApi = {
   },
 
   async deleteExpense(id: string) {
-    await delay()
     console.log(`Deleting expense with ID: ${id}`)
   },
 
   // Income
   async createIncome(data: IncomeCreate) {
-    await delay()
     const newIncome = {
       id: `income-${Date.now()}`,
       date: data.date,
@@ -81,7 +74,6 @@ export const mockApi = {
 
   // Transfer
   async createTransfer(data: TransferCreate) {
-    await delay()
     const transferOut = {
       id: `transfer-out-${Date.now()}`,
       date: data.date,
@@ -102,7 +94,6 @@ export const mockApi = {
 
   // Reports
   async getMonthlyReport() {
-    await delay()
     const expenses = mockTransactions.filter(t => t.amount < 0)
     const income = mockTransactions.filter(t => t.amount > 0)
     
@@ -119,7 +110,6 @@ export const mockApi = {
   },
 
   async getCategoryReport() {
-    await delay()
     const expenses = mockTransactions.filter(t => t.amount < 0)
     const totalExpenses = Math.abs(expenses.reduce((sum, t) => sum + t.amount, 0))
     
@@ -144,8 +134,6 @@ export const mockApi = {
 
   // Advisor
   async canBuy(data: { price: number; targetDate?: string; priority?: string }) {
-    await delay()
-    
     // Simple mock logic
     const monthlyIncome = 8000000 // Mock monthly income
     const monthlyExpenses = 6000000 // Mock monthly expenses

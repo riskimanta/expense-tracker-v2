@@ -185,24 +185,24 @@ export const mockBudgetCompliance: BudgetCompliance[] = [
 ]
 
 export const mockCashFlowData = [
-  { date: '01/01', income: 8000000, expense: 0 },
-  { date: '02/01', income: 0, expense: 150000 },
-  { date: '03/01', income: 0, expense: 250000 },
-  { date: '04/01', income: 0, expense: 300000 },
-  { date: '05/01', income: 0, expense: 180000 },
-  { date: '06/01', income: 0, expense: 220000 },
-  { date: '07/01', income: 0, expense: 350000 },
-  { date: '08/01', income: 0, expense: 280000 },
-  { date: '09/01', income: 0, expense: 320000 },
-  { date: '10/01', income: 0, expense: 190000 },
-  { date: '11/01', income: 0, expense: 240000 },
-  { date: '12/01', income: 0, expense: 310000 },
-  { date: '13/01', income: 0, expense: 270000 },
-  { date: '14/01', income: 0, expense: 500000 },
-  { date: '15/01', income: 0, expense: 150000 },
-  { date: '16/01', income: 0, expense: 25000 },
-  { date: '17/01', income: 0, expense: 50000 },
-  { date: '18/01', income: 0, expense: 300000 }
+  { date: '01/01', income: 5000000, expense: 1200000 },
+  { date: '02/01', income: 0, expense: 850000 },
+  { date: '03/01', income: 0, expense: 950000 },
+  { date: '04/01', income: 0, expense: 1100000 },
+  { date: '05/01', income: 0, expense: 780000 },
+  { date: '06/01', income: 0, expense: 920000 },
+  { date: '07/01', income: 0, expense: 1350000 },
+  { date: '08/01', income: 0, expense: 880000 },
+  { date: '09/01', income: 0, expense: 1120000 },
+  { date: '10/01', income: 0, expense: 690000 },
+  { date: '11/01', income: 0, expense: 840000 },
+  { date: '12/01', income: 0, expense: 1010000 },
+  { date: '13/01', income: 0, expense: 770000 },
+  { date: '14/01', income: 0, expense: 1500000 },
+  { date: '15/01', income: 0, expense: 650000 },
+  { date: '16/01', income: 2000000, expense: 125000 },
+  { date: '17/01', income: 0, expense: 450000 },
+  { date: '18/01', income: 0, expense: 1000000 }
 ]
 
 export const mockCategoryExpenses = [

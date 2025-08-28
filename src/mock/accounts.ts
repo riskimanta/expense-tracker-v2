@@ -1,46 +1,62 @@
-import type { Account } from '@/api/accounts'
+import { Account } from '@/types/admin'
 
 export const mockAccounts: Account[] = [
   {
     id: '1',
     name: 'Cash',
     type: 'cash',
-    balance: 2500000,
-    currency: 'IDR',
-    createdAt: '2025-01-01T00:00:00.000Z',
-    updatedAt: '2025-01-01T00:00:00.000Z'
+    balance: 500000
   },
   {
     id: '2',
     name: 'BCA',
     type: 'bank',
-    balance: 8500000,
-    currency: 'IDR',
-    accountNumber: '1234567890',
-    createdAt: '2025-01-01T00:00:00.000Z',
-    updatedAt: '2025-01-01T00:00:00.000Z'
+    balance: 2500000
   },
   {
     id: '3',
-    name: 'OVO',
-    type: 'ewallet',
-    balance: 1500000,
-    currency: 'IDR',
-    accountNumber: '08123456789',
-    createdAt: '2025-01-01T00:00:00.000Z',
-    updatedAt: '2025-01-01T00:00:00.000Z'
+    name: 'GoPay',
+    type: 'wallet',
+    balance: 150000
   },
   {
     id: '4',
-    name: 'GoPay',
-    type: 'ewallet',
-    balance: 800000,
-    currency: 'IDR',
-    accountNumber: '08123456789',
-    createdAt: '2025-01-01T00:00:00.000Z',
-    updatedAt: '2025-01-01T00:00:00.000Z'
+    name: 'Mandiri',
+    type: 'bank',
+    balance: 1000000
   }
 ]
+
+export function getAccounts(): Promise<Account[]> {
+  return Promise.resolve(mockAccounts)
+}
+
+export function createAccount(account: Omit<Account, 'id'>): Promise<Account> {
+  const newAccount: Account = {
+    ...account,
+    id: Date.now().toString()
+  }
+  mockAccounts.push(newAccount)
+  return Promise.resolve(newAccount)
+}
+
+export function updateAccount(id: string, updates: Partial<Account>): Promise<Account> {
+  const index = mockAccounts.findIndex(a => a.id === id)
+  if (index === -1) {
+    throw new Error('Account not found')
+  }
+  mockAccounts[index] = { ...mockAccounts[index], ...updates }
+  return Promise.resolve(mockAccounts[index])
+}
+
+export function deleteAccount(id: string): Promise<void> {
+  const index = mockAccounts.findIndex(a => a.id === id)
+  if (index === -1) {
+    throw new Error('Account not found')
+  }
+  mockAccounts.splice(index, 1)
+  return Promise.resolve()
+}
 
 export const mockAccountOptions = mockAccounts.map((a) => ({
   id: a.id,

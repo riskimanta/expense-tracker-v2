@@ -1,19 +1,21 @@
 "use client"
 
-import React, { createContext, useContext, useState } from 'react'
-import { Toast, ToastTitle, ToastDescription, ToastClose } from '@/components/ui/toast'
+import React, { createContext, useContext, useState, useCallback } from 'react'
+import { ToastContainer } from '@/components/ui/toast'
 
 interface ToastMessage {
   id: string
   title: string
   description?: string
-  variant: 'default' | 'destructive' | 'success' | 'warning'
+  variant: 'default' | 'destructive' | 'success'
   duration?: number
 }
 
 interface ToastContextType {
-  showToast: (message: Omit<ToastMessage, 'id'>) => void
-  hideToast: (id: string) => void
+  toast: (message: Omit<ToastMessage, 'id'>) => void
+  showToast: (message: Omit<ToastMessage, 'id'>) => void // Alias for backward compatibility
+  dismiss: (id: string) => void
+  dismissAll: () => void
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
@@ -29,7 +31,7 @@ export function useToast() {
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([])
 
-  const showToast = (message: Omit<ToastMessage, 'id'>) => {
+  const toast = useCallback((message: Omit<ToastMessage, 'id'>) => {
     const id = Math.random().toString(36).substr(2, 9)
     const newToast: ToastMessage = {
       id,
@@ -41,32 +43,26 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     
     // Auto hide after duration
     setTimeout(() => {
-      hideToast(id)
+      dismiss(id)
     }, newToast.duration)
-  }
 
-  const hideToast = (id: string) => {
+    return id
+  }, [])
+
+  const dismiss = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id))
-  }
+  }, [])
+
+  const dismissAll = useCallback(() => {
+    setToasts([])
+  }, [])
 
   return (
-    <ToastContext.Provider value={{ showToast, hideToast }}>
+    <ToastContext.Provider value={{ toast, showToast: toast, dismiss, dismissAll }}>
       {children}
       
       {/* Toast Container */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {toasts.map((toast) => (
-          <Toast key={toast.id} variant={toast.variant}>
-            <div className="flex-1">
-              <ToastTitle>{toast.title}</ToastTitle>
-              {toast.description && (
-                <ToastDescription>{toast.description}</ToastDescription>
-              )}
-            </div>
-            <ToastClose onClick={() => hideToast(toast.id)} />
-          </Toast>
-        ))}
-      </div>
+      <ToastContainer toasts={toasts} onDismiss={dismiss} />
     </ToastContext.Provider>
   )
 }

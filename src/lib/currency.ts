@@ -59,14 +59,42 @@ export const formatCurrency = (amount: number, currencyCode: string): string => 
   return formattedAmount
 }
 
-export const formatIDR = (amount: number): string => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
+export const formatID = (n: number) =>
+  new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(n);
+
+export const onlyDigits = (s: string) => s.replace(/\D+/g, "");
+
+export const toNumberFromMasked = (s: string): number => {
+  const d = onlyDigits(s);
+  return d ? parseInt(d, 10) : 0;
+};
+
+// Additional utility functions for currency handling
+export const formatIDR = (n: number) => `Rp ${formatID(n)}`;
+
+export const parseCurrencyInput = (input: string): { display: string; value: number } => {
+  const cleanValue = onlyDigits(input);
+  const numValue = cleanValue ? parseInt(cleanValue, 10) : 0;
+  const displayValue = numValue > 0 ? formatID(numValue) : '';
+  
+  return {
+    display: displayValue,
+    value: numValue
+  };
+};
+
+export const createCurrencyInputHandler = (
+  setDisplay: (value: string) => void,
+  setValue: (value: number) => void
+) => {
+  return (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const { display, value } = parseCurrencyInput(inputValue);
+    
+    setDisplay(display);
+    setValue(value);
+  };
+};
 
 export const getExchangeRate = (fromCurrency: string, toCurrency: string): number => {
   const from = getCurrencyByCode(fromCurrency)

@@ -5,12 +5,14 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
-import { formatIDR } from '@/lib/format'
+import { formatIDR } from '@/lib/currency'
 import { useToast } from '@/components/ToastProvider'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { 
   mockWishlistItems, 
   mockWishlistCategories,
@@ -27,22 +29,67 @@ export default function WishlistPage() {
   const [isAdvisorModalOpen, setIsAdvisorModalOpen] = useState(false)
   const [newItem, setNewItem] = useState({
     name: '',
-    estimatedPrice: '',
+    estimatedPriceNumber: 0,
     priority: 'medium' as 'low' | 'medium' | 'high',
-    targetDate: '',
+    targetDate: new Date(),
     category: '',
     notes: ''
   })
-  const [advisorPrice, setAdvisorPrice] = useState('')
+  const [advisorPriceNumber, setAdvisorPriceNumber] = useState<number>(0)
   const { showToast } = useToast()
+
+  // Function untuk format angka ke format ribuan Indonesia
+  const formatToIndonesianNumber = (num: number): string => {
+    return new Intl.NumberFormat("id-ID").format(num)
+  }
+
+  // Function untuk parse string format Indonesia ke number
+  const parseIndonesianNumber = (str: string): number => {
+    return parseInt(str.replace(/\D/g, '')) || 0
+  }
+
+  // Handle input change untuk advisor price dengan format otomatis
+  const handleAdvisorPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value
+    const cleanValue = inputValue.replace(/\D/g, '') // Hapus semua non-digit
+    
+    if (cleanValue === '') {
+          setAdvisorPriceNumber(0)
+      return
+    }
+    
+    const numValue = parseInt(cleanValue)
+    setAdvisorPriceNumber(numValue)
+    
+    // Format ke format ribuan Indonesia
+    const formattedValue = formatToIndonesianNumber(numValue)
+
+  }
+
+  // Handle input change untuk estimated price dengan format otomatis
+  const handleEstimatedPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value
+    const cleanValue = inputValue.replace(/\D/g, '') // Hapus semua non-digit
+    
+    if (cleanValue === '') {
+      setNewItem({...newItem, estimatedPriceNumber: 0})
+      return
+    }
+    
+    const numValue = parseInt(cleanValue)
+    
+    // Format ke format ribuan Indonesia
+    const formattedValue = formatToIndonesianNumber(numValue)
+          setNewItem({...newItem, estimatedPriceNumber: numValue})
+  }
 
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!newItem.name || !newItem.estimatedPrice || !newItem.targetDate || !newItem.category) {
+    if (!newItem.name || newItem.estimatedPriceNumber <= 0 || !newItem.targetDate || !newItem.category) {
       showToast({
         title: 'Error',
-        description: 'Semua field wajib diisi',
+        description: 'Semua field wajib diisi dan harga harus lebih dari 0',
         variant: 'destructive'
       })
       return
@@ -51,9 +98,9 @@ export default function WishlistPage() {
     const item: WishlistItem = {
       id: Date.now().toString(),
       name: newItem.name,
-      estimatedPrice: parseInt(newItem.estimatedPrice),
+      estimatedPrice: newItem.estimatedPriceNumber,
       priority: newItem.priority,
-      targetDate: newItem.targetDate,
+      targetDate: newItem.targetDate.toISOString().split('T')[0], // Convert Date to YYYY-MM-DD format
       status: 'pending',
       notes: newItem.notes,
       category: newItem.category,
@@ -72,9 +119,9 @@ export default function WishlistPage() {
     // Reset form and close modal
     setNewItem({
       name: '',
-      estimatedPrice: '',
+      estimatedPriceNumber: 0,
       priority: 'medium',
-      targetDate: '',
+      targetDate: new Date(),
       category: '',
       notes: ''
     })
@@ -82,7 +129,7 @@ export default function WishlistPage() {
   }
 
   const handleAddFromAdvisor = () => {
-    if (!advisorPrice) {
+    if (advisorPriceNumber <= 0) {
       showToast({
         title: 'Error',
         description: 'Masukkan harga item',
@@ -91,7 +138,7 @@ export default function WishlistPage() {
       return
     }
 
-    const price = parseInt(advisorPrice)
+    const price = advisorPriceNumber
     
     // Simulate advisor check
     const canAfford = price <= 5000000 // Mock threshold
@@ -119,7 +166,7 @@ export default function WishlistPage() {
       variant: 'success'
     })
 
-    setAdvisorPrice('')
+    setAdvisorPriceNumber(0)
     setIsAdvisorModalOpen(false)
   }
 
@@ -190,15 +237,14 @@ export default function WishlistPage() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-muted-foreground">Harga Item</label>
-                <Input
-                  type="text"
-                  placeholder="1000000"
-                  value={advisorPrice}
-                  onChange={(e) => setAdvisorPrice(e.target.value)}
+                <CurrencyInput
+                  value={advisorPriceNumber}
+                  onValueChange={(value) => setAdvisorPriceNumber(value || 0)}
+                  placeholder="1.000.000"
                   className="h-11"
                 />
                 <p className="text-xs text-[var(--txt-low)] mt-1">
-                  Contoh: 1000000 = Rp 1.000.000
+                  Contoh: 1000000 = Rp 1.000.000 (format otomatis)
                 </p>
               </div>
               
@@ -244,11 +290,10 @@ export default function WishlistPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-muted-foreground">Harga Estimasi</label>
-                  <Input
-                    type="text"
-                    placeholder="1000000"
-                    value={newItem.estimatedPrice}
-                    onChange={(e) => setNewItem({...newItem, estimatedPrice: e.target.value})}
+                  <CurrencyInput
+                    value={newItem.estimatedPriceNumber}
+                    onValueChange={(value) => setNewItem({...newItem, estimatedPriceNumber: value || 0})}
+                    placeholder="1.000.000"
                     className="h-11"
                   />
                 </div>
@@ -271,11 +316,10 @@ export default function WishlistPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-muted-foreground">Target Tanggal</label>
-                  <Input
-                    type="date"
+                  <DateInput
                     value={newItem.targetDate}
-                    onChange={(e) => setNewItem({...newItem, targetDate: e.target.value})}
-                    className="h-11"
+                    onChange={(date) => setNewItem({...newItem, targetDate: date || new Date()})}
+                    placeholder="DD/MM/YYYY"
                   />
                 </div>
                 
