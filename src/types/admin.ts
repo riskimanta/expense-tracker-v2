@@ -20,11 +20,12 @@ export type Category = {
 export type Account = {
   id: string
   name: string
-  type: 'cash' | 'bank' | 'ewallet'
+  type: string
   balance: number
   icon?: string
   currency?: string
   accountNumber?: string
+  logo_url?: string
 }
 
 export type BudgetRule = {
@@ -50,4 +51,12 @@ export type AdminSettings = {
   safeToSpendBuffer: number
   monthStartDate: number
   showDecimals: boolean
+}
+
+export interface AccountType {
+  id: number
+  name: string
+  created_at: string
+  updated_at: string
+  [key: string]: unknown
 }

@@ -38,10 +38,10 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border">
+      <DialogContent className="bg-[color:var(--surface)] border-[color:var(--border)]">
         <DialogHeader>
-          <DialogTitle className="text-foreground">{title}</DialogTitle>
-          <DialogDescription className="text-[var(--txt-med)]">
+          <DialogTitle className="text-[color:var(--txt-1)]">{title}</DialogTitle>
+          <DialogDescription className="text-[color:var(--txt-2)]">
             {description}
           </DialogDescription>
         </DialogHeader>
@@ -49,7 +49,7 @@ export function ConfirmDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-border text-foreground hover:bg-[var(--surface)]"
+            className="border-[color:var(--border)] text-[color:var(--txt-1)] hover:bg-[color:var(--surface-2)]"
           >
             {cancelText}
           </Button>
@@ -57,8 +57,8 @@ export function ConfirmDialog({
             onClick={handleConfirm}
             className={`${
               variant === 'danger'
-                ? 'bg-[var(--danger)] hover:bg-[var(--danger)]/90'
-                : 'bg-[var(--warning)] hover:bg-[var(--warning)]/90'
+                ? 'bg-[color:var(--danger)] hover:bg-[color:var(--danger)]/90'
+                : 'bg-[color:var(--brand)] hover:bg-[color:var(--brand-600)]'
             } text-white`}
           >
             {confirmText}

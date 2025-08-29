@@ -2,6 +2,288 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modern Light Theme Design Tokens - Base values */
+:root {
+  --radius: 12px;
+  --ring: 2px;
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.04);
+  --shadow-md: 0 8px 24px rgba(16,24,40,.08);
+}
+
+/* Dark theme overrides - only applied when explicitly set */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #334155;
+  --border: #475569;
+  --txt-1: #f8fafc;
+  --txt-2: #e2e8f0;
+  --txt-3: #cbd5e1;
+  --primary: #3b82f6;
+  --primary-fg: #ffffff;
+  --danger: #f87171;
+  --success: #4ade80;
+  --chart-grid: #475569;
+  --chart-axis: #64748b;
+}
+
+/* --- semantic roles on top of base tokens --- */
+:root {
+  /* pills/badges & subtle surfaces */
+  --pill-bg: #eef2ff;            /* light indigo-50 */
+  --pill-text: #1e40af;          /* indigo-800 */
+  --muted-bg: #f8fafc;           /* slate-50 */
+  /* progress bars */
+  --track: #e5e7eb;              /* neutral-200 */
+  --track-fill: var(--primary);  /* brand */
+}
+
+/* Brand palette from logo */
+:root {
+  /* Brand from logo (fallback values) */
+  --brand: #2f7d66;          /* hijau logo fallback */
+  --brand-600: #2a725d;
+  --brand-700: #246552;
+  --brand-50:  #e9f5f1;
+
+  --ink: #0f172a;            /* charcoal text (logo wordmark) */
+  --ink-2: #334155;
+  --ink-3: #64748b;
+
+  /* map to existing app tokens */
+  --primary: var(--brand);
+  --primary-fg: #ffffff;
+
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #f1f4f9;
+  --border: #e5e7eb;
+  --txt-1: var(--ink);
+  --txt-2: var(--ink-2);
+  --txt-3: var(--ink-3);
+  --danger: #ef4444;
+  --success: #16a34a;
+  --radius: 12px;
+  --ring: 2px;
+
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.04);
+  --shadow-md: 0 8px 24px rgba(16,24,40,.08);
+
+  /* charts */
+  --chart-grid: #e5e7eb;
+  --chart-axis: #475569;
+  --chart-a: var(--brand-50);
+  --chart-b: #fca5a5;
+  --chart-c1: var(--brand);
+  --chart-c2: #34d399;
+  --chart-c3: #f59e0b;
+  --chart-c4: #a78bfa;
+  --chart-c5: #60a5fa;
+  --chart-c6: #22c55e;
+}
+
+/* KPI card */
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem;
+}
+
+.kpi-title {
+  color: var(--txt-3);
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.kpi-value {
+  color: var(--txt-1);
+  font-weight: 700;
+}
+
+/* Pills / badges */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  background: color-mix(in oklab, var(--brand) 12%, white);
+  color: var(--brand-700);
+  border-radius: 999px;
+  padding: .25rem .6rem;
+  font-size: .75rem;
+}
+
+/* Progress */
+.progress {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+/* Cards/blocks that were dark before */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Popovers/menus/select/dialog should be light */
+.surface-pop {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+/* components keyed to brand */
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+.btn-primary:hover {
+  filter: brightness(.96);
+}
+
+.pill {
+  background: color-mix(in oklab, var(--brand) 12%, white);
+  color: var(--brand-700);
+}
+
+.progress {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+/* Base styles - always light theme by default */
+html, body {
+  background: var(--bg);
+  color: var(--txt-2);
+}
+
+/* Ensure light theme is always the base */
+html:not([data-theme="dark"]) {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #f0f2f7;
+  --border: #e5e7eb;
+  --txt-1: #0f172a;
+  --txt-2: #334155;
+  --txt-3: #64748b;
+  --primary: #2563eb;
+  --primary-fg: #ffffff;
+  --danger: #ef4444;
+  --success: #16a34a;
+  --chart-grid: #e5e7eb;
+  --chart-axis: #475569;
+  --chart-area-1: #93c5fd;
+  --chart-area-2: #fca5a5;
+  --chart-donut-1: #60a5fa;
+  --chart-donut-2: #34d399;
+  --chart-donut-3: #f59e0b;
+  --chart-donut-4: #f87171;
+  --chart-donut-5: #a78bfa;
+  --chart-donut-6: #22c55e;
+}
+
+/* Utility classes */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.input-base {
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  color: var(--txt-1);
+}
+
+.input-base:focus {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring) color-mix(in oklab, var(--primary) 35%, transparent);
+  border-color: var(--primary);
+}
+
+.btn {
+  height: 44px;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0 0.9rem;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--txt-1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  color: var(--txt-3);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.table tbody td {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.table tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.negative {
+  color: var(--danger);
+}
+
+.positive {
+  color: var(--success);
+}
+
 /* sembunyikan scrollbar tapi tetap bisa scroll */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -10,4 +292,20 @@
 .scroll-fade {
   -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
           mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
+/* Emoji font fallback untuk mencegah tofu */
+@layer utilities {
+  .font-emoji {
+    font-family:
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Noto Color Emoji",
+      "Twemoji Mozilla",
+      "EmojiOne Color",
+      "Segoe UI Symbol",
+      system-ui,
+      sans-serif !important;
+    font-variation-settings: normal;
+  }
 }

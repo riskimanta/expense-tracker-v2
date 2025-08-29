@@ -14,39 +14,52 @@ interface AdminTableProps<T> {
     sortable?: boolean
     render?: (value: string | number, item: T) => React.ReactNode
   }[]
-  searchKey?: keyof T
+  searchKeys?: (keyof T)[]  // Multiple search keys
   pageSize?: number
   emptyMessage?: string
   isLoading?: boolean
   searchPlaceholder?: string
+  defaultSortKey?: keyof T
+  defaultSortDirection?: 'asc' | 'desc'
+}
+
+// Helper function to get unique key for table rows
+function getItemKey<T extends Record<string, unknown>>(item: T, index: number): string | number {
+  if ('id' in item && item.id) return item.id as string | number
+  if ('code' in item && item.code) return item.code as string | number
+  return index
 }
 
 export function AdminTable<T extends Record<string, unknown>>({
   data,
   columns,
-  searchKey,
+  searchKeys,
   pageSize = 10,
   emptyMessage = 'Tidak ada data',
   isLoading = false,
-  searchPlaceholder = 'Cari...'
+  searchPlaceholder = 'Cari...',
+  defaultSortKey,
+  defaultSortDirection = 'asc'
 }: AdminTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortKey, setSortKey] = useState<keyof T | null>(null)
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [sortKey, setSortKey] = useState<keyof T | null>(defaultSortKey || null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(defaultSortDirection)
   const [currentPage, setCurrentPage] = useState(1)
 
   // Filter data
   const filteredData = useMemo(() => {
-    if (!searchKey || !searchTerm) return data
+    if (!searchKeys || !searchTerm) return data
     
     return data.filter(item => {
-      const value = item[searchKey]
-      if (typeof value === 'string') {
-        return value.toLowerCase().includes(searchTerm.toLowerCase())
-      }
-      return String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      return searchKeys.some(key => {
+        const value = item[key]
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(searchTerm.toLowerCase())
+        }
+        return String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      })
     })
-  }, [data, searchKey, searchTerm])
+  }, [data, searchKeys, searchTerm])
 
   // Sort data
   const sortedData = useMemo(() => {
@@ -110,95 +123,93 @@ export function AdminTable<T extends Record<string, unknown>>({
   }
 
   return (
-    <Card className="rounded-xl border border-border bg-card">
-      <CardContent className="p-6">
-        {/* Search */}
-        {searchKey && (
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--txt-low)]" />
-              <Input
-                placeholder={searchPlaceholder}
-                value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
-              />
-            </div>
+    <div className="overflow-x-auto">
+      {/* Search - Only show if searchKeys is provided */}
+      {searchKeys && searchKeys.length > 0 && (
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--txt-3)]" />
+            <Input
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="input-base pl-10 text-[color:var(--txt-1)] placeholder:text-[color:var(--txt-3)] focus:ring-[color:var(--primary)]"
+            />
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
+      {/* Table */}
+      <div className="table">
+        <table className="w-full">
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th
+                  key={String(column.key)}
+                  className={`${
+                    column.sortable ? 'cursor-pointer hover:text-[color:var(--txt-1)]' : ''
+                  }`}
+                  onClick={() => column.sortable && handleSort(column.key)}
+                >
+                  <div className="flex items-center gap-2">
+                    {column.label}
+                    {column.sortable && sortKey === column.key && (
+                      sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedData.map((item, index) => (
+              <tr
+                key={getItemKey(item, index)}
+                className="transition-colors"
+              >
                 {columns.map((column) => (
-                  <th
-                    key={String(column.key)}
-                    className={`px-4 py-3 text-left text-sm font-medium text-[var(--txt-med)] ${
-                      column.sortable ? 'cursor-pointer hover:text-foreground' : ''
-                    }`}
-                    onClick={() => column.sortable && handleSort(column.key)}
-                  >
-                    <div className="flex items-center gap-2">
-                      {column.label}
-                      {column.sortable && sortKey === column.key && (
-                        sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
-                      )}
-                    </div>
-                  </th>
+                  <td key={String(column.key)} className="text-sm text-[color:var(--txt-1)]">
+                    {column.render
+                      ? column.render(item[column.key] as string | number, item)
+                      : String(item[column.key] || '')
+                    }
+                  </td>
                 ))}
               </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((item, index) => (
-                <tr
-                  key={item.id || index}
-                  className="border-b border-border hover:bg-[var(--surface)] transition-colors"
-                >
-                  {columns.map((column) => (
-                    <td key={String(column.key)} className="px-4 py-3 text-sm text-foreground">
-                      {column.render
-                        ? column.render(item[column.key], item)
-                        : String(item[column.key] || '')
-                      }
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-[var(--txt-med)]">
-              Menampilkan {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, sortedData.length)} dari {sortedData.length} data
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="border-border text-foreground hover:bg-[var(--surface)]"
-              >
-                Sebelumnya
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="border-border text-foreground hover:bg-[var(--surface)]"
-              >
-                Selanjutnya
-              </Button>
-            </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between">
+          <p className="text-sm text-[color:var(--txt-2)]">
+            Menampilkan {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, sortedData.length)} dari {sortedData.length} data
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="btn btn-ghost border-[color:var(--border)] hover:bg-[color:var(--surface-2)]"
+            >
+              Sebelumnya
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="btn btn-ghost border-[color:var(--border)] hover:bg-[var(--surface-2)]"
+            >
+              Selanjutnya
+            </Button>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+    </div>
   )
 }

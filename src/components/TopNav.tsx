@@ -14,6 +14,7 @@ import {
   Shield
 } from "lucide-react"
 import { cn } from "@/lib/cn"
+import { ThemeToggle } from "./ui/theme-toggle"
 
 export function TopNav() {
   const pathname = usePathname()
@@ -68,49 +69,58 @@ export function TopNav() {
   ]
 
   return (
-    <div className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur">
-      <nav className="mx-auto max-w-[1200px] px-4">
-        <ul className="no-scrollbar scroll-fade flex gap-2 overflow-x-auto py-3 snap-x" aria-label="Main navigation">
+    <div className="sticky top-0 z-40 w-full border-b border-[color:var(--border)] bg-[color:var(--surface)]/80 backdrop-blur-sm shadow-sm">
+      <nav className="mx-auto max-w-7xl px-6">
+        <div className="flex items-center justify-between py-4">
           {/* Logo/Brand */}
-          <li className="shrink-0 snap-start mr-4">
-            <Link 
-              href="/dashboard" 
-              className="group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition bg-[var(--surface)] border-[var(--border)] text-[var(--txt-high)] hover:border-[var(--primary)] hover:text-[var(--primary)]"
-            >
-              <span className="text-lg font-bold">ExpenseTracker</span>
-            </Link>
-          </li>
+          <Link 
+            href="/dashboard" 
+            className="group inline-flex items-center gap-3 rounded-xl border px-4 py-2 text-sm transition bg-[color:var(--surface)] border-[color:var(--border)] text-[color:var(--txt-1)] hover:border-[color:var(--brand)] hover:text-[color:var(--brand)] shadow-sm"
+          >
+            {/* Logo placeholder - bird icon in brand color */}
+            <div className="w-6 h-6 rounded-full bg-[color:var(--brand)] flex items-center justify-center">
+              <span className="text-white text-xs font-bold">🐦</span>
+            </div>
+            <span className="text-xl font-bold tracking-tight">ExpenseTracker</span>
+          </Link>
 
           {/* Navigation Links */}
-          {navigationItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
-            const Icon = item.icon
-            
-            return (
-              <li key={item.name} className="shrink-0 snap-start">
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition bg-[var(--surface)]",
-                    isActive
-                      ? "border-[var(--primary)] text-[var(--txt-high)]"
-                      : "border-[var(--border)] text-[var(--txt-med)] hover:border-[var(--primary)] hover:text-[var(--txt-high)]"
-                  )}
-                >
-                  <Icon 
+          <ul className="no-scrollbar scroll-fade flex gap-2 overflow-x-auto snap-x" aria-label="Main navigation">
+            {navigationItems.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+              const Icon = item.icon
+              
+              return (
+                <li key={item.name} className="shrink-0 snap-start">
+                  <Link
+                    href={item.href}
                     className={cn(
-                      "w-4 h-4 transition-colors",
-                      isActive 
-                        ? "text-[var(--primary)]" 
-                        : "text-[var(--txt-low)] group-hover:text-[var(--primary)]"
-                    )} 
-                  />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+                      "group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition bg-[color:var(--surface)] shadow-sm",
+                      isActive
+                        ? "border-[color:var(--brand)] text-[color:var(--txt-1)] bg-[color:var(--brand-50)]"
+                        : "border-[color:var(--border)] text-[color:var(--txt-2)] hover:border-[color:var(--brand)] hover:text-[color:var(--txt-1)] hover:bg-[color:var(--surface-2)]"
+                    )}
+                  >
+                    <Icon 
+                      className={cn(
+                        "w-4 h-4 transition-colors",
+                        isActive 
+                          ? "text-[color:var(--brand)]" 
+                          : "text-[color:var(--txt-3)] group-hover:text-[color:var(--brand)]"
+                      )} 
+                    />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+
+          {/* Theme Toggle */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+          </div>
+        </div>
       </nav>
     </div>
   )

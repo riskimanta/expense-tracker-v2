@@ -1,0 +1,145 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e3]:
+    - list "Main navigation" [ref=e4]:
+      - listitem [ref=e5]:
+        - link "ExpenseTracker" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e7] [cursor=pointer]: ExpenseTracker
+      - listitem [ref=e8]:
+        - link "Expenses" [ref=e9] [cursor=pointer]:
+          - /url: /expenses
+          - img [ref=e10] [cursor=pointer]
+          - generic [ref=e14] [cursor=pointer]: Expenses
+      - listitem [ref=e15]:
+        - link "Income" [ref=e16] [cursor=pointer]:
+          - /url: /income
+          - img [ref=e17] [cursor=pointer]
+          - generic [ref=e20] [cursor=pointer]: Income
+      - listitem [ref=e21]:
+        - link "Transfer" [ref=e22] [cursor=pointer]:
+          - /url: /transfer
+          - img [ref=e23] [cursor=pointer]
+          - generic [ref=e28] [cursor=pointer]: Transfer
+      - listitem [ref=e29]:
+        - link "Accounts" [ref=e30] [cursor=pointer]:
+          - /url: /accounts
+          - img [ref=e31] [cursor=pointer]
+          - generic [ref=e34] [cursor=pointer]: Accounts
+      - listitem [ref=e35]:
+        - link "Reports" [ref=e36] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e37] [cursor=pointer]
+          - generic [ref=e42] [cursor=pointer]: Reports
+      - listitem [ref=e43]:
+        - link "Advisor" [ref=e44] [cursor=pointer]:
+          - /url: /advisor
+          - img [ref=e45] [cursor=pointer]
+          - generic [ref=e49] [cursor=pointer]: Advisor
+      - listitem [ref=e50]:
+        - link "Wishlist" [ref=e51] [cursor=pointer]:
+          - /url: /wishlist
+          - img [ref=e52] [cursor=pointer]
+          - generic [ref=e54] [cursor=pointer]: Wishlist
+      - listitem [ref=e55]:
+        - link "Admin" [ref=e56] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e57] [cursor=pointer]
+          - generic [ref=e59] [cursor=pointer]: Admin
+  - main [ref=e60]:
+    - generic [ref=e61]:
+      - heading "Pengeluaran" [level=1] [ref=e62]
+      - paragraph [ref=e63]: Kelola pengeluaran dan budget bulanan
+    - generic [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]: Bulan
+        - button "Pilih bulan" [ref=e69] [cursor=pointer]:
+          - generic [ref=e70] [cursor=pointer]: Agustus 2025
+          - img [ref=e71] [cursor=pointer]
+      - generic [ref=e76]:
+        - generic [ref=e77]: Filter Kategori
+        - combobox [ref=e78] [cursor=pointer]:
+          - generic: Semua Kategori
+          - img [ref=e79] [cursor=pointer]
+      - generic [ref=e81]:
+        - generic [ref=e82]: Filter Akun
+        - combobox [ref=e83] [cursor=pointer]:
+          - generic: Semua Akun
+          - img [ref=e84] [cursor=pointer]
+      - generic [ref=e87]: User = 1
+    - generic [ref=e88]:
+      - generic [ref=e90]:
+        - paragraph [ref=e91]: Total Pengeluaran
+        - paragraph [ref=e92]: Rp 0
+        - paragraph [ref=e93]: 2 hari tersisa
+      - generic [ref=e95]:
+        - paragraph [ref=e96]: Budget Bulanan
+        - paragraph [ref=e97]: Rp 5.000.000
+        - paragraph [ref=e98]: "Sisa: Rp 5.000.000"
+      - generic [ref=e100]:
+        - paragraph [ref=e101]: Kategori Teratas
+        - paragraph [ref=e102]: None
+        - paragraph [ref=e103]: Rp 0
+      - generic [ref=e105]:
+        - paragraph [ref=e106]: Rata-rata Harian
+        - paragraph [ref=e107]: Rp 0
+        - paragraph [ref=e108]: Per hari
+    - generic [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e112]:
+          - heading "Tambah Pengeluaran" [level=3] [ref=e113]
+          - generic [ref=e114]:
+            - generic [ref=e115]: Split this transaction
+            - switch [ref=e116] [cursor=pointer]
+        - generic [ref=e118]:
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e121]: Tanggal
+              - button "Pilih tanggal" [ref=e122] [cursor=pointer]:
+                - generic [ref=e123] [cursor=pointer]: 29/08/2025
+                - img
+            - generic [ref=e124]:
+              - generic [ref=e125]: Kategori
+              - combobox [ref=e126] [cursor=pointer]:
+                - generic: Pilih kategori
+                - img [ref=e127] [cursor=pointer]
+              - combobox [ref=e129]
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]: Jumlah
+              - textbox "50.000" [ref=e133]: "0"
+              - paragraph [ref=e134]: "Format otomatis: 50000 → 50.000"
+            - generic [ref=e135]:
+              - generic [ref=e136]: Mata Uang
+              - combobox [ref=e137] [cursor=pointer]:
+                - generic: IDR - Indonesian Rupiah
+                - img [ref=e138] [cursor=pointer]
+              - combobox [ref=e140]
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]: Akun
+              - combobox [ref=e144] [cursor=pointer]:
+                - img [ref=e145] [cursor=pointer]
+              - combobox [ref=e147]
+            - generic [ref=e148]:
+              - generic [ref=e149]: Catatan (Opsional)
+              - textbox "Deskripsi pengeluaran..." [ref=e150]
+          - button "Simpan" [ref=e151] [cursor=pointer]
+      - generic [ref=e152]:
+        - generic [ref=e153]:
+          - heading "Budget Allocation" [level=3] [ref=e154]
+          - paragraph [ref=e155]: Aturan 50/25/5/15/5
+        - generic [ref=e157]:
+          - application [ref=e160]
+          - generic [ref=e162]: +2 more 20%
+    - generic [ref=e163]:
+      - generic [ref=e164]:
+        - heading "Daftar Transaksi" [level=3] [ref=e165]
+        - paragraph [ref=e166]: Transaksi bulan Agustus 2025
+      - paragraph [ref=e169]: Belum ada transaksi
+  - button "Open Next.js Dev Tools" [ref=e175] [cursor=pointer]:
+    - img [ref=e176] [cursor=pointer]
+  - alert [ref=e180]
+```

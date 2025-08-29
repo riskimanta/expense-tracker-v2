@@ -40,7 +40,7 @@ export default function AdminBudgetsPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: updateBudgetRule,
+    mutationFn: ({ userId, updates }: { userId: string; updates: Partial<BudgetRule> }) => updateBudgetRule(userId, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["budgetRule"] })
       toast({
@@ -94,7 +94,7 @@ export default function AdminBudgetsPage() {
 
   const onSubmit = (data: BudgetFormData) => {
     if (budgetRule) {
-      updateMutation.mutate({ id: budgetRule.id, userId: "1", ...data })
+      updateMutation.mutate({ userId: "1", updates: data })
     }
   }
 
@@ -114,7 +114,7 @@ export default function AdminBudgetsPage() {
       case "coins":
         return "bg-[var(--coins)]"
       default:
-        return "bg-gray-500"
+        return "bg-[color:var(--txt-3)]"
     }
   }
 

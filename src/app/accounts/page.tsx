@@ -20,7 +20,7 @@ export default function AccountsPage() {
   
   const [newAccount, setNewAccount] = useState({
     name: '',
-    type: 'cash' as 'cash' | 'bank' | 'ewallet',
+    type: 'cash',
     balance: '',
     icon: '💵'
   })
@@ -86,8 +86,20 @@ export default function AccountsPage() {
     }
 
     try {
-      await createAccountMutation.mutateAsync(account)
+      const result = await createAccountMutation.mutateAsync(account)
       
+      // Check if it's a conflict response (not an error)
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // This is a conflict response, show informative message
+        showToast({
+          title: 'Tidak Dapat Dibuat',
+          description: result.error || 'Akun tidak dapat dibuat karena konflik data',
+          variant: 'destructive'
+        })
+        return
+      }
+      
+      // Success
       showToast({
         title: 'Sukses!',
         description: 'Akun berhasil ditambahkan',
@@ -105,7 +117,7 @@ export default function AccountsPage() {
     } catch (error) {
       showToast({
         title: 'Error',
-        description: 'Gagal menambahkan akun',
+        description: error instanceof Error ? error.message : 'Gagal menambahkan akun',
         variant: 'destructive'
       })
     }
@@ -138,11 +150,23 @@ export default function AccountsPage() {
     }
 
     try {
-      await updateAccountMutation.mutateAsync({
+      const result = await updateAccountMutation.mutateAsync({
         id: editingAccount.id,
         data: updatedAccount
       })
       
+      // Check if it's a conflict response (not an error)
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // This is a conflict response, show informative message
+        showToast({
+          title: 'Tidak Dapat Diupdate',
+          description: result.error || 'Akun tidak dapat diupdate karena konflik data',
+          variant: 'destructive'
+        })
+        return
+      }
+      
+      // Success
       showToast({
         title: 'Sukses!',
         description: 'Akun berhasil diupdate',
@@ -161,7 +185,7 @@ export default function AccountsPage() {
     } catch (error) {
       showToast({
         title: 'Error',
-        description: 'Gagal mengupdate akun',
+        description: error instanceof Error ? error.message : 'Gagal mengupdate akun',
         variant: 'destructive'
       })
     }
@@ -171,8 +195,20 @@ export default function AccountsPage() {
     if (!confirm('Apakah Anda yakin ingin menghapus akun ini?')) return
     
     try {
-      await deleteAccountMutation.mutateAsync(accountId)
+      const result = await deleteAccountMutation.mutateAsync(accountId)
       
+      // Check if it's a conflict response (not an error)
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // This is a conflict response, show informative message
+        showToast({
+          title: 'Tidak Dapat Dihapus',
+          description: result.error || 'Akun tidak dapat dihapus karena masih digunakan',
+          variant: 'destructive'
+        })
+        return
+      }
+      
+      // Success
       showToast({
         title: 'Sukses!',
         description: 'Akun berhasil dihapus',
@@ -181,7 +217,7 @@ export default function AccountsPage() {
     } catch (error) {
       showToast({
         title: 'Error',
-        description: 'Gagal menghapus akun',
+        description: error instanceof Error ? error.message : 'Gagal menghapus akun',
         variant: 'destructive'
       })
     }
@@ -213,7 +249,7 @@ export default function AccountsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {accounts.map((account) => (
+        {accounts.map((account: Account) => (
           <Card key={account.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">

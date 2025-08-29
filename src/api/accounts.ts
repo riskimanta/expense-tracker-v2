@@ -47,15 +47,21 @@ export async function updateAccount(id: string, updates: Partial<Account>): Prom
   return response.json()
 }
 
-export async function deleteAccount(id: string): Promise<void> {
+export async function deleteAccount(id: string, force: boolean = false): Promise<{ success: boolean; message: string }> {
   if (!API_URL) {
-    return accountService.deleteAccount(id)
+    await accountService.deleteAccount(id)
+    return { success: true, message: 'Account deleted successfully' }
   }
 
   const response = await fetch(`${API_URL}/api/accounts/${id}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ force })
   })
   if (!response.ok) {
-    throw new Error('Failed to delete account')
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.error || 'Failed to delete account')
   }
+  
+  return response.json()
 }

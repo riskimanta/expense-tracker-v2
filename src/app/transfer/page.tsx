@@ -273,8 +273,8 @@ export default function TransferPage() {
                     Jumlah {formErrors.amount && <span className="text-red-500">*</span>}
                   </label>
                   <CurrencyInput
-                    value={formData.amount}
-                    onValueChange={(value) => {
+                    value={formData.amount || 0}
+                    onChange={(value) => {
                       setFormData({...formData, amount: value})
                       if (formErrors.amount) {
                         setFormErrors({...formErrors, amount: false})
@@ -289,8 +289,8 @@ export default function TransferPage() {
                     Biaya Transfer
                   </label>
                   <CurrencyInput
-                    value={formData.fee}
-                    onValueChange={(value) => setFormData({...formData, fee: value})}
+                    value={formData.fee || 0}
+                    onChange={(value) => setFormData({...formData, fee: value})}
                     placeholder="0"
                     className="h-11"
                   />

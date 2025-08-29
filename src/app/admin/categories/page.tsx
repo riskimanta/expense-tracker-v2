@@ -24,7 +24,7 @@ const categorySchema = z.object({
   type: z.enum(['expense', 'income']),
   color: z.string().regex(/^#[0-9A-F]{6}$/i, 'Color harus dalam format hex (#RRGGBB)'),
   icon: z.string().optional(),
-  isDefault: z.boolean().default(false)
+  isDefault: z.boolean().optional()
 })
 
 type CategoryFormData = z.infer<typeof categorySchema>
@@ -70,7 +70,7 @@ export default function AdminCategoriesPage() {
       showToast({
         title: 'Error',
         description: error.message || 'Gagal membuat kategori',
-        variant: 'error'
+        variant: 'destructive'
       })
     }
   })
@@ -91,7 +91,7 @@ export default function AdminCategoriesPage() {
       showToast({
         title: 'Error',
         description: error.message || 'Gagal mengupdate kategori',
-        variant: 'error'
+        variant: 'destructive'
       })
     }
   })
@@ -112,7 +112,7 @@ export default function AdminCategoriesPage() {
       showToast({
         title: 'Error',
         description: error.message || 'Gagal menghapus kategori',
-        variant: 'error'
+        variant: 'destructive'
       })
     }
   })
@@ -158,48 +158,48 @@ export default function AdminCategoriesPage() {
   }
 
   const tableColumns = [
-    { key: 'name', label: 'Nama', sortable: true },
+    { key: 'name' as keyof Category, label: 'Nama', sortable: true },
     { 
-      key: 'type', 
+      key: 'type' as keyof Category, 
       label: 'Tipe', 
       sortable: true,
-      render: (value: string) => (
+      render: (value: string | number) => (
         <Badge variant={value === 'expense' ? 'outline' : 'default'} className="capitalize">
           {value === 'expense' ? 'Pengeluaran' : 'Pemasukan'}
         </Badge>
       )
     },
     { 
-      key: 'color', 
+      key: 'color' as keyof Category, 
       label: 'Warna', 
-      render: (value: string) => (
+      render: (value: string | number) => (
         <div className="flex items-center gap-2">
           <div 
             className="w-4 h-4 rounded-full border border-border"
-            style={{ backgroundColor: value }}
+            style={{ backgroundColor: value as string }}
           />
           <span className="text-xs font-mono">{value}</span>
         </div>
       )
     },
     { 
-      key: 'icon', 
+      key: 'icon' as keyof Category, 
       label: 'Icon', 
-      render: (value: string) => value || '-' 
+      render: (value: string | number) => (value as string) || '-' 
     },
     { 
-      key: 'isDefault', 
+      key: 'isDefault' as keyof Category, 
       label: 'Default', 
-      render: (value: boolean) => (
+      render: (value: string | number) => (
         <Badge variant={value ? 'default' : 'outline'} className={value ? 'bg-[var(--success)]' : ''}>
           {value ? 'Ya' : 'Tidak'}
         </Badge>
       )
     },
     {
-      key: 'actions',
+      key: 'actions' as keyof Category,
       label: 'Aksi',
-      render: (_: unknown, category: Category) => (
+      render: (_: string | number, category: Category) => (
         <RowActions
           onEdit={() => handleEdit(category)}
           onDelete={() => handleDelete(category)}
@@ -259,7 +259,7 @@ export default function AdminCategoriesPage() {
       <AdminTable
         data={filteredCategories}
         columns={tableColumns}
-        searchKey="name"
+        searchKeys={["name"]}
         pageSize={10}
         emptyMessage="Belum ada kategori"
       />

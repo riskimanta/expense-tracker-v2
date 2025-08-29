@@ -37,3 +37,29 @@ export function formatMonthYear(date: string): string {
     year: 'numeric',
   }).format(dateObj)
 }
+
+/**
+ * Format number to Indonesian format with thousand separators
+ * Example: 7000000 -> 7.000.000
+ */
+export function formatNumberToIndonesian(value: number | string): string {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  
+  if (isNaN(num)) return '0';
+  
+  return num.toLocaleString('id-ID');
+}
+
+/**
+ * Parse Indonesian formatted number back to number
+ * Example: "7.000.000" -> 7000000
+ */
+export function parseIndonesianNumber(value: string): number {
+  if (!value) return 0;
+  
+  // Remove all dots and replace comma with dot for decimal
+  const cleanValue = value.replace(/\./g, '').replace(',', '.');
+  const num = parseFloat(cleanValue);
+  
+  return isNaN(num) ? 0 : num;
+}

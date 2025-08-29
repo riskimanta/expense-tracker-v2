@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
         name,
         type,
         opening_balance as balance,
+        logo_url,
         created_at
       FROM accounts 
       WHERE user_id = ?
@@ -36,12 +37,13 @@ export async function GET(request: NextRequest) {
     
     // Transform to match expected API response format
     const transformedAccounts = accounts.map((account: unknown) => {
-      const acc = account as { id: number; name: string; type: string; balance: number; created_at: string }
+      const acc = account as { id: number; name: string; type: string; balance: number; logo_url?: string; created_at: string }
       return {
         id: acc.id,
         name: acc.name,
         type: acc.type === 'wallet' ? 'ewallet' : acc.type, // Map wallet to ewallet
         balance: acc.balance || 0,
+        logo_url: acc.logo_url || null,
         created_at: acc.created_at
       }
     })
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, type, balance, userId = '1' } = body
+    const { name, type, balance, logo_url, userId = '1' } = body
     
     if (!name || !type || balance === undefined) {
       return NextResponse.json(
@@ -76,11 +78,11 @@ export async function POST(request: NextRequest) {
     
     // Insert account
     const stmt = db.prepare(`
-      INSERT INTO accounts (name, type, opening_balance, user_id, created_at)
-      VALUES (?, ?, ?, ?, datetime('now'))
+      INSERT INTO accounts (name, type, opening_balance, logo_url, user_id, created_at)
+      VALUES (?, ?, ?, ?, ?, datetime('now'))
     `)
     
-    const result = stmt.run(name, type === 'ewallet' ? 'wallet' : type, balance, userId)
+    const result = stmt.run(name, type === 'ewallet' ? 'wallet' : type, balance, logo_url || null, userId)
     db.close()
     
     if (result.lastInsertRowid) {
@@ -100,43 +102,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/accounts/[id] - Update account
-export async function PUT(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { id, name, type, balance, icon } = body
-    
-    if (!id || !name || !type || balance === undefined) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
-    }
-    
-    const db = getDb()
-    
-    // Update account
-    const stmt = db.prepare(`
-      UPDATE accounts 
-      SET name = ?, type = ?, opening_balance = ?
-      WHERE id = ?
-    `)
-    
-    const result = stmt.run(name, type === 'ewallet' ? 'ewallet' : type, balance, id)
-    db.close()
-    
-    if (result.changes > 0) {
-      return NextResponse.json({
-        message: 'Account updated successfully'
-      }, { status: 200 })
-    } else {
-      throw new Error('Failed to update account')
-    }
-  } catch (error) {
-    console.error('Error updating account:', error)
-    return NextResponse.json(
-      { error: 'Failed to update account' },
-      { status: 500 }
-    )
-  }
-}
+

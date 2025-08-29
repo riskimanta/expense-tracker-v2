@@ -383,7 +383,7 @@ export default function ExpensesPage() {
                   </label>
                   <CurrencyInput
                     value={formData.amountNumber}
-                    onValueChange={(value) => {
+                    onChange={(value) => {
                       setFormData({...formData, amountNumber: value || 0})
                       if (formErrors.amountNumber) {
                         setFormErrors({...formErrors, amountNumber: false})

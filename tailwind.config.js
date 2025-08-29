@@ -25,6 +25,18 @@ module.exports = {
         xl: 'var(--radius)',
         lg: 'calc(var(--radius) - 2px)',
       },
+      fontFamily: {
+        emoji: [
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Noto Color Emoji",
+          "Twemoji Mozilla",
+          "EmojiOne Color",
+          "Segoe UI Symbol",
+          "system-ui",
+          "sans-serif",
+        ],
+      },
     },
   },
   plugins: [],

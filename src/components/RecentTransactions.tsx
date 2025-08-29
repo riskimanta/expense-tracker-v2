@@ -63,7 +63,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
         <CardTitle className="text-lg font-semibold text-foreground">
           Transaksi Terbaru
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[color:var(--txt-2)]">
           {data.length} transaksi terakhir
         </p>
       </CardHeader>
@@ -72,7 +72,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
           {data.map((transaction) => (
             <div
               key={transaction.id}
-              className="flex items-center space-x-3 p-3 rounded-lg border border-border bg-muted hover:bg-card transition-colors"
+              className="flex items-center space-x-3 p-3 rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] hover:bg-[color:var(--surface)] transition-colors"
             >
               <div className="text-lg">{getTypeIcon(transaction.type)}</div>
               <div className="flex-1 min-w-0">
@@ -81,7 +81,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
                     <p className="text-sm font-medium text-foreground truncate">
                       {transaction.description}
                     </p>
-                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                    <div className="flex items-center space-x-2 text-xs text-[color:var(--txt-2)]">
                       <span>{formatDateShort(transaction.date)}</span>
                       <span>•</span>
                       <span>{transaction.account}</span>
@@ -101,7 +101,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
                       {transaction.type === 'expense' ? '-' : '+'}
                       {formatIDR(Math.abs(transaction.amount))}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[color:var(--txt-2)]">
                       {getTypeLabel(transaction.type)}
                     </p>
                   </div>
@@ -113,7 +113,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
         
         {data.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">Belum ada transaksi</p>
+            <p className="text-[color:var(--txt-2)]">Belum ada transaksi</p>
           </div>
         )}
       </CardContent>

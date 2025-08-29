@@ -6,7 +6,7 @@ type Props = {
   type: "Cash" | "Bank" | "E-Wallet";
   balance: number;       // in IDR
   currency?: string;     // default "IDR"
-  icon?: React.ReactNode;
+  icon?: string | React.ReactNode;  // Can be logo URL or emoji
   tone?: "green" | "blue" | "orange" | "gray";
 };
 
@@ -37,8 +37,22 @@ export function AccountCard({
         {currency}
       </span>
 
-      {/* Icon */}
-      {icon ? <div className="text-2xl">{icon}</div> : null}
+      {/* Icon or Logo */}
+      {icon ? (
+        typeof icon === 'string' && icon.startsWith('/') ? (
+          // Display uploaded logo - no cropping, maintain aspect ratio, rectangular for landscape logos, transparent background, no border
+          <div className="w-24 h-20 rounded-lg overflow-hidden flex items-center justify-center">
+            <img
+              src={icon}
+              alt={`${name} logo`}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        ) : (
+          // Display emoji icon
+          <div className="text-2xl">{icon}</div>
+        )
+      ) : null}
 
       {/* Nominal BESAR di tengah: prefix 'Rp' menyatu di sini */}
       <div className="text-xl md:text-2xl font-semibold tracking-tight text-[color:var(--txt-1)]">

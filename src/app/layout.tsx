@@ -7,8 +7,11 @@ import { ToastProvider } from '@/components/ToastProvider'
 export const metadata = { title: 'Expense Tracker' }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Force light theme as default on SSR to avoid dark flash
+  const attr = { suppressHydrationWarning: true, 'data-theme': 'light' as const };
+
   return (
-    <html lang="id" className="dark">
+    <html lang="id" {...attr}>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Providers>
           <ToastProvider>

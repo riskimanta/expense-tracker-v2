@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -35,17 +35,38 @@ export default function AdminUsersPage() {
   const queryClient = useQueryClient()
 
   // Fetch users
-  const { data: users = [], isLoading, error } = useQuery({
+  const { data: initialUsers = [], isLoading, error } = useQuery({
     queryKey: ['admin-users'],
     queryFn: getUsers
   })
 
+  // Local state untuk users yang bisa di-update
+  const [users, setUsers] = useState<User[]>([])
+
+  // Update local users ketika initialUsers berubah
+  useEffect(() => {
+    if (initialUsers && initialUsers.length > 0) {
+      setUsers(initialUsers)
+    }
+  }, [initialUsers?.length]) // Use length instead of the entire array
+
   // Create user mutation
   const createMutation = useMutation({
     mutationFn: createUser,
-    onSuccess: () => {
+    onSuccess: (newUser) => {
+      console.log('Create success, new user:', newUser)
+      // Tambah user baru ke local state
+      setUsers(prevUsers => [newUser, ...prevUsers])
+      // Invalidate query untuk refresh data
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setIsCreateOpen(false)
+      // Reset form setelah berhasil create
+      form.reset({
+        name: '',
+        email: '',
+        role: 'user',
+        status: 'active'
+      })
       showToast({
         title: 'Berhasil',
         description: 'User berhasil dibuat',
@@ -56,7 +77,7 @@ export default function AdminUsersPage() {
       showToast({
         title: 'Error',
         description: error.message || 'Gagal membuat user',
-        variant: 'error'
+        variant: 'destructive'
       })
     }
   })
@@ -64,7 +85,15 @@ export default function AdminUsersPage() {
   // Update user mutation
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<User> }) => updateUser(id, data),
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
+      console.log('Update success, updated user:', updatedUser)
+      // Update local state dengan user yang sudah diupdate
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === editingUser?.id ? { ...user, ...updatedUser } : user
+        )
+      )
+      // Invalidate query untuk refresh data
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setEditingUser(null)
       showToast({
@@ -77,7 +106,7 @@ export default function AdminUsersPage() {
       showToast({
         title: 'Error',
         description: error.message || 'Gagal mengupdate user',
-        variant: 'error'
+        variant: 'destructive'
       })
     }
   })
@@ -85,7 +114,11 @@ export default function AdminUsersPage() {
   // Delete user mutation
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
-    onSuccess: () => {
+    onSuccess: (deletedUserId) => {
+      console.log('Delete success, user ID:', deletedUserId)
+      // Hapus user dari local state
+      setUsers(prevUsers => prevUsers.filter(user => user.id !== deletedUserId))
+      // Invalidate query dashboard agar total user ter-update
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setDeletingUser(null)
       showToast({
@@ -98,7 +131,7 @@ export default function AdminUsersPage() {
       showToast({
         title: 'Error',
         description: error.message || 'Gagal menghapus user',
-        variant: 'error'
+        variant: 'destructive'
       })
     }
   })
@@ -115,11 +148,20 @@ export default function AdminUsersPage() {
   })
 
   const handleCreate = () => {
-    form.reset()
+    // Reset form ke default values
+    form.reset({
+      name: '',
+      email: '',
+      role: 'user',
+      status: 'active'
+    })
+    // Pastikan tidak ada user yang sedang diedit
+    setEditingUser(null)
     setIsCreateOpen(true)
   }
 
   const handleEdit = (user: User) => {
+    // Reset form dengan data user yang akan diedit
     form.reset({
       name: user.name,
       email: user.email,
@@ -127,9 +169,12 @@ export default function AdminUsersPage() {
       status: user.status
     })
     setEditingUser(user)
+    // Tutup modal create jika terbuka
+    setIsCreateOpen(false)
   }
 
   const handleDelete = (user: User) => {
+    console.log('Delete user requested:', user)
     setDeletingUser(user)
   }
 
@@ -139,44 +184,51 @@ export default function AdminUsersPage() {
     } else {
       createMutation.mutate(data)
     }
+    // Reset form setelah submit
+    form.reset({
+      name: '',
+      email: '',
+      role: 'user',
+      status: 'active'
+    })
   }
 
   const tableColumns = [
-    { key: 'name', label: 'Nama', sortable: true },
-    { key: 'email', label: 'Email', sortable: true },
+    { key: 'name' as keyof User, label: 'Nama', sortable: true },
+    { key: 'email' as keyof User, label: 'Email', sortable: true },
     { 
-      key: 'role', 
+      key: 'role' as keyof User, 
       label: 'Role', 
       sortable: true,
-      render: (value: string) => (
-        <Badge variant={value === 'admin' ? 'default' : 'outline'} className="capitalize">
-          {value}
+      render: (value: string | number) => (
+        <Badge variant={String(value) === 'admin' ? 'default' : 'outline'} className="capitalize">
+          {String(value)}
         </Badge>
       )
     },
     { 
-      key: 'status', 
+      key: 'status' as keyof User, 
       label: 'Status', 
       sortable: true,
-      render: (value: string) => (
+      render: (value: string | number) => (
         <Badge 
-          variant={value === 'active' ? 'default' : 'outline'}
-          className={value === 'active' ? 'bg-[var(--success)]' : 'border-[var(--txt-low)] text-[var(--txt-low)]'}
+          variant={String(value) === 'active' ? 'default' : 'outline'}
+          className={String(value) === 'active' ? 'bg-[var(--success)]' : 'border-[var(--txt-low)] text-[var(--txt-low)]'}
         >
-          {value === 'active' ? 'Aktif' : 'Tidak Aktif'}
+          {String(value) === 'active' ? 'Aktif' : 'Tidak Aktif'}
         </Badge>
       )
     },
     { 
-      key: 'createdAt', 
+      key: 'createdAt' as keyof User, 
       label: 'Dibuat', 
       sortable: true,
-      render: (value: string) => new Date(value).toLocaleDateString('id-ID') 
+      render: (value: string | number) => new Date(String(value)).toLocaleDateString('id-ID') 
     },
     {
-      key: 'actions',
+      key: 'id' as keyof User, // Use 'id' instead of 'actions' since it's a valid User property
       label: 'Aksi',
-      render: (_: unknown, user: User) => (
+      render: (_: string | number, user: User) => (
         <RowActions
           onEdit={() => handleEdit(user)}
           onDelete={() => handleDelete(user)}
@@ -211,7 +263,7 @@ export default function AdminUsersPage() {
       <AdminTable
         data={users}
         columns={tableColumns}
-        searchKey="name"
+        searchKeys={["name"]}
         pageSize={10}
         emptyMessage="Belum ada user"
       />
@@ -346,7 +398,12 @@ export default function AdminUsersPage() {
         onOpenChange={() => setDeletingUser(null)}
         title="Hapus User"
         description={`Apakah Anda yakin ingin menghapus user "${deletingUser?.name}"? Tindakan ini tidak dapat dibatalkan.`}
-        onConfirm={() => deletingUser && deleteMutation.mutate(deletingUser.id)}
+        onConfirm={() => {
+          console.log('Confirming delete for user:', deletingUser)
+          if (deletingUser) {
+            deleteMutation.mutate(deletingUser.id)
+          }
+        }}
         confirmText="Hapus"
         variant="danger"
       />

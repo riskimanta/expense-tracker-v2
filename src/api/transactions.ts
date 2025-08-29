@@ -1,40 +1,5 @@
 import { apiGet, apiPost } from './http'
 
-// Mock data moved inline
-const mockExpenseTransactions = [
-  {
-    id: '1',
-    accountId: '1',
-    category: '1',
-    amount: 50000,
-    description: 'Makan Siang',
-    date: '2024-01-15',
-    splits: []
-  }
-]
-
-const mockIncomeTransactions = [
-  {
-    id: '1',
-    account: '1',
-    source: '1',
-    amount: 8000000,
-    description: 'Gaji Bulanan',
-    date: '2024-01-15'
-  }
-]
-
-const mockTransferTransactions = [
-  {
-    id: '1',
-    fromAccount: '1',
-    toAccount: '2',
-    amount: 1000000,
-    description: 'Transfer ke BCA',
-    date: '2024-01-15'
-  }
-]
-
 export interface Transaction {
   id: string
   type: 'INCOME' | 'EXPENSE' | 'TRANSFER'
@@ -91,79 +56,8 @@ export async function getTransactions(filters: TransactionFilters = {}): Promise
     const response = await apiGet<Transaction[]>(endpoint)
     return response.data
   } catch (error) {
-    console.warn('API call failed, using mock data:', error)
-    
-    // Filter mock data based on filters
-    let allTransactions: Transaction[] = []
-    
-    if (!filters.type || filters.type === 'EXPENSE') {
-      allTransactions.push(...mockExpenseTransactions.map(t => ({
-        id: t.id,
-        type: 'EXPENSE' as const,
-        accountId: t.accountId,
-        categoryId: t.category,
-        amount: t.amount,
-        currency: 'IDR',
-        description: t.description,
-        date: t.date,
-        splits: t.splits?.map(split => ({
-          id: split.id,
-          categoryId: split.category,
-          amount: split.amount,
-          description: split.description
-        })),
-        createdAt: t.date,
-        updatedAt: t.date
-      })))
-    }
-    
-    if (!filters.type || filters.type === 'INCOME') {
-      allTransactions.push(...mockIncomeTransactions.map(t => ({
-        id: t.id,
-        type: 'INCOME' as const,
-        accountId: t.account,
-        categoryId: t.source,
-        amount: t.amount,
-        currency: 'IDR',
-        description: t.description,
-        date: t.date,
-        createdAt: t.date,
-        updatedAt: t.date
-      })))
-    }
-    
-    if (!filters.type || filters.type === 'TRANSFER') {
-      allTransactions.push(      ...mockTransferTransactions.map(t => ({ 
-        id: t.id,
-        type: 'TRANSFER' as const, 
-        accountId: t.fromAccount,
-        amount: t.amount,
-        currency: 'IDR',
-        description: t.description,
-        date: t.date,
-        createdAt: t.date,
-        updatedAt: t.date
-      })))
-    }
-    
-    // Apply filters
-    if (filters.accountId) {
-      allTransactions = allTransactions.filter(t => t.accountId === filters.accountId)
-    }
-    
-    if (filters.categoryId) {
-      allTransactions = allTransactions.filter(t => t.categoryId === filters.categoryId)
-    }
-    
-    if (filters.from) {
-      allTransactions = allTransactions.filter(t => t.date >= filters.from!)
-    }
-    
-    if (filters.to) {
-      allTransactions = allTransactions.filter(t => t.date <= filters.to!)
-    }
-    
-    return allTransactions
+    console.error('Failed to fetch transactions:', error)
+    throw new Error('Failed to fetch transactions from database')
   }
 }
 
@@ -172,87 +66,18 @@ export async function getTransactionById(id: string): Promise<Transaction | null
     const response = await apiGet<Transaction>(`/api/transactions/${id}`)
     return response.data
   } catch (error) {
-    console.warn('API call failed, using mock data:', error)
-    
-    // Search in all mock data
-    const allTransactions = [
-      ...mockExpenseTransactions.map(t => ({ 
-        id: t.id,
-        type: 'EXPENSE' as const, 
-        accountId: t.accountId,
-        categoryId: t.category,
-        amount: t.amount,
-        currency: 'IDR',
-        description: t.description,
-        date: t.date,
-        splits: t.splits?.map(split => ({
-          id: split.id,
-          categoryId: split.category,
-          amount: split.amount,
-          description: split.description
-        })),
-        createdAt: t.date,
-        updatedAt: t.date
-      })),
-      ...mockIncomeTransactions.map(t => ({ 
-        id: t.id,
-        type: 'INCOME' as const, 
-        accountId: t.account,
-        categoryId: t.source,
-        amount: t.amount,
-        currency: 'IDR',
-        description: t.description,
-        date: t.date,
-        createdAt: t.date,
-        updatedAt: t.date
-      })),
-      ...mockTransferTransactions.map(t => ({ 
-        id: t.id,
-        type: 'TRANSFER' as const, 
-        accountId: t.fromAccount,
-        amount: t.amount,
-        currency: 'IDR',
-        description: t.description,
-        date: t.date,
-        createdAt: t.date,
-        updatedAt: t.date
-      }))
-    ]
-    
-    const transaction = allTransactions.find(t => t.id === id)
-    if (!transaction) return null
-    
-    return {
-      ...transaction,
-      createdAt: transaction.date,
-      updatedAt: transaction.date
-    }
+    console.error('Failed to fetch transaction:', error)
+    throw new Error('Failed to fetch transaction from database')
   }
 }
 
-// POST /api/transactions (body {type, accountId, categoryId?, amount, currency?, rate?, description, date, splits?[]})
 export async function createTransaction(data: CreateTransactionRequest): Promise<Transaction> {
   try {
     const response = await apiPost<Transaction>('/api/transactions', data)
     return response.data
   } catch (error) {
-    console.warn('API call failed, creating mock transaction:', error)
-    
-    // Create mock transaction
-    const newTransaction: Transaction = {
-      id: Date.now().toString(),
-      ...data,
-      splits: data.splits?.map((split, index) => ({
-        id: `${Date.now()}-split-${index}`,
-        categoryId: split.categoryId,
-        amount: split.amount,
-        description: split.description
-      })),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-    
-    return newTransaction
+    console.error('Failed to create transaction:', error)
+    throw new Error('Failed to create transaction in database')
   }
 }
 
@@ -261,17 +86,16 @@ export async function updateTransaction(id: string, data: Partial<CreateTransact
     const response = await apiPost<Transaction>(`/api/transactions/${id}`, data)
     return response.data
   } catch (error) {
-    console.warn('API call failed, updating mock transaction:', error)
-    throw new Error('Update not implemented in mock mode')
+    console.error('Failed to update transaction:', error)
+    throw new Error('Failed to update transaction in database')
   }
 }
 
-export async function deleteTransaction(id: string): Promise<boolean> {
+export async function deleteTransaction(id: string): Promise<void> {
   try {
-    await apiGet(`/api/transactions/${id}/delete`)
-    return true
+    await apiPost(`/api/transactions/${id}/delete`, {})
   } catch (error) {
-    console.warn('API call failed, deleting mock transaction:', error)
-    throw new Error('Delete not implemented in mock mode')
+    console.error('Failed to delete transaction:', error)
+    throw new Error('Failed to delete transaction from database')
   }
 }

@@ -65,8 +65,8 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
           {transactions.map((transaction, index) => (
             <tr
               key={transaction.id}
-              className={`border-b border-border ${
-                index % 2 === 0 ? "bg-card" : "bg-muted"
+              className={`border-b border-[color:var(--border)] ${
+                index % 2 === 0 ? "bg-[color:var(--surface)]" : "bg-[color:var(--surface-2)]"
               }`}
             >
               <td className="p-3 text-sm text-foreground">
@@ -75,7 +75,7 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
               <td className="p-3 text-sm text-foreground">
                 <Badge 
                   variant="outline" 
-                  className="text-xs cursor-pointer hover:bg-muted"
+                  className="text-xs cursor-pointer hover:bg-[color:var(--surface-2)]"
                   onClick={() => onAccountClick && transaction.accountId && onAccountClick(transaction.accountId)}
                 >
                   {transaction.accountName || 'Unknown'}

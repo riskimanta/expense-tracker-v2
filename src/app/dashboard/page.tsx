@@ -1,10 +1,26 @@
 "use client"
 
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 import { FilterBar } from '@/app/(dashboard)/_components/FilterBar'
+import { getAccounts } from '@/api/accounts'
+
+// Helper function to get default icon based on account type
+const getDefaultIcon = (type: string): string => {
+  switch (type) {
+    case 'cash':
+      return '💵'
+    case 'bank':
+      return '🏦'
+    case 'ewallet':
+      return '📱'
+    default:
+      return '💰'
+  }
+}
 // Mock data moved inline
 const mockDashboardKPIs = [
   { icon: '💰', label: 'Total Saldo', value: 'Rp 12.500.000', change: '+5.2%', changeType: 'increase' },
@@ -58,13 +74,27 @@ export default function DashboardPage() {
   // State untuk filter akun
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null)
 
-  // Data akun untuk filter
-  const accounts = [
-    { id: 'cash', name: 'Cash' },
-    { id: 'bca', name: 'BCA' },
-    { id: 'ovo', name: 'OVO' },
-    { id: 'gopay', name: 'GoPay' }
-  ]
+  // Fetch real accounts data from database
+  const { data: accountsData = [], isLoading: accountsLoading } = useQuery({
+    queryKey: ['accounts'],
+    queryFn: getAccounts,
+  })
+
+  // Transform accounts data for filter
+  const accounts = accountsData.map(account => ({
+    id: account.id.toString(),
+    name: account.name
+  }))
+
+  // Transform accounts data for AccountBalance component
+  const realAccountBalances = accountsData.map(account => ({
+    id: account.id.toString(),
+    name: account.name,
+    type: account.type as 'cash' | 'bank' | 'ewallet',
+    balance: account.balance,
+    currency: 'IDR',
+    icon: account.logo_url || getDefaultIcon(account.type)
+  }))
 
   // Function untuk update header text
   const getHeaderText = () => {
@@ -75,65 +105,79 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="mx-auto max-w-[1200px] p-6 space-y-6">
+    <main className="mx-auto max-w-7xl p-6 space-y-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-foreground">Dashboard Summary</h1>
-        <p className="mt-1 text-muted-foreground">{getHeaderText()}</p>
-      </div>
+      <section className="card p-6">
+        <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Dashboard Summary</h1>
+        <p className="mt-2 text-[color:var(--txt-2)]">{getHeaderText()}</p>
+      </section>
 
       {/* Filter Bar */}
-      <FilterBar
-        period={selectedMonthYear}
-        onPeriodChange={(date) => date && setSelectedMonthYear(date)}
-        account={selectedAccount}
-        onAccountChange={setSelectedAccount}
-        accounts={accounts}
-      />
+      <section className="card p-5">
+        <FilterBar
+          period={selectedMonthYear}
+          onPeriodChange={(date) => date && setSelectedMonthYear(date)}
+          account={selectedAccount}
+          onAccountChange={setSelectedAccount}
+          accounts={accounts}
+        />
+      </section>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {mockDashboardKPIs.map((kpi, index) => (
-          <Card key={index} className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center space-x-3">
-              <div className="text-2xl">{kpi.icon}</div>
-              <div className="flex-1">
-                <p className="text-sm text-muted-foreground">{kpi.label}</p>
-                <p className="text-2xl font-semibold text-foreground">{kpi.value}</p>
-                <p className={`text-xs ${
-                  kpi.changeType === 'increase' ? 'text-[var(--success)]' : 
-                  kpi.changeType === 'decrease' ? 'text-[var(--danger)]' : 
-                  'text-muted-foreground'
-                }`}>
-                  {kpi.change}
-                </p>
+      <section className="card p-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {mockDashboardKPIs.map((kpi, index) => (
+            <div key={index} className="p-4 rounded-lg bg-[color:var(--surface-2)] border border-[color:var(--border)]">
+              <div className="flex items-center space-x-3">
+                <div className="text-2xl">{kpi.icon}</div>
+                <div className="flex-1">
+                  <p className="text-sm text-[color:var(--txt-2)]">{kpi.label}</p>
+                  <p className="text-2xl font-semibold text-[color:var(--txt-1)]">{kpi.value}</p>
+                  <p className={`text-xs ${
+                    kpi.changeType === 'increase' ? 'text-[color:var(--success)]' : 
+                    kpi.changeType === 'decrease' ? 'text-[color:var(--danger)]' : 
+                    'text-[color:var(--txt-3)]'
+                  }`}>
+                    {kpi.change}
+                  </p>
+                </div>
               </div>
             </div>
-          </Card>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
 
       {/* Charts Row */}
-      <DashboardCharts 
-        cashFlowData={mockCashFlowData}
-        categoryData={mockCategoryExpenses}
-        selectedMonth={selectedMonthYear ? selectedMonthYear.toLocaleDateString('id-ID', { month: 'long' }) : 'Januari'}
-        selectedYear={selectedMonthYear ? selectedMonthYear.getFullYear().toString() : '2025'}
-      />
+      <section className="card p-5">
+        <DashboardCharts 
+          cashFlowData={mockCashFlowData}
+          categoryData={mockCategoryExpenses}
+          selectedMonth={selectedMonthYear ? selectedMonthYear.toLocaleDateString('id-ID', { month: 'long' }) : 'Januari'}
+          selectedYear={selectedMonthYear ? selectedMonthYear.getFullYear().toString() : '2025'}
+        />
+      </section>
 
       {/* Budget Compliance */}
-      <BudgetCompliance data={mockBudgetCompliance} />
+      <section className="card p-5">
+        <BudgetCompliance data={mockBudgetCompliance} />
+      </section>
 
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Account Balances */}
-        <AccountBalance data={mockAccountBalances} />
+        <section className="card p-5">
+          <AccountBalance data={realAccountBalances} />
+        </section>
 
         {/* Recent Transactions */}
-        <RecentTransactions data={mockRecentTransactions} />
+        <section className="card p-5">
+          <RecentTransactions data={mockRecentTransactions} />
+        </section>
 
         {/* Mini Advisor */}
-        <MiniAdvisor safeToSpend={2500000} />
+        <section className="card p-5">
+          <MiniAdvisor safeToSpend={2500000} />
+        </section>
       </div>
     </main>
   )

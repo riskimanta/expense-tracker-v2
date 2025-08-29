@@ -351,7 +351,7 @@ export function EditTransactionDialog({
             <Label htmlFor="amount">Jumlah</Label>
             <CurrencyInput
               value={formData.amount}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, amount: value || 0 }))}
+              onChange={(value) => setFormData(prev => ({ ...prev, amount: value || 0 }))}
               data-testid="edit-tx-amount"
             />
           </div>

@@ -63,7 +63,7 @@ const getPriorityColor = (priority: string) => {
     case 'high': return 'bg-red-100 text-red-800'
     case 'medium': return 'bg-yellow-100 text-yellow-800'
     case 'low': return 'bg-green-100 text-green-800'
-    default: return 'bg-gray-100 text-gray-800'
+    default: return 'bg-[color:var(--muted-bg)] text-[color:var(--txt-2)]'
   }
 }
 
@@ -75,7 +75,7 @@ const getStatusColor = (status: string) => {
     case 'cancelled': return 'bg-red-100 text-red-800'
     case 'achieved': return 'bg-green-100 text-green-800'
     case 'saving': return 'bg-blue-100 text-blue-800'
-    default: return 'bg-gray-100 text-gray-800'
+    default: return 'bg-[color:var(--muted-bg)] text-[color:var(--txt-2)]'
   }
 }
 
@@ -300,7 +300,7 @@ export default function WishlistPage() {
                 <label className="text-sm text-muted-foreground">Harga Item</label>
                 <CurrencyInput
                   value={advisorPriceNumber}
-                  onValueChange={(value) => setAdvisorPriceNumber(value || 0)}
+                  onChange={(value) => setAdvisorPriceNumber(value)}
                   placeholder="1.000.000"
                   className="h-11"
                 />
@@ -353,7 +353,7 @@ export default function WishlistPage() {
                   <label className="text-sm text-muted-foreground">Harga Estimasi</label>
                   <CurrencyInput
                     value={newItem.estimatedPriceNumber}
-                    onValueChange={(value) => setNewItem({...newItem, estimatedPriceNumber: value || 0})}
+                    onChange={(value) => setNewItem({...newItem, estimatedPriceNumber: value})}
                     placeholder="1.000.000"
                     className="h-11"
                   />

@@ -71,7 +71,7 @@ export function DateInput({
           fromYear={fromYear}
           toYear={toYear}
           initialFocus
-          captionLayout="dropdown-buttons"  // ada dropdown tahun/bulan
+          captionLayout="dropdown"  // ada dropdown tahun/bulan
           weekStartsOn={1}                  // Senin
           className="text-[color:var(--txt-1)]"
         />

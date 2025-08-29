@@ -28,7 +28,7 @@ export function Calendar({
         components={{
           IconLeft: () => <ChevronLeft className="h-4 w-4" />,
           IconRight: () => <ChevronRight className="h-4 w-4" />,
-        }}
+        } as Record<string, React.ComponentType<Record<string, never>>>}
         className={cn("rdp p-2", className)}
         classNames={{
           months: "rdp-months",

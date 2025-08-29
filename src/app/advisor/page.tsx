@@ -235,7 +235,7 @@ export default function AdvisorPage() {
       case 'high': return 'bg-red-500'
       case 'medium': return 'bg-yellow-500'
       case 'low': return 'bg-green-500'
-      default: return 'bg-gray-500'
+      default: return 'bg-[color:var(--txt-3)]'
     }
   }
 
@@ -253,7 +253,7 @@ export default function AdvisorPage() {
       case 'good': return 'text-green-500'
       case 'warning': return 'text-yellow-500'
       case 'danger': return 'text-red-500'
-      default: return 'text-gray-500'
+      default: return 'text-[color:var(--txt-3)]'
     }
   }
 

@@ -37,40 +37,40 @@ export function EditDrawer({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="text-foreground">{title}</CardTitle>
+    <div className="fixed inset-0 z-50 bg-[color:var(--bg)]/50 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto card">
+        <div className="flex flex-row items-center justify-between space-y-0 pb-4 p-6 border-b border-[color:var(--border)]">
+          <h2 className="text-xl font-semibold text-[color:var(--txt-1)]">{title}</h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleCancel}
-            className="h-8 w-8 p-0 hover:bg-[var(--surface)]"
+            className="h-8 w-8 p-0 hover:bg-[color:var(--surface-2)]"
           >
             <X className="h-4 w-4" />
           </Button>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        </div>
+        <div className="p-6 space-y-6">
           {children}
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[color:var(--border)]">
             <Button
               variant="outline"
               onClick={handleCancel}
               disabled={loading}
-              className="border-border text-foreground hover:bg-[var(--surface)]"
+              className="border-[color:var(--border)] text-[color:var(--txt-1)] hover:bg-[color:var(--surface-2)]"
             >
               {cancelText}
             </Button>
             <Button
               onClick={onSave}
               disabled={loading}
-              className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"
+              className="btn btn-primary"
             >
               {loading ? 'Menyimpan...' : saveText}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

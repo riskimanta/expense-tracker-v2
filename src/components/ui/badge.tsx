@@ -7,7 +7,7 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-muted text-foreground ring-border",
+        default: "bg-[color:var(--surface-2)] text-[color:var(--txt-1)] ring-[color:var(--border)]",
         ok: "bg-[var(--success)] text-white ring-[var(--success)]",
         warn: "bg-[var(--warning)] text-white ring-[var(--warning)]",
         danger: "bg-[var(--danger)] text-white ring-[var(--danger)]",

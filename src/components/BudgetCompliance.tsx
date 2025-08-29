@@ -43,7 +43,7 @@ export function BudgetCompliance({ data }: BudgetComplianceProps) {
         <CardTitle className="text-lg font-semibold text-foreground">
           Budget Compliance
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[color:var(--txt-2)]">
           Aturan 50/25/5/15/5 (Needs/Wants/Savings/Invest/Coins)
         </p>
       </CardHeader>
@@ -60,12 +60,12 @@ export function BudgetCompliance({ data }: BudgetComplianceProps) {
                   {item.category}
                 </span>
               </div>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-[color:var(--txt-2)]">
                 {item.percentage}%
               </span>
             </div>
             <div className="space-y-1">
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex justify-between text-xs text-[color:var(--txt-2)]">
                 <span>Target: {item.target}%</span>
                 <span>Actual: {item.actual}%</span>
               </div>
@@ -78,8 +78,8 @@ export function BudgetCompliance({ data }: BudgetComplianceProps) {
           </div>
         ))}
         
-        <div className="mt-4 rounded-lg bg-muted p-3">
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-4 rounded-lg bg-[color:var(--surface-2)] p-3">
+          <p className="text-xs text-[color:var(--txt-2)]">
             <strong>Ringkasan:</strong> {data.filter(d => d.status === 'over-budget').length} kategori over-budget, 
             {data.filter(d => d.status === 'under-budget').length} kategori under-budget, 
             {data.filter(d => d.status === 'on-track').length} kategori on-track.

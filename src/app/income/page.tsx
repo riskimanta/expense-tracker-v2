@@ -340,8 +340,8 @@ export default function IncomePage() {
                   Jumlah {formErrors.amount && <span className="text-red-500">*</span>}
                 </label>
                 <CurrencyInput
-                  value={formData.amount}
-                  onValueChange={(value) => {
+                  value={formData.amount || 0}
+                  onChange={(value) => {
                     setFormData({...formData, amount: value})
                     if (formErrors.amount) {
                       setFormErrors({...formErrors, amount: false})
@@ -430,8 +430,8 @@ export default function IncomePage() {
                     incomeTransactions.map((transaction: Record<string, unknown>, index: number) => (
                       <tr 
                         key={(transaction.id as string) || index}
-                        className={`border-b border-border ${
-                          index % 2 === 0 ? "bg-card" : "bg-muted"
+                        className={`border-b border-[color:var(--border)] ${
+                          index % 2 === 0 ? "bg-[color:var(--surface)]" : "bg-[color:var(--surface-2)]"
                         }`}
                       >
                         <td className="py-3 px-4 text-sm text-foreground">

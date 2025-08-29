@@ -59,7 +59,7 @@ export default function AdminCurrenciesPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: updateCurrency,
+    mutationFn: ({ code, updates }: { code: string; updates: Partial<Currency> }) => updateCurrency(code, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currencies"] })
       toast({
@@ -132,7 +132,7 @@ export default function AdminCurrenciesPage() {
 
   const onSubmit = (data: CurrencyFormData) => {
     if (editingCurrency) {
-      updateMutation.mutate(editingCurrency.code, data)
+      updateMutation.mutate({ code: editingCurrency.code, updates: data })
     } else {
       createMutation.mutate(data)
     }
@@ -159,9 +159,9 @@ export default function AdminCurrenciesPage() {
 
   const columns = [
     {
-      key: "code",
+      key: "code" as keyof Currency,
       label: "Kode",
-      render: (currency: Currency) => (
+      render: (_: string | number, currency: Currency) => (
         <div className="flex items-center gap-2">
           {getCurrencyIcon(currency.code)}
           <span className="font-mono font-medium text-[var(--txt-high)]">{currency.code || 'N/A'}</span>
@@ -169,41 +169,41 @@ export default function AdminCurrenciesPage() {
       ),
     },
     {
-      key: "name",
+      key: "name" as keyof Currency,
       label: "Nama",
-      render: (currency: Currency) => (
+      render: (_: string | number, currency: Currency) => (
         <span className="text-[var(--txt-high)]">{currency.name}</span>
       ),
     },
     {
-      key: "symbol",
+      key: "symbol" as keyof Currency,
       label: "Symbol",
-      render: (currency: Currency) => (
+      render: (_: string | number, currency: Currency) => (
         <span className="font-mono text-[var(--txt-med)]">{currency.symbol}</span>
       ),
     },
     {
-      key: "rateToIDR",
+      key: "rateToIDR" as keyof Currency,
       label: "Rate ke IDR",
-      render: (currency: Currency) => (
+      render: (_: string | number, currency: Currency) => (
         <span className="font-mono text-[var(--txt-high)]">
           1 {currency.code || 'N/A'} = Rp {currency.rateToIDR?.toLocaleString() || '0'}
         </span>
       ),
     },
     {
-      key: "updatedAt",
+      key: "updatedAt" as keyof Currency,
       label: "Update Terakhir",
-      render: (currency: Currency) => (
+      render: (_: string | number, currency: Currency) => (
         <span className="text-sm text-[var(--txt-low)]">
           {currency.updatedAt ? new Date(currency.updatedAt).toLocaleDateString("id-ID") : 'N/A'}
         </span>
       ),
     },
     {
-      key: "actions",
+      key: "actions" as keyof Currency,
       label: "Aksi",
-      render: (currency: Currency) => {
+      render: (_: string | number, currency: Currency) => {
         if (!currency || !currency.code) return null
         return (
           <RowActions
@@ -349,7 +349,7 @@ export default function AdminCurrenciesPage() {
         confirmText="Hapus"
         onConfirm={() => {
           if (deletingCurrency) {
-            deleteMutation.mutate(deletingCurrency.id)
+            deleteMutation.mutate(deletingCurrency.code)
           }
         }}
         variant="danger"

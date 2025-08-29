@@ -60,7 +60,7 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
         <div className="flex space-x-2">
           <CurrencyInput
             value={priceNumber}
-            onValueChange={(value) => setPriceNumber(value || 0)}
+            onChange={(value) => setPriceNumber(value || 0)}
             placeholder="Masukkan harga (contoh: 500.000)"
             className="flex-1"
             data-testid="canbuy-input"

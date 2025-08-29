@@ -91,7 +91,21 @@ export const transactionApi = {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to delete transaction');
+      // Try to get error message from response
+      try {
+        const errorData = await response.json()
+        
+        // For 409 Conflict, return the error data instead of throwing
+        if (response.status === 409) {
+          return { success: false, error: errorData.error, status: response.status }
+        }
+        
+        // For other errors, throw with informative message
+        throw new Error(errorData.error || `Failed to delete transaction (${response.status})`)
+      } catch (parseError) {
+        // If we can't parse the error response, throw generic error
+        throw new Error(`Failed to delete transaction (${response.status})`)
+      }
     }
     return response.json();
   },
@@ -132,7 +146,21 @@ export const accountApi = {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to create account');
+      // Try to get error message from response
+      try {
+        const errorData = await response.json()
+        
+        // For 409 Conflict (e.g., duplicate name), return the error data instead of throwing
+        if (response.status === 409) {
+          return { success: false, error: errorData.error, status: response.status }
+        }
+        
+        // For other errors, throw with informative message
+        throw new Error(errorData.error || `Failed to create account (${response.status})`)
+      } catch (parseError) {
+        // If we can't parse the error response, throw generic error
+        throw new Error(`Failed to create account (${response.status})`)
+      }
     }
     return response.json();
   },
@@ -149,7 +177,46 @@ export const accountApi = {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to update account');
+      // Try to get error message from response
+      try {
+        const errorData = await response.json()
+        
+        // For 409 Conflict (e.g., duplicate name), return the error data instead of throwing
+        if (response.status === 409) {
+          return { success: false, error: errorData.error, status: response.status }
+        }
+        
+        // For other errors, throw with informative message
+        throw new Error(errorData.error || `Failed to update account (${response.status})`)
+      } catch (parseError) {
+        // If we can't parse the error response, throw generic error
+        throw new Error(`Failed to update account (${response.status})`)
+      }
+    }
+    return response.json();
+  },
+
+  deleteAccount: async (id: string) => {
+    const response = await api(`/api/accounts/${id}`, {
+      method: 'DELETE',
+    });
+    
+    if (!response.ok) {
+      // Try to get error message from response
+      try {
+        const errorData = await response.json()
+        
+        // For 409 Conflict, return the error data instead of throwing
+        if (response.status === 409) {
+          return { success: false, error: errorData.error, status: response.status }
+        }
+        
+        // For other errors, throw with informative message
+        throw new Error(errorData.error || `Failed to delete account (${response.status})`)
+      } catch (parseError) {
+        // If we can't parse the error response, throw generic error
+        throw new Error(`Failed to delete account (${response.status})`)
+      }
     }
     return response.json();
   },

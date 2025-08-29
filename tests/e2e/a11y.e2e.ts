@@ -64,6 +64,6 @@ test.describe('Accessibility Tests', () => {
     await expect(h1.first()).toHaveText('Pengeluaran')
     
     // Should have at least one h2 heading
-    await expect(h2).toHaveCount.greaterThan(0)
+    await expect(h2).toHaveCount(1)
   })
 })

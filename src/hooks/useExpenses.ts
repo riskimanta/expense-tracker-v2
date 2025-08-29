@@ -250,14 +250,30 @@ export function useCreateAccount() {
   return useMutation({
     mutationFn: async (data: {
       name: string
-      type: 'cash' | 'bank' | 'ewallet'
+      type: string
       balance: number
       userId?: string
     }) => {
       // Use database API for creating accounts
-      return accountApi.createAccount(data)
+      const result = await accountApi.createAccount(data)
+      
+      // Check if it's a conflict response (not an error)
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // This is a conflict response, not an error
+        return result
+      }
+      
+      // This is a successful creation
+      return result
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      // Check if creation was successful or if there was a conflict
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // Conflict occurred, don't invalidate queries
+        return
+      }
+      
+      // Success, invalidate queries
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
     },
     onError: (error) => {
@@ -274,14 +290,30 @@ export function useUpdateAccount() {
       id: string
       data: Partial<{
         name: string
-        type: 'cash' | 'bank' | 'ewallet'
+        type: string
         balance: number
       }>
     }) => {
       // Use database API for updating accounts
-      return accountApi.updateAccount(id, data)
+      const result = await accountApi.updateAccount(id, data)
+      
+      // Check if it's a conflict response (not an error)
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // This is a conflict response, not an error
+        return result
+      }
+      
+      // This is a successful update
+      return result
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      // Check if update was successful or if there was a conflict
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // Conflict occurred, don't invalidate queries
+        return
+      }
+      
+      // Success, invalidate queries
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
     },
     onError: (error) => {
@@ -295,12 +327,26 @@ export function useDeleteAccount() {
   
   return useMutation({
     mutationFn: async (id: string) => {
-      // For now, we'll use the accountService since we don't have account API endpoints yet
-      // TODO: Replace with actual API call when account endpoints are created
-      const { accountService } = await import('@/lib/accountService')
-      return accountService.deleteAccount(id)
+      // Use database API for deleting accounts
+      const result = await accountApi.deleteAccount(id)
+      
+      // Check if it's a conflict response (not an error)
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // This is a conflict response, not an error
+        return result
+      }
+      
+      // This is a successful deletion
+      return result
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      // Check if deletion was successful or if there was a conflict
+      if (result && typeof result === 'object' && 'success' in result && !result.success) {
+        // Conflict occurred, don't invalidate queries
+        return
+      }
+      
+      // Success, invalidate queries
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
     },
     onError: (error) => {
