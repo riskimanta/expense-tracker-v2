@@ -176,7 +176,7 @@ export default function AdminUsersPage() {
     {
       key: 'actions',
       label: 'Aksi',
-      render: (_: any, user: User) => (
+      render: (_: unknown, user: User) => (
         <RowActions
           onEdit={() => handleEdit(user)}
           onDelete={() => handleDelete(user)}

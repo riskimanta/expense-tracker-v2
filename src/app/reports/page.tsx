@@ -4,11 +4,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatIDR } from '@/lib/format'
-import { 
-  mockMonthlyKPI, 
-  mockCategoryBreakdown, 
-  mockMonthlyData 
-} from '@/mock/reports'
+// Mock data moved inline
+const mockMonthlyKPI = {
+  totalIncome: 8000000,
+  totalExpense: 5500000,
+  netIncome: 2500000,
+  savingsRate: 31.25,
+  topCategory: 'Makanan',
+  topCategoryAmount: 2000000
+}
+
+const mockCategoryBreakdown = [
+  { name: 'Makanan', value: 2000000, color: '#ef4444', category: 'Makanan', amount: 2000000, percentage: 36.4 },
+  { name: 'Transport', value: 800000, color: '#3b82f6', category: 'Transport', amount: 800000, percentage: 14.5 },
+  { name: 'Hiburan', value: 500000, color: '#10b981', category: 'Hiburan', amount: 500000, percentage: 9.1 },
+  { name: 'Belanja', value: 400000, color: '#f59e0b', category: 'Belanja', amount: 400000, percentage: 7.3 },
+  { name: 'Lainnya', value: 200000, color: '#8b5cf6', category: 'Lainnya', amount: 200000, percentage: 3.6 }
+]
+
+const mockMonthlyData = [
+  { month: 'Jan', income: 8000000, expense: 5500000 },
+  { month: 'Feb', income: 7500000, expense: 5200000 },
+  { month: 'Mar', income: 8200000, expense: 5800000 },
+  { month: 'Apr', income: 7800000, expense: 5400000 },
+  { month: 'Mei', income: 8100000, expense: 5600000 },
+  { month: 'Jun', income: 7900000, expense: 5300000 }
+]
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 
 export default function ReportsPage() {

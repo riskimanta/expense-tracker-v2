@@ -1,11 +1,11 @@
 import { Category } from '@/types/admin'
-import * as mockCategories from '@/mock/categories'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export async function getCategories(): Promise<Category[]> {
   if (!API_URL) {
-    return mockCategories.getCategories()
+    // Return empty array if no API configured
+    return []
   }
 
   const response = await fetch(`${API_URL}/api/categories`)
@@ -17,7 +17,7 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function createCategory(category: Omit<Category, 'id'>): Promise<Category> {
   if (!API_URL) {
-    return mockCategories.createCategory(category)
+    throw new Error('API not configured')
   }
 
   const response = await fetch(`${API_URL}/api/categories`, {
@@ -33,7 +33,7 @@ export async function createCategory(category: Omit<Category, 'id'>): Promise<Ca
 
 export async function updateCategory(id: string, updates: Partial<Category>): Promise<Category> {
   if (!API_URL) {
-    return mockCategories.updateCategory(id, updates)
+    throw new Error('API not configured')
   }
 
   const response = await fetch(`${API_URL}/api/categories/${id}`, {
@@ -49,7 +49,7 @@ export async function updateCategory(id: string, updates: Partial<Category>): Pr
 
 export async function deleteCategory(id: string): Promise<void> {
   if (!API_URL) {
-    return mockCategories.deleteCategory(id)
+    throw new Error('API not configured')
   }
 
   const response = await fetch(`${API_URL}/api/categories/${id}`, {

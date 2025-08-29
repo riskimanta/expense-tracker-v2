@@ -1,5 +1,16 @@
 import { apiGet } from './http'
-import { mockMonthlyData, mockCategoryBreakdown } from '@/mock/reports'
+// Mock data moved inline
+const mockMonthlyData = [
+  { month: 'Jan', income: 8000000, expense: 5500000, net: 2500000 },
+  { month: 'Feb', income: 7500000, expense: 5200000, net: 2300000 },
+  { month: 'Mar', income: 8200000, expense: 5800000, net: 2400000 }
+]
+
+const mockCategoryBreakdown = [
+  { category: 'Makanan', amount: 2000000, percentage: 36.4 },
+  { category: 'Transport', amount: 800000, percentage: 14.5 },
+  { category: 'Hiburan', amount: 500000, percentage: 9.1 }
+]
 
 export interface MonthlyReport {
   date: string

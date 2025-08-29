@@ -12,7 +12,7 @@ interface AdminTableProps<T> {
     key: keyof T
     label: string
     sortable?: boolean
-    render?: (value: any, item: T) => React.ReactNode
+    render?: (value: string | number, item: T) => React.ReactNode
   }[]
   searchKey?: keyof T
   pageSize?: number
@@ -21,7 +21,7 @@ interface AdminTableProps<T> {
   searchPlaceholder?: string
 }
 
-export function AdminTable<T extends Record<string, any>>({
+export function AdminTable<T extends Record<string, unknown>>({
   data,
   columns,
   searchKey,

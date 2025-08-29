@@ -20,8 +20,11 @@ export type Category = {
 export type Account = {
   id: string
   name: string
-  type: 'cash' | 'bank' | 'wallet'
+  type: 'cash' | 'bank' | 'ewallet'
   balance: number
+  icon?: string
+  currency?: string
+  accountNumber?: string
 }
 
 export type BudgetRule = {

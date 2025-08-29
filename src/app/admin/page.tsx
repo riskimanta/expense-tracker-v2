@@ -1,9 +1,57 @@
 "use client"
 
+import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, FolderOpen, Wallet, PiggyBank, Coins, TrendingUp } from 'lucide-react'
+import { getUsers } from '@/api/users'
+import { getCategories } from '@/api/categories'
+import { getAccounts } from '@/api/accounts'
+import { getBudgetRules } from '@/api/budgets'
+import { getCurrencies } from '@/api/currencies'
 
 export default function AdminDashboardPage() {
+  // Fetch real data
+  const { data: users = [] } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: getUsers
+  })
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ['admin-categories'],
+    queryFn: getCategories
+  })
+
+  const { data: accounts = [] } = useQuery({
+    queryKey: ['admin-accounts'],
+    queryFn: getAccounts
+  })
+
+  const { data: budgetRules = [] } = useQuery({
+    queryKey: ['admin-budgets'],
+    queryFn: getBudgetRules
+  })
+
+  const { data: currencies = [] } = useQuery({
+    queryKey: ['admin-currencies'],
+    queryFn: getCurrencies
+  })
+
+  // Calculate stats
+  const totalUsers = users.length
+  const totalCategories = categories.length
+  const totalAccounts = accounts.length
+  const totalBudgetRules = budgetRules.length
+  const totalCurrencies = currencies.length
+
+  // Calculate category breakdown
+  const expenseCategories = categories.filter(cat => cat.type === 'expense').length
+  const incomeCategories = categories.filter(cat => cat.type === 'income').length
+
+  // Calculate account breakdown
+  const cashAccounts = accounts.filter(acc => acc.type === 'cash').length
+  const bankAccounts = accounts.filter(acc => acc.type === 'bank').length
+  const walletAccounts = accounts.filter(acc => acc.type === 'ewallet').length
+
   return (
     <div className="space-y-6">
       <div>
@@ -21,9 +69,9 @@ export default function AdminDashboardPage() {
             <Users className="h-4 w-4 text-[var(--txt-low)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">3</div>
+            <div className="text-2xl font-bold text-foreground">{totalUsers}</div>
             <p className="text-xs text-[var(--txt-low)]">
-              +2 dari bulan lalu
+              {totalUsers > 0 ? `${totalUsers} user aktif` : 'Belum ada user'}
             </p>
           </CardContent>
         </Card>
@@ -36,9 +84,9 @@ export default function AdminDashboardPage() {
             <FolderOpen className="h-4 w-4 text-[var(--txt-low)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">5</div>
+            <div className="text-2xl font-bold text-foreground">{totalCategories}</div>
             <p className="text-xs text-[var(--txt-low)]">
-              3 expense, 2 income
+              {expenseCategories} expense, {incomeCategories} income
             </p>
           </CardContent>
         </Card>
@@ -51,9 +99,9 @@ export default function AdminDashboardPage() {
             <Wallet className="h-4 w-4 text-[var(--txt-low)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">4</div>
+            <div className="text-2xl font-bold text-foreground">{totalAccounts}</div>
             <p className="text-xs text-[var(--txt-low)]">
-              1 cash, 2 bank, 1 wallet
+              {cashAccounts} cash, {bankAccounts} bank, {walletAccounts} wallet
             </p>
           </CardContent>
         </Card>
@@ -66,9 +114,9 @@ export default function AdminDashboardPage() {
             <PiggyBank className="h-4 w-4 text-[var(--txt-low)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">1</div>
+            <div className="text-2xl font-bold text-foreground">{totalBudgetRules}</div>
             <p className="text-xs text-[var(--txt-low)]">
-              Default 50/25/15/5/5
+              {totalBudgetRules > 0 ? 'Default 50/25/15/5/5' : 'Belum ada budget rule'}
             </p>
           </CardContent>
         </Card>
@@ -81,9 +129,9 @@ export default function AdminDashboardPage() {
             <Coins className="h-4 w-4 text-[var(--txt-low)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">4</div>
+            <div className="text-2xl font-bold text-foreground">{totalCurrencies}</div>
             <p className="text-xs text-[var(--txt-low)]">
-              IDR, USD, EUR, SGD
+              {totalCurrencies > 0 ? `${totalCurrencies} mata uang aktif` : 'Belum ada currency'}
             </p>
           </CardContent>
         </Card>

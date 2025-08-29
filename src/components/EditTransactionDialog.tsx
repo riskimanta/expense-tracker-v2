@@ -123,20 +123,20 @@ export function EditTransactionDialog({
       if (transaction.account_id) {
         accountId = transaction.account_id.toString();
         console.log('EditTransactionDialog - Using direct account_id:', accountId);
-      } else if ((transaction as any).accountId) {
-        accountId = (transaction as any).accountId.toString();
+      } else if ((transaction as unknown as Record<string, unknown>).accountId) {
+        accountId = (transaction as unknown as Record<string, unknown>).accountId?.toString() || '';
         console.log('EditTransactionDialog - Using accountId field:', accountId);
       }
       
       // If still no accountId, try to find it from account name
       if (!accountId && accounts && accounts.length > 0) {
-        const accountName = (transaction as any).accountName || (transaction as any).account_name;
+        const accountName = (transaction as unknown as Record<string, unknown>).accountName || (transaction as unknown as Record<string, unknown>).account_name;
         if (accountName) {
                      console.log('EditTransactionDialog - Looking for account by name:', accountName);
           
-          const foundAccount = accounts.find((acc: any) => 
+          const foundAccount = accounts.find((acc: Record<string, unknown>) => 
             acc.name === accountName || 
-            acc.name.toLowerCase() === accountName.toLowerCase()
+            (acc.name as string)?.toLowerCase() === (accountName as string)?.toLowerCase()
           );
           
           if (foundAccount) {
@@ -155,20 +155,20 @@ export function EditTransactionDialog({
       if (transaction.category_id) {
         categoryId = transaction.category_id.toString();
         console.log('EditTransactionDialog - Using direct category_id:', categoryId);
-      } else if ((transaction as any).categoryId) {
-        categoryId = (transaction as any).categoryId.toString();
+      } else if ((transaction as unknown as Record<string, unknown>).categoryId) {
+        categoryId = (transaction as unknown as Record<string, unknown>).categoryId?.toString() || '';
         console.log('EditTransactionDialog - Using categoryId field:', categoryId);
       }
       
       // If still no categoryId, try to find it from category name
       if (!categoryId && categories && categories.length > 0) {
-        const categoryName = (transaction as any).category || (transaction as any).category_name;
+        const categoryName = (transaction as unknown as Record<string, unknown>).category || (transaction as unknown as Record<string, unknown>).category_name;
         if (categoryName) {
                      console.log('EditTransactionDialog - Looking for category by name:', categoryName);
           
-          const foundCategory = categories.find((cat: any) => 
+          const foundCategory = categories.find((cat: Record<string, unknown>) => 
             cat.name === categoryName || 
-            cat.name.toLowerCase() === categoryName.toLowerCase()
+            (cat.name as string)?.toLowerCase() === (categoryName as string)?.toLowerCase()
           );
           
           if (foundCategory) {
@@ -301,9 +301,9 @@ export function EditTransactionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   {accounts && accounts.length > 0 ? (
-                    accounts.map((account: any) => (
-                      <SelectItem key={account.id} value={account.id.toString()}>
-                        {account.name}
+                    accounts.map((account: Record<string, unknown>) => (
+                      <SelectItem key={(account.id as string | number)?.toString() || ''} value={(account.id as string | number)?.toString() || ''}>
+                        {account.name as string}
                       </SelectItem>
                     ))
                   ) : (
@@ -329,9 +329,9 @@ export function EditTransactionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   {categories && categories.length > 0 ? (
-                    categories.map((category: any) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
-                        {category.name}
+                    categories.map((category: Record<string, unknown>) => (
+                      <SelectItem key={(category.id as string | number)?.toString() || ''} value={(category.id as string | number)?.toString() || ''}>
+                        {category.name as string}
                       </SelectItem>
                     ))
                   ) : (

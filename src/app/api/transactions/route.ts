@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
         c.name as category_name,
         t.account_id,
         a.name as account_name,
+        a.opening_balance as balance,
         t.type,
         t.created_at,
         t.transfer_group

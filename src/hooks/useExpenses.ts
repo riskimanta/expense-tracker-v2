@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { transactionApi, categoryApi, accountApi } from "@/lib/api"
-import { getCategories } from "@/mock/expenses"
+// Mock data moved inline
+const getCategories = () => [
+  { id: 1, name: 'Makanan', color: '#ef4444', type: 'expense', icon: '🍽️' },
+  { id: 2, name: 'Transport', color: '#3b82f6', type: 'expense', icon: '🚗' },
+  { id: 3, name: 'Hiburan', color: '#10b981', type: 'expense', icon: '🎮' },
+  { id: 4, name: 'Belanja', color: '#f59e0b', type: 'expense', icon: '🛍️' },
+  { id: 5, name: 'Lainnya', color: '#8b5cf6', type: 'expense', icon: '📦' }
+]
 
 interface UseExpensesParams {
   userId: string
@@ -232,6 +239,72 @@ export function useDeleteTransaction() {
     },
     onError: (error) => {
       console.error('Failed to delete transaction:', error)
+    }
+  })
+}
+
+// Account management hooks
+export function useCreateAccount() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async (data: {
+      name: string
+      type: 'cash' | 'bank' | 'ewallet'
+      balance: number
+      userId?: string
+    }) => {
+      // Use database API for creating accounts
+      return accountApi.createAccount(data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+    },
+    onError: (error) => {
+      console.error('Failed to create account:', error)
+    }
+  })
+}
+
+export function useUpdateAccount() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async ({ id, data }: {
+      id: string
+      data: Partial<{
+        name: string
+        type: 'cash' | 'bank' | 'ewallet'
+        balance: number
+      }>
+    }) => {
+      // Use database API for updating accounts
+      return accountApi.updateAccount(id, data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+    },
+    onError: (error) => {
+      console.error('Failed to update account:', error)
+    }
+  })
+}
+
+export function useDeleteAccount() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // For now, we'll use the accountService since we don't have account API endpoints yet
+      // TODO: Replace with actual API call when account endpoints are created
+      const { accountService } = await import('@/lib/accountService')
+      return accountService.deleteAccount(id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+    },
+    onError: (error) => {
+      console.error('Failed to delete account:', error)
     }
   })
 }

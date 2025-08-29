@@ -302,9 +302,9 @@ export default function IncomePage() {
                       <SelectValue placeholder="Pilih akun" />
                     </SelectTrigger>
                     <SelectContent>
-                      {accounts.map((account: any) => (
-                        <SelectItem key={account.id.toString()} value={account.id.toString()}>
-                          {account.name}
+                      {accounts.map((account: Record<string, unknown>) => (
+                        <SelectItem key={(account.id as string | number)?.toString() || ''} value={(account.id as string | number)?.toString() || ''}>
+                          {account.name as string}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -326,11 +326,11 @@ export default function IncomePage() {
                     <SelectValue placeholder="Pilih sumber" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category: any) => (
-                      <SelectItem key={category.id.toString()} value={category.id.toString()}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
+                                        {categories.map((category: Record<string, unknown>) => (
+                        <SelectItem key={(category.id as string | number)?.toString() || ''} value={(category.id as string | number)?.toString() || ''}>
+                          {category.name as string}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -427,33 +427,33 @@ export default function IncomePage() {
                       </td>
                     </tr>
                   ) : (
-                    incomeTransactions.map((transaction: any, index: number) => (
+                    incomeTransactions.map((transaction: Record<string, unknown>, index: number) => (
                       <tr 
-                        key={transaction.id}
+                        key={(transaction.id as string) || index}
                         className={`border-b border-border ${
                           index % 2 === 0 ? "bg-card" : "bg-muted"
                         }`}
                       >
                         <td className="py-3 px-4 text-sm text-foreground">
-                          {formatDateID(transaction.date)}
+                          {formatDateID(transaction.date as string)}
                         </td>
                         <td className="py-3 px-4">
                           <Badge variant="outline" className="text-xs">
-                            {transaction.accountName}
+                            {transaction.accountName as string}
                           </Badge>
                         </td>
                         <td className="py-3 px-4">
                           <span className="text-sm text-foreground">
-                            {transaction.category}
+                            {transaction.category as string}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right">
                           <span className="text-sm font-medium text-[var(--success)]">
-                            +{formatIDR(transaction.amount)}
+                            +{formatIDR(transaction.amount as number)}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-sm text-foreground">
-                          {transaction.description}
+                          {transaction.description as string}
                         </td>
                         <td className="py-3 px-4 text-center">
                           <div className="flex items-center justify-center space-x-2">
@@ -470,7 +470,15 @@ export default function IncomePage() {
                                   accountName: transaction.accountName,
                                   type: transaction.type
                                 });
-                                handleEditTransaction(transaction);
+                                handleEditTransaction({
+                                  id: transaction.id as string,
+                                  date: transaction.date as string,
+                                  amount: transaction.amount as number,
+                                  description: transaction.description as string,
+                                  type: transaction.type as string,
+                                  category_id: transaction.category_id as string,
+                                  account_id: transaction.account_id as string
+                                });
                               }}
                               className="h-8 w-8 p-0"
                             >
@@ -481,7 +489,7 @@ export default function IncomePage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleDeleteTransaction(transaction.id)}
+                              onClick={() => handleDeleteTransaction(transaction.id as string)}
                               className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                             >
                               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,28 +1,32 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { CurrencyInput } from '@/components/ui/currency-input'
 import { DateInput } from '@/components/ui/date-input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { formatIDR } from '@/lib/format'
 import { formatDateID } from '@/lib/format'
-import { 
-  mockTransferTransactions
-} from '@/mock/transfer'
-import { getAccounts, updateAccountBalances, type Account } from '@/lib/accountStorage'
-import { useEffect } from 'react'
-
-// Create a copy of mock data that we can modify
-const initialTransferHistory = [...mockTransferTransactions]
-const initialAccounts = getAccounts()
+import { accountService } from '@/lib/accountService'
+import type { Account } from '@/types/admin'
 import { useToast } from '@/components/ToastProvider'
 
+interface Transfer {
+  id: string
+  fromAccount: string
+  toAccount: string
+  amount: number
+  fee: number
+  date: string
+  description: string
+}
+
 export default function TransferPage() {
+  const { showToast } = useToast()
+  
   const [formData, setFormData] = useState({
     fromAccount: '',
     toAccount: '',
@@ -39,40 +43,33 @@ export default function TransferPage() {
   })
   
   // State untuk transfer history
-  const [transferHistory, setTransferHistory] = useState(initialTransferHistory)
+  const [transferHistory, setTransferHistory] = useState<Transfer[]>([])
   
   // State untuk accounts yang bisa di-update
-  const [accounts, setAccounts] = useState(initialAccounts)
+  const [accounts, setAccounts] = useState<Account[]>([])
   
   // State untuk mode edit
   const [isEditMode, setIsEditMode] = useState(false)
   const [editingTransferId, setEditingTransferId] = useState<string | null>(null)
-  
-  // Sync accounts from localStorage when component mounts and when storage changes
+
+  // Load accounts from service when component mounts
   useEffect(() => {
-    const syncAccounts = () => {
-      const storedAccounts = getAccounts()
-      setAccounts(storedAccounts)
-    }
-    
-    // Initial sync
-    syncAccounts()
-    
-    // Listen for storage changes (when other pages update accounts)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'expense-tracker-accounts') {
-        syncAccounts()
+    const loadAccounts = async () => {
+      try {
+        const storedAccounts = await accountService.getAccounts()
+        setAccounts(storedAccounts)
+      } catch (error) {
+        console.error('Error loading accounts:', error)
+        showToast({
+          title: 'Error',
+          description: 'Gagal memuat data akun',
+          variant: 'destructive'
+        })
       }
     }
     
-    window.addEventListener('storage', handleStorageChange)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [])
-  
-  const { showToast } = useToast()
+    loadAccounts()
+  }, [showToast])
 
   const validateForm = () => {
     const errors = {
@@ -106,108 +103,58 @@ export default function TransferPage() {
       return
     }
 
-    if (isEditMode && editingTransferId) {
-      // Update existing transfer
-      setTransferHistory(prev => prev.map(t => 
-        t.id === editingTransferId 
-          ? {
-              ...t,
-              date: formData.date.toISOString().split('T')[0],
-              fromAccount: getAccountName(formData.fromAccount),
-              toAccount: getAccountName(formData.toAccount),
-              amount: formData.amount || 0,
-              fee: formData.fee || 0,
-              description: formData.description || ''
-            }
-          : t
-      ))
-      
-      // Exit edit mode
-      setIsEditMode(false)
-      setEditingTransferId(null)
-      
-      showToast({
-        title: 'Sukses!',
-        description: 'Transfer berhasil diupdate',
-        variant: 'success'
-      })
-    } else {
-      // Create new transfer record
-      const newTransfer = {
-        id: Date.now().toString(), // Simple ID generation
-        date: formData.date.toISOString().split('T')[0],
-        fromAccount: getAccountName(formData.fromAccount),
-        toAccount: getAccountName(formData.toAccount),
+    try {
+      // Update account balances
+      await accountService.updateAccountBalances(
+        formData.fromAccount,
+        formData.toAccount,
+        formData.amount || 0,
+        formData.fee || 0
+      )
+
+      // Create transfer record
+      const newTransfer: Transfer = {
+        id: Date.now().toString(),
+        fromAccount: accounts.find(acc => acc.id === formData.fromAccount)?.name || '',
+        toAccount: accounts.find(acc => acc.id === formData.toAccount)?.name || '',
         amount: formData.amount || 0,
         fee: formData.fee || 0,
-        description: formData.description || '',
-        status: 'completed' as const
+        date: formData.date.toISOString().split('T')[0],
+        description: formData.description
       }
 
-      // Add to transfer history
       setTransferHistory(prev => [newTransfer, ...prev])
-      
+
+      // Refresh accounts
+      const freshAccounts = await accountService.getAccounts()
+      setAccounts(freshAccounts)
+
+      // Reset form
+      setFormData({
+        fromAccount: '',
+        toAccount: '',
+        amount: null,
+        fee: null,
+        date: new Date(),
+        description: ''
+      })
+
       showToast({
         title: 'Sukses!',
-        description: 'Transfer berhasil diproses',
+        description: 'Transfer berhasil dilakukan',
         variant: 'success'
       })
+    } catch (error) {
+      showToast({
+        title: 'Error',
+        description: 'Gagal melakukan transfer',
+        variant: 'destructive'
+      })
     }
-
-    // Update account balances using localStorage
-    const updatedAccounts = updateAccountBalances(
-      formData.fromAccount,
-      formData.toAccount,
-      formData.amount || 0,
-      formData.fee || 0
-    )
-    
-    // Update local state to reflect changes immediately
-    setAccounts(updatedAccounts)
-    
-    // Force refresh accounts from localStorage to ensure consistency
-    setTimeout(() => {
-      const freshAccounts = getAccounts()
-      setAccounts(freshAccounts)
-    }, 100)
-
-
-
-    // Reset form
-    setFormData({
-      fromAccount: '',
-      toAccount: '',
-      amount: null,
-      fee: null,
-      date: new Date(),
-      description: ''
-    })
-    setFormErrors({
-      fromAccount: false,
-      toAccount: false,
-      amount: false,
-      description: false
-    })
-  }
-
-  const getAccountBalance = (accountId: string) => {
-    const account = accounts.find(acc => acc.id === accountId)
-    return account?.balance || 0
-  }
-
-  const getAccountName = (accountId: string) => {
-    const account = accounts.find(acc => acc.id === accountId)
-    return account?.name || accountId
-  }
-  
-  // Function to refresh accounts from localStorage
-  const refreshAccounts = () => {
-    const freshAccounts = getAccounts()
-    setAccounts(freshAccounts)
   }
 
   // Function to handle edit transfer
-  const handleEditTransfer = (transfer: any) => {
+  const handleEditTransfer = (transfer: Transfer) => {
     // Set form data for editing
     setFormData({
       fromAccount: accounts.find(acc => acc.name === transfer.fromAccount)?.id || '',
@@ -292,9 +239,6 @@ export default function TransferPage() {
                         </SelectItem>
                       ))}
                     </SelectContent>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Debug: {accounts.length} accounts loaded
-                    </div>
                   </Select>
                 </div>
                 <div>
@@ -312,7 +256,7 @@ export default function TransferPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {accounts
-                        .filter((account) => account.id !== formData.fromAccount)
+                        .filter(acc => acc.id !== formData.fromAccount)
                         .map((account) => (
                           <SelectItem key={account.id} value={account.id}>
                             {account.name} - {formatIDR(account.balance)}
@@ -322,7 +266,7 @@ export default function TransferPage() {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-muted-foreground'}`}>
@@ -339,81 +283,49 @@ export default function TransferPage() {
                     placeholder="1000000"
                     className={`h-11 ${formErrors.amount ? 'border-red-500 focus:border-red-500' : ''}`}
                   />
-                  <p className="text-xs text-[var(--txt-low)] mt-1">
-                    Contoh: 1000000 = 1.000.000
-                  </p>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Biaya (Opsional)</label>
+                  <label className="text-sm text-muted-foreground">
+                    Biaya Transfer
+                  </label>
                   <CurrencyInput
                     value={formData.fee}
                     onValueChange={(value) => setFormData({...formData, fee: value})}
                     placeholder="0"
                     className="h-11"
                   />
-                  <p className="text-xs text-[var(--txt-low)] mt-1">
-                    Biaya transfer/admin
-                  </p>
                 </div>
               </div>
-              
+
               <div>
-                <label className="text-sm text-muted-foreground">Tanggal</label>
-                <DateInput
-                  value={formData.date}
-                  onChange={(date) => setFormData({...formData, date: date || new Date()})}
-                  placeholder="DD/MM/YYYY"
-                />
+                <label className="text-sm text-muted-foreground">
+                  Tanggal Transfer
+                </label>
+                                  <DateInput
+                    value={formData.date}
+                    onChange={(date) => setFormData({...formData, date: date || new Date()})}
+                    className="h-11"
+                  />
               </div>
-              
+
               <div>
                 <label className="text-sm text-muted-foreground">
                   Catatan (Opsional)
                 </label>
                 <Textarea
-                  placeholder="Alasan transfer..."
+                  placeholder="Deskripsi transfer..."
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   className="min-h-[88px]"
                 />
               </div>
-              
-              <div className="flex space-x-3">
-                <Button 
-                  type="submit" 
-                  className="flex-1 h-11"
-                  disabled={!formData.fromAccount || !formData.toAccount || !formData.amount || formData.amount <= 0}
-                >
-                  {isEditMode ? 'Update Transfer' : 'Proses Transfer'}
-                </Button>
-                {isEditMode && (
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    className="h-11 px-6"
-                    onClick={() => {
-                      setIsEditMode(false)
-                      setEditingTransferId(null)
-                      setFormData({
-                        fromAccount: '',
-                        toAccount: '',
-                        amount: null,
-                        fee: null,
-                        date: new Date(),
-                        description: ''
-                      })
-                      setFormErrors({
-                        fromAccount: false,
-                        toAccount: false,
-                        amount: false,
-                        description: false
-                      })
-                    }}
-                  >
-                    Batal
-                  </Button>
-                )}
-              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full h-11"
+              >
+                {isEditMode ? 'Update Transfer' : 'Lakukan Transfer'}
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -424,87 +336,54 @@ export default function TransferPage() {
             <CardTitle className="text-lg font-semibold text-foreground">
               Preview Transfer
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Ringkasan transaksi
-            </p>
           </CardHeader>
-          <CardContent>
-            {formData.fromAccount && formData.toAccount && formData.amount ? (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-muted">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">Dari:</span>
-                    <span className="text-sm font-medium text-foreground">
-                      {getAccountName(formData.fromAccount)}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-lg font-semibold text-[var(--danger)]">
-                      -{formatIDR(amount)}
-                    </span>
-                    <p className="text-xs text-muted-foreground">
-                      Saldo: {formatIDR(getAccountBalance(formData.fromAccount))}
-                    </p>
-                  </div>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Dari Akun:</span>
+                <span className="text-sm font-medium">
+                  {accounts.find(acc => acc.id === formData.fromAccount)?.name || '-'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Ke Akun:</span>
+                <span className="text-sm font-medium">
+                  {accounts.find(acc => acc.id === formData.toAccount)?.name || '-'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Jumlah:</span>
+                <span className="text-sm font-medium text-[var(--danger)]">
+                  -{formatIDR(amount)}
+                </span>
+              </div>
+              {fee && fee > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Biaya:</span>
+                  <span className="text-sm font-medium text-[var(--danger)]">
+                    -{formatIDR(fee)}
+                  </span>
                 </div>
-
-                <div className="text-center text-2xl">⬇️</div>
-
-                <div className="p-4 rounded-lg bg-muted">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">Ke:</span>
-                    <span className="text-sm font-medium text-foreground">
-                      {getAccountName(formData.toAccount)}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-lg font-semibold text-[var(--success)]">
-                      +{formatIDR(amount)}
-                    </span>
-                    <p className="text-xs text-muted-foreground">
-                      Saldo: {formatIDR(getAccountBalance(formData.toAccount))}
-                    </p>
-                  </div>
-                </div>
-
-                {fee > 0 && (
-                  <div className="p-3 rounded-lg border border-border">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Biaya Transfer:</span>
-                      <span className="text-sm font-medium text-[var(--warning)]">
-                        {formatIDR(fee)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-3 rounded-lg bg-[var(--primary)]/10 border border-[var(--primary)]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-[var(--primary)]">Total:</span>
-                    <span className="text-lg font-semibold text-[var(--primary)]">
-                      {formatIDR(total)}
-                    </span>
-                  </div>
+              )}
+              <div className="border-t pt-3">
+                <div className="flex justify-between">
+                  <span className="text-sm font-medium">Total:</span>
+                  <span className="text-sm font-bold text-[var(--danger)]">
+                    -{formatIDR(total)}
+                  </span>
                 </div>
               </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>Pilih akun dan jumlah untuk melihat preview</p>
-              </div>
-            )}
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Transfer History Table */}
+      {/* Transfer History */}
       <Card className="rounded-xl border border-border bg-card p-4">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-semibold text-foreground">
             Riwayat Transfer
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {transferHistory.length} transfer terakhir
-          </p>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -515,7 +394,10 @@ export default function TransferPage() {
                     Tanggal
                   </th>
                   <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Dari → Ke
+                    Dari
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                    Ke
                   </th>
                   <th className="text-right py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
                     Jumlah
@@ -527,83 +409,73 @@ export default function TransferPage() {
                     Catatan
                   </th>
                   <th className="text-center py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-center py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
                     Aksi
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {transferHistory.map((transfer, index) => (
-                  <tr 
-                    key={transfer.id}
-                    className={`border-b border-border ${
-                      index % 2 === 0 ? "bg-card" : "bg-muted"
-                    }`}
-                  >
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {formatDateID(transfer.date)}
+                {transferHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                      Belum ada riwayat transfer
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2">
+                  </tr>
+                ) : (
+                  transferHistory.map((transfer) => (
+                    <tr key={transfer.id} className="border-b border-border">
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {formatDateID(transfer.date)}
+                      </td>
+                      <td className="py-3 px-4">
                         <Badge variant="outline" className="text-xs">
                           {transfer.fromAccount}
                         </Badge>
-                        <span className="text-muted-foreground">→</span>
+                      </td>
+                      <td className="py-3 px-4">
                         <Badge variant="outline" className="text-xs">
                           {transfer.toAccount}
                         </Badge>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <span className="text-sm font-medium text-foreground">
-                        {formatIDR(transfer.amount)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <span className="text-sm text-muted-foreground">
-                        {transfer.fee > 0 ? formatIDR(transfer.fee) : '-'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {transfer.description}
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <Badge 
-                        variant="outline"
-                        className={`text-xs ${
-                          transfer.status === 'completed' ? 'bg-[var(--success)] text-[var(--txt-high)] border-[var(--success)]' :
-                          transfer.status === 'pending' ? 'bg-[var(--warning)] text-[var(--txt-high)] border-[var(--warning)]' :
-                          'bg-[var(--danger)] text-[var(--txt-high)] border-[var(--danger)]'
-                        }`}
-                      >
-                        {transfer.status === 'completed' ? 'Selesai' :
-                         transfer.status === 'pending' ? 'Pending' : 'Gagal'}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditTransfer(transfer)}
-                          className="h-8 px-3 text-xs"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDeleteTransfer(transfer.id)}
-                          className="h-8 px-3 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          Hapus
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <span className="text-sm font-medium text-[var(--danger)]">
+                          -{formatIDR(transfer.amount)}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <span className="text-sm text-muted-foreground">
+                          {transfer.fee > 0 ? `-${formatIDR(transfer.fee)}` : '-'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {transfer.description || '-'}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex items-center justify-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditTransfer(transfer)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteTransfer(transfer.id)}
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

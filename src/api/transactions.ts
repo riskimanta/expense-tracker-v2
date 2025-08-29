@@ -1,7 +1,39 @@
 import { apiGet, apiPost } from './http'
-import { mockExpenseTransactions } from '@/mock/expenses'
-import { mockIncomeTransactions } from '@/mock/income'
-import { mockTransferTransactions } from '@/mock/transfer'
+
+// Mock data moved inline
+const mockExpenseTransactions = [
+  {
+    id: '1',
+    accountId: '1',
+    category: '1',
+    amount: 50000,
+    description: 'Makan Siang',
+    date: '2024-01-15',
+    splits: []
+  }
+]
+
+const mockIncomeTransactions = [
+  {
+    id: '1',
+    account: '1',
+    source: '1',
+    amount: 8000000,
+    description: 'Gaji Bulanan',
+    date: '2024-01-15'
+  }
+]
+
+const mockTransferTransactions = [
+  {
+    id: '1',
+    fromAccount: '1',
+    toAccount: '2',
+    amount: 1000000,
+    description: 'Transfer ke BCA',
+    date: '2024-01-15'
+  }
+]
 
 export interface Transaction {
   id: string

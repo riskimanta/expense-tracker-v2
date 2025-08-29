@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
+import { adminSettingsService } from "@/lib/adminSettingsService"
 import { AdminSettings } from "@/types/admin"
 
 export default function AdminSettingsPage() {
@@ -18,31 +19,44 @@ export default function AdminSettingsPage() {
   const [isDirty, setIsDirty] = useState(false)
   const { toast } = useToast()
 
-  // Load settings from localStorage on mount
+  // Load settings from database service on mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem("adminSettings")
-    if (savedSettings) {
+    const loadSettings = async () => {
       try {
-        const parsed = JSON.parse(savedSettings)
-        setSettings(parsed)
+        const savedSettings = await adminSettingsService.getSettings()
+        setSettings(savedSettings)
       } catch (error) {
-        console.error("Failed to parse saved settings:", error)
+        console.error("Failed to load settings:", error)
+        toast({
+          title: "Error",
+          description: "Gagal memuat pengaturan",
+          variant: "destructive",
+        })
       }
     }
-  }, [])
+    loadSettings()
+  }, [toast])
 
-  const handleSettingChange = (key: keyof AdminSettings, value: any) => {
+  const handleSettingChange = (key: keyof AdminSettings, value: string | number | boolean) => {
     setSettings(prev => ({ ...prev, [key]: value }))
     setIsDirty(true)
   }
 
-  const handleSave = () => {
-    localStorage.setItem("adminSettings", JSON.stringify(settings))
-    setIsDirty(false)
-    toast({
-      title: "Berhasil",
-      description: "Pengaturan berhasil disimpan",
-    })
+  const handleSave = async () => {
+    try {
+      await adminSettingsService.updateSettings(settings)
+      setIsDirty(false)
+      toast({
+        title: "Berhasil",
+        description: "Pengaturan berhasil disimpan",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Gagal menyimpan pengaturan",
+        variant: "destructive",
+      })
+    }
   }
 
   const handleExport = () => {

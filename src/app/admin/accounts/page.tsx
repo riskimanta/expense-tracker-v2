@@ -166,7 +166,7 @@ export default function AdminAccountsPage() {
     {
       key: "name" as keyof Account,
       label: "Nama Akun",
-      render: (value: any, account: Account) => (
+      render: (value: string | number, account: Account) => (
         <div className="flex items-center gap-2">
           {getAccountIcon(account.type)}
           <span className="font-medium">{account.name}</span>
@@ -176,7 +176,7 @@ export default function AdminAccountsPage() {
     {
       key: "type" as keyof Account,
       label: "Tipe",
-      render: (value: any, account: Account) => (
+      render: (value: string | number, account: Account) => (
         <span className="px-2 py-1 text-xs rounded-full bg-[var(--surface2)] text-[var(--txt-med)]">
           {getTypeLabel(account.type)}
         </span>
@@ -185,7 +185,7 @@ export default function AdminAccountsPage() {
     {
       key: "balance" as keyof Account,
       label: "Balance",
-      render: (value: any, account: Account) => (
+      render: (value: string | number, account: Account) => (
         <span className="font-mono text-[var(--txt-high)]">
           Rp {account.balance?.toLocaleString() || '0'}
         </span>
@@ -194,7 +194,7 @@ export default function AdminAccountsPage() {
     {
       key: "id" as keyof Account,
       label: "Aksi",
-      render: (value: any, account: Account) => (
+      render: (value: string | number, account: Account) => (
         <RowActions
           onEdit={() => handleEdit(account)}
           onDelete={() => handleDelete(account)}
@@ -260,7 +260,7 @@ export default function AdminAccountsPage() {
             </label>
             <Select
               value={form.watch("type")}
-              onValueChange={(value) => form.setValue("type", value as any)}
+              onValueChange={(value) => form.setValue("type", value as 'cash' | 'bank' | 'ewallet')}
             >
               <SelectTrigger className="bg-[var(--surface)] border-[var(--border)] text-[var(--txt-high)]">
                 <SelectValue />
@@ -268,7 +268,7 @@ export default function AdminAccountsPage() {
               <SelectContent>
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="bank">Bank</SelectItem>
-                <SelectItem value="wallet">Wallet</SelectItem>
+                <SelectItem value="ewallet">E-Wallet</SelectItem>
               </SelectContent>
             </Select>
           </div>

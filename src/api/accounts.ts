@@ -1,11 +1,11 @@
 import { Account } from '@/types/admin'
-import * as mockAccounts from '@/mock/accounts'
+import { accountService } from '@/lib/accountService'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export async function getAccounts(): Promise<Account[]> {
   if (!API_URL) {
-    return mockAccounts.getAccounts()
+    return accountService.getAccounts()
   }
 
   const response = await fetch(`${API_URL}/api/accounts`)
@@ -17,7 +17,7 @@ export async function getAccounts(): Promise<Account[]> {
 
 export async function createAccount(account: Omit<Account, 'id'>): Promise<Account> {
   if (!API_URL) {
-    return mockAccounts.createAccount(account)
+    return accountService.createAccount(account)
   }
 
   const response = await fetch(`${API_URL}/api/accounts`, {
@@ -33,7 +33,7 @@ export async function createAccount(account: Omit<Account, 'id'>): Promise<Accou
 
 export async function updateAccount(id: string, updates: Partial<Account>): Promise<Account> {
   if (!API_URL) {
-    return mockAccounts.updateAccount(id, updates)
+    return accountService.updateAccount(id, updates)
   }
 
   const response = await fetch(`${API_URL}/api/accounts/${id}`, {
@@ -49,7 +49,7 @@ export async function updateAccount(id: string, updates: Partial<Account>): Prom
 
 export async function deleteAccount(id: string): Promise<void> {
   if (!API_URL) {
-    return mockAccounts.deleteAccount(id)
+    return accountService.deleteAccount(id)
   }
 
   const response = await fetch(`${API_URL}/api/accounts/${id}`, {

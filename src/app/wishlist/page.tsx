@@ -13,14 +13,75 @@ import { Progress } from '@/components/ui/progress'
 import { formatIDR } from '@/lib/currency'
 import { useToast } from '@/components/ToastProvider'
 import { CurrencyInput } from '@/components/ui/currency-input'
-import { 
-  mockWishlistItems, 
-  mockWishlistCategories,
-  getPriorityColor,
-  getStatusColor,
-  getProgressPercentage,
-  type WishlistItem
-} from '@/mock/wishlist'
+// Mock data moved inline
+interface WishlistItem {
+  id: string
+  name: string
+  estimatedPrice: number
+  priority: 'low' | 'medium' | 'high'
+  targetDate: string
+  status: 'pending' | 'in-progress' | 'completed' | 'cancelled' | 'achieved' | 'saving'
+  notes: string
+  category: string
+  currentSavings: number
+  createdAt: string
+}
+
+const mockWishlistItems: WishlistItem[] = [
+  {
+    id: '1',
+    name: 'iPhone 15 Pro',
+    estimatedPrice: 25000000,
+    priority: 'high',
+    targetDate: '2024-06-01',
+    status: 'pending',
+    notes: 'iPhone terbaru dengan kamera yang bagus',
+    category: 'Electronics',
+    currentSavings: 5000000,
+    createdAt: '2024-01-01'
+  },
+  {
+    id: '2',
+    name: 'Liburan ke Bali',
+    estimatedPrice: 8000000,
+    priority: 'medium',
+    targetDate: '2024-08-01',
+    status: 'in-progress',
+    notes: 'Liburan 5 hari 4 malam dengan keluarga',
+    category: 'Travel',
+    currentSavings: 3000000,
+    createdAt: '2024-01-01'
+  }
+]
+
+const mockWishlistCategories = [
+  'Electronics', 'Travel', 'Fashion', 'Home', 'Sports', 'Books', 'Other'
+]
+
+const getPriorityColor = (priority: string) => {
+  switch (priority) {
+    case 'high': return 'bg-red-100 text-red-800'
+    case 'medium': return 'bg-yellow-100 text-yellow-800'
+    case 'low': return 'bg-green-100 text-green-800'
+    default: return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'pending': return 'bg-yellow-100 text-yellow-800'
+    case 'in-progress': return 'bg-blue-100 text-blue-800'
+    case 'completed': return 'bg-green-100 text-green-800'
+    case 'cancelled': return 'bg-red-100 text-red-800'
+    case 'achieved': return 'bg-green-100 text-green-800'
+    case 'saving': return 'bg-blue-100 text-blue-800'
+    default: return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getProgressPercentage = (current: number, target: number) => {
+  return Math.min((current / target) * 100, 100)
+}
 import { Heart, Plus, Target, Calendar, DollarSign, BookOpen, Trash2, Edit } from 'lucide-react'
 
 export default function WishlistPage() {

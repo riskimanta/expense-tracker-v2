@@ -119,4 +119,38 @@ export const accountApi = {
     }
     return response.json();
   },
+
+  createAccount: async (data: {
+    name: string;
+    type: string;
+    balance: number;
+    userId?: string;
+  }) => {
+    const response = await api('/api/accounts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to create account');
+    }
+    return response.json();
+  },
+
+  updateAccount: async (id: string, data: {
+    name?: string;
+    type?: string;
+    balance?: number;
+    icon?: string;
+  }) => {
+    const response = await api(`/api/accounts`, {
+      method: 'PUT',
+      body: JSON.stringify({ id, ...data }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to update account');
+    }
+    return response.json();
+  },
 };

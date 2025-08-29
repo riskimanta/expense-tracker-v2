@@ -16,7 +16,54 @@ import { FilterBar } from '@/components/expenses/FilterBar'
 import { useExpenses, useExpenseCategories, useCreateExpense, useAccounts, useUpdateTransaction, useDeleteTransaction } from '@/hooks/useExpenses'
 import { TransactionsTable } from '@/components/TransactionsTable'
 import { EditTransactionDialog } from '@/components/EditTransactionDialog'
-import { calculateKPIs, calculateBudgetAllocation } from '@/mock/expenses'
+// Mock functions moved inline for now
+const calculateKPIs = (expenses: Array<{amount: number; category: string}>) => {
+  const totalExpense = expenses.reduce((sum, exp) => sum + exp.amount, 0)
+  const avgExpense = expenses.length > 0 ? totalExpense / expenses.length : 0
+  const topCategory = expenses.length > 0 ? expenses[0]?.category || 'Unknown' : 'None'
+  const topCategoryAmount = expenses.length > 0 ? expenses[0]?.amount || 0 : 0
+  
+  // Calculate days remaining in month
+  const now = new Date()
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+  const daysRemaining = daysInMonth - now.getDate()
+  
+  // Mock budget values
+  const monthlyBudget = 5000000 // 5 million IDR
+  const remainingBudget = monthlyBudget - totalExpense
+  const averageDaily = totalExpense / now.getDate()
+  
+  return {
+    totalExpense,
+    totalSpent: totalExpense,
+    avgExpense,
+    topCategory,
+    topCategoryAmount,
+    count: expenses.length,
+    daysRemaining,
+    monthlyBudget,
+    remainingBudget,
+    averageDaily
+  }
+}
+
+const calculateBudgetAllocation = (expenses: Array<{amount: number; category: string}>) => {
+  const categoryTotals = expenses.reduce((acc: Record<string, number>, exp: {amount: number; category: string}) => {
+    acc[exp.category] = (acc[exp.category] || 0) + exp.amount
+    return acc
+  }, {})
+  
+  const total = Object.values(categoryTotals).reduce((sum: number, amount: number) => sum + amount, 0)
+  
+  return Object.entries(categoryTotals).map(([category, amount]) => ({
+    category,
+    name: category,
+    amount,
+    value: amount,
+    percentage: total > 0 ? (amount / total) * 100 : 0,
+    color: `hsl(${Math.random() * 360}, 70%, 50%)` // Random color for now
+  }))
+}
 import { useToast } from '@/components/ToastProvider'
 
 export default function ExpensesPage() {

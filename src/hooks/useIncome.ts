@@ -70,20 +70,20 @@ export function useIncome({ userId, month, categoryId = 'all' }: UseIncomeParams
 
         console.log('API responses:', { transactions, categories, accounts })
 
-        const transformed = transactions.map((tx: any, index: number) => {
+        const transformed = transactions.map((tx: Record<string, unknown>, index: number) => {
           const result = {
-            id: tx.id.toString(),
-            date: tx.date,
-            category: tx.category_name || 'Unknown',
-            amount: tx.amount,
-            description: tx.description || '',
-            accountId: tx.account_id.toString(),
-            accountName: tx.account_name || 'Unknown',
+            id: (tx.id as string | number)?.toString() || '',
+            date: tx.date as string,
+            category: (tx.category_name as string) || 'Unknown',
+            amount: tx.amount as number,
+            description: (tx.description as string) || '',
+            accountId: (tx.account_id as string | number)?.toString() || '',
+            accountName: (tx.account_name as string) || 'Unknown',
             splitCount: 1,
             // Added fields needed for editing to be passed to UI
-            type: tx.type,
-            category_id: tx.category_id ? tx.category_id.toString() : null,
-            account_id: tx.account_id ? tx.account_id.toString() : null
+            type: tx.type as string,
+            category_id: tx.category_id ? (tx.category_id as string | number)?.toString() : null,
+            account_id: tx.account_id ? (tx.account_id as string | number)?.toString() : null
           }
           return result
         })
@@ -122,7 +122,7 @@ export function useIncomeKPIs({ userId, month }: { userId: string; month?: Date 
         }
       }
 
-      const totalIncome = transactions.reduce((sum: number, tx: IncomeTransaction) => sum + tx.amount, 0)
+      const totalIncome = transactions.reduce((sum: number, tx: IncomeTransaction) => sum + (tx.amount || 0), 0)
       const daysInMonth = month ? new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate() : 30
       const averageDaily = totalIncome / daysInMonth
       
@@ -206,7 +206,7 @@ export function useUpdateIncome() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+    mutationFn: async ({ id, data }: { id: string; data: { date: string; categoryId: string; amount: number; description: string; accountId: string; type: string } }) => {
       return transactionApi.updateTransaction(id, data)
     },
     onSuccess: () => {

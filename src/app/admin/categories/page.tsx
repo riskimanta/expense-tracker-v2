@@ -199,7 +199,7 @@ export default function AdminCategoriesPage() {
     {
       key: 'actions',
       label: 'Aksi',
-      render: (_: any, category: Category) => (
+      render: (_: unknown, category: Category) => (
         <RowActions
           onEdit={() => handleEdit(category)}
           onDelete={() => handleDelete(category)}

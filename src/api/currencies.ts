@@ -1,5 +1,12 @@
 import { Currency } from '@/types/admin'
-import * as mockCurrencies from '@/mock/currencies'
+// Mock data moved inline
+const mockCurrencies = {
+  getCurrencies: () => [
+    { code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp', rateToIDR: 1, updatedAt: '2024-01-01' },
+    { code: 'USD', name: 'US Dollar', symbol: '$', rateToIDR: 15000, updatedAt: '2024-01-01' },
+    { code: 'EUR', name: 'Euro', symbol: '€', rateToIDR: 16500, updatedAt: '2024-01-01' }
+  ]
+}
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 

@@ -1,4 +1,20 @@
-import { mockAccounts, mockCategories, mockTransactions } from "@/mock/data"
+// Mock data moved inline
+const mockAccounts = [
+  { id: '1', name: 'Cash', type: 'cash', balance: 500000 },
+  { id: '2', name: 'BCA', type: 'bank', balance: 8500000 },
+  { id: '3', name: 'OVO', type: 'ewallet', balance: 250000 }
+]
+
+const mockCategories = [
+  { id: '1', name: 'Makanan', type: 'expense', color: '#ef4444' },
+  { id: '2', name: 'Transport', type: 'expense', color: '#3b82f6' },
+  { id: '3', name: 'Gaji', type: 'income', color: '#10b981' }
+]
+
+const mockTransactions = [
+  { id: '1', type: 'expense', amount: 50000, category: '1', account: '1', date: '2024-01-15' },
+  { id: '2', type: 'income', amount: 8000000, category: '3', account: '1', date: '2024-01-15' }
+]
 
 
 
