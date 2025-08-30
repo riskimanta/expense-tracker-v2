@@ -127,11 +127,11 @@ export default function ExpensesPage() {
     return (
       <main className="mx-auto max-w-[1200px] p-6 space-y-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-semibold text-foreground">Pengeluaran</h1>
-          <p className="mt-1 text-muted-foreground">Kelola pengeluaran dan budget bulanan</p>
+          <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Pengeluaran</h1>
+          <p className="mt-1 text-[color:var(--txt-2)]">Kelola pengeluaran dan budget bulanan</p>
         </div>
         <div className="text-center py-12">
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-[color:var(--txt-2)]">Loading...</p>
         </div>
       </main>
     )
@@ -255,8 +255,8 @@ export default function ExpensesPage() {
     <main className="mx-auto max-w-[1200px] p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-foreground">Pengeluaran</h1>
-        <p className="mt-1 text-muted-foreground">Kelola pengeluaran dan budget bulanan</p>
+        <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Pengeluaran</h1>
+        <p className="mt-1 text-[color:var(--txt-2)]">Kelola pengeluaran dan budget bulanan</p>
       </div>
 
       {/* Filter Bar */}
@@ -273,49 +273,49 @@ export default function ExpensesPage() {
 
       {/* KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Pengeluaran</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Total Pengeluaran</p>
             <p className="text-2xl font-semibold text-[var(--danger)]">
               {formatIDR(kpis.totalSpent)}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               {kpis.daysRemaining} hari tersisa
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Budget Bulanan</p>
-            <p className="text-2xl font-semibold text-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">Budget Bulanan</p>
+            <p className="text-2xl font-semibold text-[color:var(--txt-1)]">
               {formatIDR(kpis.monthlyBudget)}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               Sisa: {formatIDR(kpis.remainingBudget)}
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Kategori Teratas</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Kategori Teratas</p>
             <p className="text-2xl font-semibold text-[var(--needs)]">
               {kpis.topCategory}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               {formatIDR(kpis.topCategoryAmount)}
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Rata-rata Harian</p>
-            <p className="text-2xl font-semibold text-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">Rata-rata Harian</p>
+            <p className="text-2xl font-semibold text-[color:var(--txt-1)]">
               {formatIDR(kpis.averageDaily)}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               Per hari
             </p>
           </div>
@@ -325,14 +325,14 @@ export default function ExpensesPage() {
       {/* Form + Budget Section */}
       <div className="grid grid-cols-12 gap-6">
         {/* Form Card */}
-        <Card className="col-span-12 lg:col-span-7 rounded-xl border border-border bg-card p-4">
+        <Card className="col-span-12 lg:col-span-7 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-foreground">
+              <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
                 Tambah Pengeluaran
               </CardTitle>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground">Split this transaction</span>
+                <span className="text-sm text-[color:var(--txt-2)]">Split this transaction</span>
                 <Switch 
                   checked={isSplitMode}
                   onCheckedChange={setIsSplitMode}
@@ -344,7 +344,7 @@ export default function ExpensesPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Tanggal</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Tanggal</label>
                   <DateInput
                     value={formData.date}
                     onChange={(date) => setFormData({...formData, date: date || new Date()})}
@@ -353,7 +353,7 @@ export default function ExpensesPage() {
                   />
                 </div>
                 <div>
-                  <label className={`text-sm ${formErrors.category ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <label className={`text-sm ${formErrors.category ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                     Kategori {formErrors.category && <span className="text-red-500">*</span>}
                   </label>
                   <Select value={formData.category} onValueChange={(value) => {
@@ -378,7 +378,7 @@ export default function ExpensesPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={`text-sm ${formErrors.amountNumber ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <label className={`text-sm ${formErrors.amountNumber ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                     Jumlah {formErrors.amountNumber && <span className="text-red-500">*</span>}
                   </label>
                   <CurrencyInput
@@ -398,7 +398,7 @@ export default function ExpensesPage() {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Mata Uang</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Mata Uang</label>
                   <Select value={formData.currency || 'IDR'} onValueChange={(value) => setFormData({...formData, currency: value})}>
                     <SelectTrigger className="h-11">
                       <SelectValue placeholder="Pilih mata uang" />
@@ -416,7 +416,7 @@ export default function ExpensesPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Akun</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Akun</label>
                   <Select value={formData.account} onValueChange={(value) => setFormData({...formData, account: value})}>
                     <SelectTrigger className="h-11" data-testid="tx-account">
                       <SelectValue placeholder="Pilih akun" />
@@ -431,7 +431,7 @@ export default function ExpensesPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">
+                  <label className="text-sm text-[color:var(--txt-2)]">
                     Catatan (Opsional)
                   </label>
                   <Textarea
@@ -454,12 +454,12 @@ export default function ExpensesPage() {
         </Card>
 
         {/* Budget Allocation Card */}
-        <Card className="col-span-12 lg:col-span-5 rounded-xl border border-border bg-card p-4">
+        <Card className="col-span-12 lg:col-span-5 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
               Budget Allocation
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">
               Aturan 50/25/5/15/5
             </p>
           </CardHeader>
@@ -490,9 +490,9 @@ export default function ExpensesPage() {
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: item.color }}
                       />
-                      <span className="text-sm text-foreground">{item.name}</span>
+                      <span className="text-sm text-[color:var(--txt-1)]">{item.name}</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-[color:var(--txt-2)]">
                       {item.value}%
                     </span>
                   </div>
@@ -507,12 +507,12 @@ export default function ExpensesPage() {
       </div>
 
       {/* Transactions Table */}
-      <Card className="rounded-xl border border-border bg-card p-4" data-testid="tx-table">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4" data-testid="tx-table">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-foreground">
+          <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
             Daftar Transaksi
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[color:var(--txt-2)]">
             Transaksi bulan {month ? month.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : 'Semua periode'}
           </p>
         </CardHeader>

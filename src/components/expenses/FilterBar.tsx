@@ -27,11 +27,11 @@ export function FilterBar({
   onAccountChange,
 }: FilterBarProps) {
   return (
-    <Card className="rounded-xl border border-border bg-card">
+    <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]">
       <CardContent className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Bulan</label>
+            <label className="text-sm text-[color:var(--txt-2)]">Bulan</label>
             <MonthYearPicker
               value={month}
               onChange={onMonthChange}
@@ -42,7 +42,7 @@ export function FilterBar({
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Filter Kategori</label>
+            <label className="text-sm text-[color:var(--txt-2)]">Filter Kategori</label>
             <Select value={categoryId} onValueChange={onCategoryChange}>
               <SelectTrigger className="h-11" data-testid="category-select">
                 <SelectValue placeholder="Semua Kategori" />
@@ -59,7 +59,7 @@ export function FilterBar({
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Filter Akun</label>
+            <label className="text-sm text-[color:var(--txt-2)]">Filter Akun</label>
             <Select value={accountId} onValueChange={onAccountChange}>
               <SelectTrigger className="h-11" data-testid="account-select">
                 <SelectValue placeholder="Semua Akun" />

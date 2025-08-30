@@ -11,7 +11,7 @@ const badgeVariants = cva(
         ok: "bg-[var(--success)] text-white ring-[var(--success)]",
         warn: "bg-[var(--warning)] text-white ring-[var(--warning)]",
         danger: "bg-[var(--danger)] text-white ring-[var(--danger)]",
-        outline: "bg-transparent text-foreground ring-border",
+        outline: "bg-transparent text-[color:var(--txt-1)] ring-border",
       },
     },
     defaultVariants: {

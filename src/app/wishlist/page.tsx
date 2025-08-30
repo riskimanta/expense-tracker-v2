@@ -248,33 +248,33 @@ export default function WishlistPage() {
     <main className="mx-auto max-w-[1200px] p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-foreground">Wishlist</h1>
-        <p className="mt-1 text-muted-foreground">Kelola impian dan target keuangan Anda</p>
+        <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Wishlist</h1>
+        <p className="mt-1 text-[color:var(--txt-2)]">Kelola impian dan target keuangan Anda</p>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Nilai</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Total Nilai</p>
             <p className="text-2xl font-semibold text-[var(--warning)]">
               {formatIDR(totalWorth)}
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Tabungan</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Total Tabungan</p>
             <p className="text-2xl font-semibold text-[var(--success)]">
               {formatIDR(totalSavings)}
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Tercapai</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Tercapai</p>
             <p className="text-2xl font-semibold text-[var(--primary)]">
               {achievedItems} / {items.length}
             </p>
@@ -297,7 +297,7 @@ export default function WishlistPage() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-muted-foreground">Harga Item</label>
+                <label className="text-sm text-[color:var(--txt-2)]">Harga Item</label>
                 <CurrencyInput
                   value={advisorPriceNumber}
                   onChange={(value) => setAdvisorPriceNumber(value)}
@@ -339,7 +339,7 @@ export default function WishlistPage() {
             </DialogHeader>
             <form onSubmit={handleAddItem} className="space-y-4">
               <div>
-                <label className="text-sm text-muted-foreground">Nama Item</label>
+                <label className="text-sm text-[color:var(--txt-2)]">Nama Item</label>
                 <Input
                   placeholder="Contoh: iPhone 15 Pro"
                   value={newItem.name}
@@ -350,7 +350,7 @@ export default function WishlistPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Harga Estimasi</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Harga Estimasi</label>
                   <CurrencyInput
                     value={newItem.estimatedPriceNumber}
                     onChange={(value) => setNewItem({...newItem, estimatedPriceNumber: value})}
@@ -360,7 +360,7 @@ export default function WishlistPage() {
                 </div>
                 
                 <div>
-                  <label className="text-sm text-muted-foreground">Prioritas</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Prioritas</label>
                   <Select value={newItem.priority} onValueChange={(value: 'low' | 'medium' | 'high') => setNewItem({...newItem, priority: value})}>
                     <SelectTrigger className="h-11">
                       <SelectValue />
@@ -376,7 +376,7 @@ export default function WishlistPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Target Tanggal</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Target Tanggal</label>
                   <DateInput
                     value={newItem.targetDate}
                     onChange={(date) => setNewItem({...newItem, targetDate: date || new Date()})}
@@ -385,7 +385,7 @@ export default function WishlistPage() {
                 </div>
                 
                 <div>
-                  <label className="text-sm text-muted-foreground">Kategori</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Kategori</label>
                   <Select value={newItem.category} onValueChange={(value) => setNewItem({...newItem, category: value})}>
                     <SelectTrigger className="h-11">
                       <SelectValue />
@@ -400,7 +400,7 @@ export default function WishlistPage() {
               </div>
               
               <div>
-                <label className="text-sm text-muted-foreground">Catatan (Opsional)</label>
+                <label className="text-sm text-[color:var(--txt-2)]">Catatan (Opsional)</label>
                 <Textarea
                   placeholder="Tambahkan catatan atau alasan..."
                   value={newItem.notes}
@@ -434,13 +434,13 @@ export default function WishlistPage() {
           const remaining = item.estimatedPrice - item.currentSavings
           
           return (
-            <Card key={item.id} className="rounded-xl border border-border bg-card p-6">
+            <Card key={item.id} className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1 space-y-4">
                   <div className="flex items-center space-x-3">
                     <Heart className="w-5 h-5 text-[var(--primary)]" />
                     <div>
-                      <h3 className="text-lg font-semibold text-foreground">{item.name}</h3>
+                      <h3 className="text-lg font-semibold text-[color:var(--txt-1)]">{item.name}</h3>
                       <div className="flex items-center space-x-2 mt-1">
                         <Badge 
                           variant="outline" 
@@ -463,47 +463,47 @@ export default function WishlistPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex items-center space-x-2">
-                      <DollarSign className="w-4 h-4 text-muted-foreground" />
+                      <DollarSign className="w-4 h-4 text-[color:var(--txt-2)]" />
                       <div>
-                        <p className="text-sm text-muted-foreground">Harga</p>
-                        <p className="font-medium text-foreground">{formatIDR(item.estimatedPrice)}</p>
+                        <p className="text-sm text-[color:var(--txt-2)]">Harga</p>
+                        <p className="font-medium text-[color:var(--txt-1)]">{formatIDR(item.estimatedPrice)}</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Target className="w-4 h-4 text-muted-foreground" />
+                      <Target className="w-4 h-4 text-[color:var(--txt-2)]" />
                       <div>
-                        <p className="text-sm text-muted-foreground">Target</p>
-                        <p className="font-medium text-foreground">{item.targetDate}</p>
+                        <p className="text-sm text-[color:var(--txt-2)]">Target</p>
+                        <p className="font-medium text-[color:var(--txt-1)]">{item.targetDate}</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <Calendar className="w-4 h-4 text-[color:var(--txt-2)]" />
                       <div>
-                        <p className="text-sm text-muted-foreground">Dibuat</p>
-                        <p className="font-medium text-foreground">{item.createdAt}</p>
+                        <p className="text-sm text-[color:var(--txt-2)]">Dibuat</p>
+                        <p className="font-medium text-[color:var(--txt-1)]">{item.createdAt}</p>
                       </div>
                     </div>
                   </div>
                   
                   {item.notes && (
-                    <p className="text-sm text-muted-foreground">{item.notes}</p>
+                    <p className="text-sm text-[color:var(--txt-2)]">{item.notes}</p>
                   )}
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Progress Tabungan</span>
-                      <span className="text-foreground">
+                      <span className="text-[color:var(--txt-2)]">Progress Tabungan</span>
+                      <span className="text-[color:var(--txt-1)]">
                         {formatIDR(item.currentSavings)} / {formatIDR(item.estimatedPrice)}
                       </span>
                     </div>
                     <Progress value={progress} className="h-2" />
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">
+                      <span className="text-[color:var(--txt-2)]">
                         {progress.toFixed(1)}% tercapai
                       </span>
-                      <span className="text-muted-foreground">
+                      <span className="text-[color:var(--txt-2)]">
                         Sisa: {formatIDR(remaining)}
                       </span>
                     </div>
@@ -531,13 +531,13 @@ export default function WishlistPage() {
 
       {/* Empty State */}
       {items.length === 0 && (
-        <Card className="rounded-xl border border-border bg-card p-12">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-12">
           <div className="text-center">
             <div className="text-4xl mb-4">💝</div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">
+            <h3 className="text-lg font-semibold text-[color:var(--txt-1)] mb-2">
               Belum ada wishlist
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-[color:var(--txt-2)] mb-4">
               Mulai dengan menambahkan impian pertama Anda
             </p>
             <Button onClick={() => setIsAddModalOpen(true)}>

@@ -313,7 +313,7 @@ export function EditTransactionDialog({
                   )}
                 </SelectContent>
               </Select>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-[color:var(--txt-2)]">
                 Debug: {accounts?.length || 0} accounts, selected: {formData.accountId || 'none'}
               </div>
             </div>
@@ -341,7 +341,7 @@ export function EditTransactionDialog({
                   )}
                 </SelectContent>
               </Select>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-[color:var(--txt-2)]">
                 Debug: {categories?.length || 0} categories, selected: {formData.categoryId || 'none'}
               </div>
             </div>

@@ -46,7 +46,7 @@ export function DashboardCharts({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Cash Flow Area Chart */}
-      <Card className="rounded-xl border border-border bg-card" data-testid="chart-daily">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]" data-testid="chart-daily">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-semibold text-[var(--txt-high)]">
             Arus Kas Harian
@@ -122,7 +122,7 @@ export function DashboardCharts({
       </Card>
 
       {/* Category Donut Chart */}
-      <Card className="rounded-xl border border-border bg-card" data-testid="chart-donut">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]" data-testid="chart-donut">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-semibold text-[var(--txt-high)]">
             Pengeluaran per Kategori

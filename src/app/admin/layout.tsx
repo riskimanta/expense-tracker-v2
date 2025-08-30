@@ -37,12 +37,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Check if admin access is enabled
   if (process.env.NEXT_PUBLIC_SHOW_ADMIN !== '1') {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-[color:var(--bg)] p-6">
         <div className="mx-auto max-w-[1200px]">
-          <Card className="rounded-xl border border-border bg-card">
+          <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]">
             <CardContent className="p-12 text-center">
               <Shield className="h-16 w-16 mx-auto mb-4 text-[var(--txt-low)]" />
-              <h1 className="text-2xl font-semibold text-foreground mb-2">
+              <h1 className="text-2xl font-semibold text-[color:var(--txt-1)] mb-2">
                 Hanya Admin
               </h1>
               <p className="text-[var(--txt-med)]">
@@ -56,12 +56,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[color:var(--bg)]">
       {/* Admin Header */}
-      <div className="sticky top-0 z-40 bg-card border-b border-border">
+      <div className="sticky top-0 z-40 bg-[color:var(--surface)] border-b border-[color:var(--border)]">
         <div className="mx-auto max-w-[1200px] px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-foreground">Admin</h1>
+            <h1 className="text-2xl font-semibold text-[color:var(--txt-1)]">Admin</h1>
             <div className="flex items-center gap-1">
               {adminTabsWithIcons.map((tab) => (
                 <Link

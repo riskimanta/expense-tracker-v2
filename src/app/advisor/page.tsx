@@ -271,32 +271,32 @@ export default function AdvisorPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Financial Advisor</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold text-[color:var(--txt-1)]">Financial Advisor</h1>
+          <p className="text-[color:var(--txt-2)]">
             Dapatkan saran keuangan personal dan analisis budget
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Target className="w-6 h-6 text-primary" />
-          <span className="text-sm text-muted-foreground">AI-Powered</span>
+          <span className="text-sm text-[color:var(--txt-2)]">AI-Powered</span>
         </div>
       </div>
 
       {/* Quick Analysis */}
-      <Card className="rounded-xl border border-border bg-card p-6">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-foreground flex items-center space-x-2">
+          <CardTitle className="text-xl font-semibold text-[color:var(--txt-1)] flex items-center space-x-2">
             <DollarSign className="w-5 h-5 text-primary" />
             <span>Analisis Keuangan Cepat</span>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[color:var(--txt-2)]">
             Masukkan data keuangan bulanan untuk mendapatkan analisis instan
           </p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-sm text-muted-foreground">Pendapatan Bulanan</label>
+              <label className="text-sm text-[color:var(--txt-2)]">Pendapatan Bulanan</label>
               <Input
                 type="text"
                 placeholder="5.000.000"
@@ -306,7 +306,7 @@ export default function AdvisorPage() {
               />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">Pengeluaran Bulanan</label>
+              <label className="text-sm text-[color:var(--txt-2)]">Pengeluaran Bulanan</label>
               <Input
                 type="text"
                 placeholder="3.500.000"
@@ -325,21 +325,21 @@ export default function AdvisorPage() {
       </Card>
 
       {/* Budget Analysis */}
-      <Card className="rounded-xl border border-border bg-card p-6">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-foreground flex items-center space-x-2">
+          <CardTitle className="text-xl font-semibold text-[color:var(--txt-1)] flex items-center space-x-2">
             <PiggyBank className="w-5 h-5 text-primary" />
             <span>Analisis Budget per Kategori</span>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[color:var(--txt-2)]">
             Perbandingan alokasi budget aktual vs rekomendasi
           </p>
         </CardHeader>
         <CardContent>
           {!isAnalyzed ? (
             <div className="text-center py-8">
-              <PiggyBank className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
+              <PiggyBank className="w-12 h-12 text-[color:var(--txt-2)] mx-auto mb-4" />
+              <p className="text-[color:var(--txt-2)]">
                 Klik tombol &quot;Analisis&quot; di atas untuk melihat analisis budget per kategori
               </p>
             </div>
@@ -349,13 +349,13 @@ export default function AdvisorPage() {
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     {getStatusIcon(item.status)}
-                    <span className="text-sm font-medium text-foreground">
+                    <span className="text-sm font-medium text-[color:var(--txt-1)]">
                       {item.category}
                     </span>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="text-right">
-                      <p className="text-sm text-foreground">
+                      <p className="text-sm text-[color:var(--txt-1)]">
                         {item.current}% vs {item.recommended}%
                       </p>
                       <p className={`text-xs ${getStatusColor(item.status)}`}>
@@ -375,28 +375,28 @@ export default function AdvisorPage() {
       </Card>
 
       {/* Financial Advice */}
-      <Card className="rounded-xl border border-border bg-card p-6">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-foreground flex items-center space-x-2">
+          <CardTitle className="text-xl font-semibold text-[color:var(--txt-1)] flex items-center space-x-2">
             <Lightbulb className="w-5 h-5 text-primary" />
             <span>Saran Keuangan Personal</span>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[color:var(--txt-2)]">
             Rekomendasi berdasarkan analisis keuangan Anda
           </p>
         </CardHeader>
         <CardContent>
           {!isAnalyzed ? (
             <div className="text-center py-8">
-              <Lightbulb className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
+              <Lightbulb className="w-12 h-12 text-[color:var(--txt-2)] mx-auto mb-4" />
+              <p className="text-[color:var(--txt-2)]">
                 Klik tombol &quot;Analisis&quot; di atas untuk mendapatkan saran keuangan personal
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {financialAdvice.map((advice) => (
-                <Card key={advice.id} className="border border-border bg-card">
+                <Card key={advice.id} className="border border-[color:var(--border)] bg-[color:var(--surface)]">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
@@ -408,17 +408,17 @@ export default function AdvisorPage() {
                       {getImpactIcon(advice.impact)}
                     </div>
                     
-                    <h4 className="font-semibold text-foreground mb-2">
+                    <h4 className="font-semibold text-[color:var(--txt-1)] mb-2">
                       {advice.title}
                     </h4>
                     
-                    <p className="text-sm text-muted-foreground mb-3">
+                    <p className="text-sm text-[color:var(--txt-2)] mb-3">
                       {advice.description}
                     </p>
                     
                     {advice.estimatedSavings && (
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-[color:var(--txt-2)]">
                           Estimasi penghematan:
                         </span>
                         <span className="text-sm font-medium text-green-500">
@@ -435,12 +435,12 @@ export default function AdvisorPage() {
       </Card>
 
       {/* Action Items */}
-      <Card className="rounded-xl border border-border bg-card p-6">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-foreground">
+          <CardTitle className="text-xl font-semibold text-[color:var(--txt-1)]">
             Langkah Selanjutnya
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[color:var(--txt-2)]">
             Tindakan yang disarankan untuk meningkatkan kesehatan keuangan
           </p>
         </CardHeader>

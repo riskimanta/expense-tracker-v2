@@ -31,7 +31,7 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
   if (!transactions || transactions.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">Belum ada transaksi</p>
+        <p className="text-[color:var(--txt-2)]">Belum ada transaksi</p>
       </div>
     )
   }
@@ -39,24 +39,24 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
-        <thead className="border-b border-border">
+        <thead className="border-b border-[color:var(--border)]">
           <tr>
-            <th className="text-left p-3 text-xs uppercase font-medium text-muted-foreground">
+            <th className="text-left p-3 text-xs uppercase font-medium text-[color:var(--txt-2)]">
               Tanggal
             </th>
-            <th className="text-left p-3 text-xs uppercase font-medium text-muted-foreground">
+            <th className="text-left p-3 text-xs uppercase font-medium text-[color:var(--txt-2)]">
               Akun
             </th>
-            <th className="text-left p-3 text-xs uppercase font-medium text-muted-foreground">
+            <th className="text-left p-3 text-xs uppercase font-medium text-[color:var(--txt-2)]">
               Kategori
             </th>
-            <th className="text-right p-3 text-xs uppercase font-medium text-muted-foreground">
+            <th className="text-right p-3 text-xs uppercase font-medium text-[color:var(--txt-2)]">
               Jumlah
             </th>
-            <th className="text-left p-3 text-xs uppercase font-medium text-muted-foreground">
+            <th className="text-left p-3 text-xs uppercase font-medium text-[color:var(--txt-2)]">
               Catatan
             </th>
-            <th className="text-center p-3 text-xs uppercase font-medium text-muted-foreground">
+            <th className="text-center p-3 text-xs uppercase font-medium text-[color:var(--txt-2)]">
               Aksi
             </th>
           </tr>
@@ -69,10 +69,10 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
                 index % 2 === 0 ? "bg-[color:var(--surface)]" : "bg-[color:var(--surface-2)]"
               }`}
             >
-              <td className="p-3 text-sm text-foreground">
+              <td className="p-3 text-sm text-[color:var(--txt-1)]">
                 {transaction.date}
               </td>
-              <td className="p-3 text-sm text-foreground">
+              <td className="p-3 text-sm text-[color:var(--txt-1)]">
                 <Badge 
                   variant="outline" 
                   className="text-xs cursor-pointer hover:bg-[color:var(--surface-2)]"
@@ -81,7 +81,7 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
                   {transaction.accountName || 'Unknown'}
                 </Badge>
               </td>
-              <td className="p-3 text-sm text-foreground">
+              <td className="p-3 text-sm text-[color:var(--txt-1)]">
                 <div className="flex items-center space-x-2">
                   <span>{transaction.category}</span>
                   {transaction.splitCount && transaction.splitCount > 1 && (
@@ -92,11 +92,11 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
                 </div>
               </td>
               <td className="p-3 text-sm text-right">
-                <span className={transaction.amount > 0 ? "text-[var(--success)]" : "text-foreground"}>
+                <span className={transaction.amount > 0 ? "text-[var(--success)]" : "text-[color:var(--txt-1)]"}>
                   {transaction.amount > 0 ? "+" : ""}{formatIDR(Math.abs(transaction.amount))}
                 </span>
               </td>
-              <td className="p-3 text-sm text-foreground">
+              <td className="p-3 text-sm text-[color:var(--txt-1)]">
                 {transaction.description || transaction.note || "-"}
               </td>
               <td className="p-3 text-center">
@@ -105,7 +105,7 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                      className="h-8 w-8 p-0 text-[color:var(--txt-2)] hover:text-[color:var(--txt-1)]"
                       onClick={() => onEdit(transaction)}
                       data-testid={`edit-tx-${transaction.id}`}
                     >
@@ -116,7 +116,7 @@ export function TransactionsTable({ transactions, onEdit, onDelete, onAccountCli
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                      className="h-8 w-8 p-0 text-[color:var(--txt-2)] hover:text-[color:var(--txt-1)]"
                       onClick={() => onDelete(transaction.id)}
                       data-testid={`delete-tx-${transaction.id}`}
                     >

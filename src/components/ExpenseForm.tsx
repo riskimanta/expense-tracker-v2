@@ -78,7 +78,7 @@ export function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="date" className="text-sm text-muted-foreground">
+        <Label htmlFor="date" className="text-sm text-[color:var(--txt-2)]">
           Tanggal
         </Label>
         <DateInput
@@ -89,7 +89,7 @@ export function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="category" className={`text-sm ${formErrors.category ? 'text-red-500' : 'text-muted-foreground'}`}>
+        <Label htmlFor="category" className={`text-sm ${formErrors.category ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
           Kategori {formErrors.category && <span className="text-red-500">*</span>}
         </Label>
         <Select value={formData.category} onValueChange={(value) => {
@@ -112,7 +112,7 @@ export function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="amount" className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-muted-foreground'}`}>
+        <Label htmlFor="amount" className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
           Jumlah {formErrors.amount && <span className="text-red-500">*</span>}
         </Label>
         <Input
@@ -135,7 +135,7 @@ export function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="note" className="text-sm text-muted-foreground">
+        <Label htmlFor="note" className="text-sm text-[color:var(--txt-2)]">
           Catatan (Opsional)
         </Label>
         <Textarea

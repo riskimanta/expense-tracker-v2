@@ -21,11 +21,11 @@ export function FilterBar({
   onCategoryChange,
 }: FilterBarProps) {
   return (
-    <Card className="rounded-xl border border-border bg-card">
+    <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]">
       <CardContent className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Bulan</label>
+            <label className="text-sm text-[color:var(--txt-2)]">Bulan</label>
             <Input
               type="month"
               value={selectedMonth}
@@ -35,7 +35,7 @@ export function FilterBar({
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Filter Kategori</label>
+            <label className="text-sm text-[color:var(--txt-2)]">Filter Kategori</label>
             <Select value={selectedCategory} onValueChange={onCategoryChange}>
               <SelectTrigger className="h-11">
                 <SelectValue placeholder="Semua Kategori" />

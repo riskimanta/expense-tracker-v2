@@ -229,7 +229,7 @@ export default function AccountsPage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Memuat data akun...</p>
+            <p className="text-[color:var(--txt-2)]">Memuat data akun...</p>
           </div>
         </div>
       </div>
@@ -241,7 +241,7 @@ export default function AccountsPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Akun</h1>
-          <p className="text-muted-foreground">Kelola akun keuangan Anda</p>
+          <p className="text-[color:var(--txt-2)]">Kelola akun keuangan Anda</p>
         </div>
         <Button onClick={() => setIsAddModalOpen(true)}>
           Tambah Akun

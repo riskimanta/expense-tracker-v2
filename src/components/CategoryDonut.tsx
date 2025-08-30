@@ -17,8 +17,8 @@ export function CategoryDonut({ data, className }: CategoryDonutProps) {
   return (
     <div className={className}>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Category Breakdown</h3>
-        <p className="text-sm text-muted-foreground">Distribusi pengeluaran per kategori</p>
+        <h3 className="text-lg font-semibold text-[color:var(--txt-1)]">Category Breakdown</h3>
+        <p className="text-sm text-[color:var(--txt-2)]">Distribusi pengeluaran per kategori</p>
       </div>
       
       <div className="flex items-center space-x-6">
@@ -59,10 +59,10 @@ export function CategoryDonut({ data, className }: CategoryDonutProps) {
                   className="w-3 h-3 rounded-full" 
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="text-sm text-muted-foreground">{item.category}</span>
+                <span className="text-sm text-[color:var(--txt-2)]">{item.category}</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium text-foreground">
+                <div className="text-sm font-medium text-[color:var(--txt-1)]">
                   {formatIDR(item.amount)}
                 </div>
                 <div className="text-xs text-[var(--txt-low)]">

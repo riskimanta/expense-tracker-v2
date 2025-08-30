@@ -5,7 +5,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Pengaturan</h1>
-        <p className="text-muted-foreground">
+        <p className="text-[color:var(--txt-2)]">
           Kelola preferensi akun dan pengaturan Anda
         </p>
       </div>
@@ -15,7 +15,7 @@ export default function SettingsPage() {
           <CardTitle>Ringkasan Pengaturan</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">
+          <p className="text-[color:var(--txt-2)]">
             Fitur pengaturan dan preferensi segera hadir...
           </p>
         </CardContent>

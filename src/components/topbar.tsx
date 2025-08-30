@@ -13,7 +13,7 @@ export function Topbar() {
   const currentMonth = formatMonthYear(new Date().toISOString())
 
   return (
-    <div className="flex h-16 items-center justify-between border-b border-border px-6 bg-background">
+    <div className="flex h-16 items-center justify-between border-b border-[color:var(--border)] px-6 bg-[color:var(--bg)]">
       <div className="flex items-center space-x-4">
         {/* Month Switcher */}
         <div className="flex items-center space-x-2">
@@ -45,7 +45,7 @@ export function Topbar() {
       <div className="flex items-center space-x-4">
         {/* Search */}
         <div className="relative w-64">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--txt-2)]" />
           <Input
             placeholder={t('form.search') + " transaksi..."}
             className="pl-9"

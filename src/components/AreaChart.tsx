@@ -16,8 +16,8 @@ export function AreaChart({ data, className }: AreaChartProps) {
   return (
     <div className={className}>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Income vs Expenses</h3>
-        <p className="text-sm text-muted-foreground">Trend bulanan pemasukan dan pengeluaran</p>
+        <h3 className="text-lg font-semibold text-[color:var(--txt-1)]">Income vs Expenses</h3>
+        <p className="text-sm text-[color:var(--txt-2)]">Trend bulanan pemasukan dan pengeluaran</p>
       </div>
       
       <ResponsiveContainer width="100%" height={300}>

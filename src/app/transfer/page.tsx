@@ -197,19 +197,19 @@ export default function TransferPage() {
     <main className="mx-auto max-w-[1200px] p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-foreground">Transfer</h1>
-        <p className="mt-1 text-muted-foreground">Transfer antar akun dan e-wallet</p>
+        <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Transfer</h1>
+        <p className="mt-1 text-[color:var(--txt-2)]">Transfer antar akun dan e-wallet</p>
       </div>
 
       {/* Form + Preview Section */}
       <div className="grid grid-cols-12 gap-6">
         {/* Form Card */}
-        <Card className="col-span-12 lg:col-span-7 rounded-xl border border-border bg-card p-4">
+        <Card className="col-span-12 lg:col-span-7 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
               Transfer antar Akun
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">
               Pindahkan dana antar akun
             </p>
           </CardHeader>
@@ -217,7 +217,7 @@ export default function TransferPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={`text-sm ${formErrors.fromAccount ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <label className={`text-sm ${formErrors.fromAccount ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                     Dari Akun {formErrors.fromAccount && <span className="text-red-500">*</span>}
                   </label>
                   <Select value={formData.fromAccount} onValueChange={(value) => {
@@ -242,7 +242,7 @@ export default function TransferPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className={`text-sm ${formErrors.toAccount ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <label className={`text-sm ${formErrors.toAccount ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                     Ke Akun {formErrors.toAccount && <span className="text-red-500">*</span>}
                   </label>
                   <Select value={formData.toAccount} onValueChange={(value) => {
@@ -269,7 +269,7 @@ export default function TransferPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <label className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                     Jumlah {formErrors.amount && <span className="text-red-500">*</span>}
                   </label>
                   <CurrencyInput
@@ -285,7 +285,7 @@ export default function TransferPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">
+                  <label className="text-sm text-[color:var(--txt-2)]">
                     Biaya Transfer
                   </label>
                   <CurrencyInput
@@ -298,7 +298,7 @@ export default function TransferPage() {
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground">
+                <label className="text-sm text-[color:var(--txt-2)]">
                   Tanggal Transfer
                 </label>
                                   <DateInput
@@ -309,7 +309,7 @@ export default function TransferPage() {
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground">
+                <label className="text-sm text-[color:var(--txt-2)]">
                   Catatan (Opsional)
                 </label>
                 <Textarea
@@ -331,35 +331,35 @@ export default function TransferPage() {
         </Card>
 
         {/* Preview Card */}
-        <Card className="col-span-12 lg:col-span-5 rounded-xl border border-border bg-card p-4">
+        <Card className="col-span-12 lg:col-span-5 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
               Preview Transfer
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Dari Akun:</span>
+                <span className="text-sm text-[color:var(--txt-2)]">Dari Akun:</span>
                 <span className="text-sm font-medium">
                   {accounts.find(acc => acc.id === formData.fromAccount)?.name || '-'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Ke Akun:</span>
+                <span className="text-sm text-[color:var(--txt-2)]">Ke Akun:</span>
                 <span className="text-sm font-medium">
                   {accounts.find(acc => acc.id === formData.toAccount)?.name || '-'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Jumlah:</span>
+                <span className="text-sm text-[color:var(--txt-2)]">Jumlah:</span>
                 <span className="text-sm font-medium text-[var(--danger)]">
                   -{formatIDR(amount)}
                 </span>
               </div>
               {fee && fee > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Biaya:</span>
+                  <span className="text-sm text-[color:var(--txt-2)]">Biaya:</span>
                   <span className="text-sm font-medium text-[var(--danger)]">
                     -{formatIDR(fee)}
                   </span>
@@ -379,9 +379,9 @@ export default function TransferPage() {
       </div>
 
       {/* Transfer History */}
-      <Card className="rounded-xl border border-border bg-card p-4">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-foreground">
+          <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
             Riwayat Transfer
           </CardTitle>
         </CardHeader>
@@ -389,26 +389,26 @@ export default function TransferPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                <tr className="border-b border-[color:var(--border)]">
+                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Tanggal
                   </th>
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Dari
                   </th>
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Ke
                   </th>
-                  <th className="text-right py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <th className="text-right py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Jumlah
                   </th>
-                  <th className="text-right py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <th className="text-right py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Biaya
                   </th>
-                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Catatan
                   </th>
-                  <th className="text-center py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <th className="text-center py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                     Aksi
                   </th>
                 </tr>
@@ -416,14 +416,14 @@ export default function TransferPage() {
               <tbody>
                 {transferHistory.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={7} className="py-8 text-center text-[color:var(--txt-2)]">
                       Belum ada riwayat transfer
                     </td>
                   </tr>
                 ) : (
                   transferHistory.map((transfer) => (
-                    <tr key={transfer.id} className="border-b border-border">
-                      <td className="py-3 px-4 text-sm text-foreground">
+                    <tr key={transfer.id} className="border-b border-[color:var(--border)]">
+                      <td className="py-3 px-4 text-sm text-[color:var(--txt-1)]">
                         {formatDateID(transfer.date)}
                       </td>
                       <td className="py-3 px-4">
@@ -442,11 +442,11 @@ export default function TransferPage() {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-[color:var(--txt-2)]">
                           {transfer.fee > 0 ? `-${formatIDR(transfer.fee)}` : '-'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-sm text-foreground">
+                      <td className="py-3 px-4 text-sm text-[color:var(--txt-1)]">
                         {transfer.description || '-'}
                       </td>
                       <td className="py-3 px-4 text-center">

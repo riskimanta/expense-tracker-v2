@@ -175,7 +175,7 @@ export default function AdminCategoriesPage() {
       render: (value: string | number) => (
         <div className="flex items-center gap-2">
           <div 
-            className="w-4 h-4 rounded-full border border-border"
+            className="w-4 h-4 rounded-full border border-[color:var(--border)]"
             style={{ backgroundColor: value as string }}
           />
           <span className="text-xs font-mono">{value}</span>
@@ -221,7 +221,7 @@ export default function AdminCategoriesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-foreground">Categories</h1>
+          <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Categories</h1>
           <p className="text-[var(--txt-med)] mt-1">Kelola kategori pengeluaran dan pemasukan</p>
         </div>
         <Button onClick={handleCreate} className="bg-[var(--primary)] hover:bg-[var(--primary)]/90">
@@ -235,21 +235,21 @@ export default function AdminCategoriesPage() {
         <Button
           variant={selectedType === 'all' ? 'default' : 'outline'}
           onClick={() => setSelectedType('all')}
-          className={selectedType === 'all' ? 'bg-[var(--primary)]' : 'border-border text-foreground hover:bg-[var(--surface)]'}
+          className={selectedType === 'all' ? 'bg-[var(--primary)]' : 'border-[color:var(--border)] text-[color:var(--txt-1)] hover:bg-[var(--surface)]'}
         >
           Semua
         </Button>
         <Button
           variant={selectedType === 'expense' ? 'default' : 'outline'}
           onClick={() => setSelectedType('expense')}
-          className={selectedType === 'expense' ? 'bg-[var(--primary)]' : 'border-border text-foreground hover:bg-[var(--surface)]'}
+          className={selectedType === 'expense' ? 'bg-[var(--primary)]' : 'border-[color:var(--border)] text-[color:var(--txt-1)] hover:bg-[var(--surface)]'}
         >
           Pengeluaran
         </Button>
         <Button
           variant={selectedType === 'income' ? 'default' : 'outline'}
           onClick={() => setSelectedType('income')}
-          className={selectedType === 'income' ? 'bg-[var(--primary)]' : 'border-border text-foreground hover:bg-[var(--surface)]'}
+          className={selectedType === 'income' ? 'bg-[var(--primary)]' : 'border-[color:var(--border)] text-[color:var(--txt-1)] hover:bg-[var(--surface)]'}
         >
           Pemasukan
         </Button>
@@ -274,10 +274,10 @@ export default function AdminCategoriesPage() {
       >
         <form className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Nama Kategori</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Nama Kategori</label>
             <Input
               {...form.register('name')}
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="Masukkan nama kategori"
             />
             {form.formState.errors.name && (
@@ -286,9 +286,9 @@ export default function AdminCategoriesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Tipe</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Tipe</label>
             <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as 'expense' | 'income')}>
-              <SelectTrigger className="bg-background border-border text-foreground focus:ring-[var(--primary)]">
+              <SelectTrigger className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] focus:ring-[var(--primary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -299,15 +299,15 @@ export default function AdminCategoriesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Warna</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Warna</label>
             <div className="flex items-center gap-3">
               <Input
                 {...form.register('color')}
-                className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+                className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
                 placeholder="#667eea"
               />
               <div 
-                className="w-8 h-8 rounded border border-border"
+                className="w-8 h-8 rounded border border-[color:var(--border)]"
                 style={{ backgroundColor: form.watch('color') }}
               />
             </div>
@@ -321,7 +321,7 @@ export default function AdminCategoriesPage() {
                 <button
                   key={color}
                   type="button"
-                  className="w-6 h-6 rounded border border-border hover:scale-110 transition-transform"
+                  className="w-6 h-6 rounded border border-[color:var(--border)] hover:scale-110 transition-transform"
                   style={{ backgroundColor: color }}
                   onClick={() => form.setValue('color', color)}
                 />
@@ -330,10 +330,10 @@ export default function AdminCategoriesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Icon (Opsional)</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Icon (Opsional)</label>
             <Input
               {...form.register('icon')}
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="🍽️, 🚗, 💰, dll"
             />
             <p className="text-xs text-[var(--txt-low)]">
@@ -347,7 +347,7 @@ export default function AdminCategoriesPage() {
               checked={form.watch('isDefault')}
               onCheckedChange={(checked) => form.setValue('isDefault', checked)}
             />
-            <label htmlFor="isDefault" className="text-sm font-medium text-foreground">
+            <label htmlFor="isDefault" className="text-sm font-medium text-[color:var(--txt-1)]">
               Kategori Default
             </label>
           </div>
@@ -364,10 +364,10 @@ export default function AdminCategoriesPage() {
       >
         <form className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Nama Kategori</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Nama Kategori</label>
             <Input
               {...form.register('name')}
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="Masukkan nama kategori"
             />
             {form.formState.errors.name && (
@@ -376,9 +376,9 @@ export default function AdminCategoriesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Tipe</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Tipe</label>
             <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as 'expense' | 'income')}>
-              <SelectTrigger className="bg-background border-border text-foreground focus:ring-[var(--primary)]">
+              <SelectTrigger className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] focus:ring-[var(--primary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -389,15 +389,15 @@ export default function AdminCategoriesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Warna</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Warna</label>
             <div className="flex items-center gap-3">
               <Input
                 {...form.register('color')}
-                className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+                className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
                 placeholder="#667eea"
               />
               <div 
-                className="w-8 h-8 rounded border border-border"
+                className="w-8 h-8 rounded border border-[color:var(--border)]"
                 style={{ backgroundColor: form.watch('color') }}
               />
             </div>
@@ -411,7 +411,7 @@ export default function AdminCategoriesPage() {
                 <button
                   key={color}
                   type="button"
-                  className="w-6 h-6 rounded border border-border hover:scale-110 transition-transform"
+                  className="w-6 h-6 rounded border border-[color:var(--border)] hover:scale-110 transition-transform"
                   style={{ backgroundColor: color }}
                   onClick={() => form.setValue('color', color)}
                 />
@@ -420,10 +420,10 @@ export default function AdminCategoriesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Icon (Opsional)</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Icon (Opsional)</label>
             <Input
               {...form.register('icon')}
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="🍽️, 🚗, 💰, dll"
             />
             <p className="text-xs text-[var(--txt-low)]">
@@ -437,7 +437,7 @@ export default function AdminCategoriesPage() {
               checked={form.watch('isDefault')}
               onCheckedChange={(checked) => form.setValue('isDefault', checked)}
             />
-            <label htmlFor="isDefault" className="text-sm font-medium text-foreground">
+            <label htmlFor="isDefault" className="text-sm font-medium text-[color:var(--txt-1)]">
               Kategori Default
             </label>
           </div>

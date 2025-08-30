@@ -210,55 +210,55 @@ export default function IncomePage() {
     <main className="mx-auto max-w-[1200px] p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-foreground">Pemasukan</h1>
-        <p className="mt-1 text-muted-foreground">Kelola pemasukan dan sumber penghasilan</p>
+        <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Pemasukan</h1>
+        <p className="mt-1 text-[color:var(--txt-2)]">Kelola pemasukan dan sumber penghasilan</p>
       </div>
 
       {/* KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Pemasukan</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Total Pemasukan</p>
             <p className="text-2xl font-semibold text-[var(--success)]">
               {formatIDR(incomeKPIs.totalIncome)}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               Bulan ini
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Target Bulanan</p>
-            <p className="text-2xl font-semibold text-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">Target Bulanan</p>
+            <p className="text-2xl font-semibold text-[color:var(--txt-1)]">
               {formatIDR(incomeKPIs.monthlyTarget)}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               {Math.round((incomeKPIs.totalIncome / incomeKPIs.monthlyTarget) * 100)}% tercapai
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Rata-rata Harian</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Rata-rata Harian</p>
             <p className="text-2xl font-semibold text-[var(--primary)]">
               {formatIDR(incomeKPIs.averageDaily)}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               Per hari
             </p>
           </div>
         </Card>
         
-        <Card className="rounded-xl border border-border bg-card p-5">
+        <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Sumber Teratas</p>
+            <p className="text-sm text-[color:var(--txt-2)]">Sumber Teratas</p>
             <p className="text-2xl font-semibold text-[var(--warning)]">
               {incomeKPIs.topSource}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[color:var(--txt-2)]">
               {formatIDR(incomeKPIs.topSourceAmount)}
             </p>
           </div>
@@ -268,12 +268,12 @@ export default function IncomePage() {
       {/* Form + Table Section */}
       <div className="grid grid-cols-12 gap-6">
         {/* Form Card */}
-        <Card className="col-span-12 lg:col-span-5 rounded-xl border border-border bg-card p-4">
+        <Card className="col-span-12 lg:col-span-5 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
               Tambah Pemasukan
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">
               Catat pemasukan baru
             </p>
           </CardHeader>
@@ -281,7 +281,7 @@ export default function IncomePage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Tanggal</label>
+                  <label className="text-sm text-[color:var(--txt-2)]">Tanggal</label>
                   <DateInput
                     value={formData.date}
                     onChange={(date) => setFormData({...formData, date: date || new Date()})}
@@ -289,7 +289,7 @@ export default function IncomePage() {
                   />
                 </div>
                 <div>
-                  <label className={`text-sm ${formErrors.account ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <label className={`text-sm ${formErrors.account ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                     Akun {formErrors.account && <span className="text-red-500">*</span>}
                   </label>
                   <Select value={formData.account} onValueChange={(value) => {
@@ -313,7 +313,7 @@ export default function IncomePage() {
               </div>
               
               <div>
-                <label className={`text-sm ${formErrors.source ? 'text-red-500' : 'text-muted-foreground'}`}>
+                <label className={`text-sm ${formErrors.source ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                   Sumber {formErrors.source && <span className="text-red-500">*</span>}
                 </label>
                 <Select value={formData.source} onValueChange={(value) => {
@@ -336,7 +336,7 @@ export default function IncomePage() {
               </div>
               
               <div>
-                <label className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-muted-foreground'}`}>
+                <label className={`text-sm ${formErrors.amount ? 'text-red-500' : 'text-[color:var(--txt-2)]'}`}>
                   Jumlah {formErrors.amount && <span className="text-red-500">*</span>}
                 </label>
                 <CurrencyInput
@@ -356,7 +356,7 @@ export default function IncomePage() {
               </div>
               
               <div>
-                <label className="text-sm text-muted-foreground">
+                <label className="text-sm text-[color:var(--txt-2)]">
                   Catatan (Opsional)
                 </label>
                 <Textarea
@@ -379,12 +379,12 @@ export default function IncomePage() {
         </Card>
 
         {/* Table Card */}
-        <Card className="col-span-12 lg:col-span-7 rounded-xl border border-border bg-card p-4">
+        <Card className="col-span-12 lg:col-span-7 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-foreground">
+            <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
               Daftar Pemasukan
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[color:var(--txt-2)]">
               Transaksi bulan {selectedMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
             </p>
           </CardHeader>
@@ -392,23 +392,23 @@ export default function IncomePage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                  <tr className="border-b border-[color:var(--border)]">
+                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                       Tanggal
                     </th>
-                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                       Akun
                     </th>
-                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                       Kategori
                     </th>
-                    <th className="text-right py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                    <th className="text-right py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                       Jumlah
                     </th>
-                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                    <th className="text-left py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                       Catatan
                     </th>
-                    <th className="text-center py-3 px-4 text-xs uppercase font-medium text-muted-foreground">
+                    <th className="text-center py-3 px-4 text-xs uppercase font-medium text-[color:var(--txt-2)]">
                       Aksi
                     </th>
                   </tr>
@@ -416,13 +416,13 @@ export default function IncomePage() {
                 <tbody>
                   {isLoadingTransactions ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                      <td colSpan={6} className="py-8 text-center text-[color:var(--txt-2)]">
                         Loading...
                       </td>
                     </tr>
                   ) : incomeTransactions.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                      <td colSpan={6} className="py-8 text-center text-[color:var(--txt-2)]">
                         Belum ada data pemasukan
                       </td>
                     </tr>
@@ -434,7 +434,7 @@ export default function IncomePage() {
                           index % 2 === 0 ? "bg-[color:var(--surface)]" : "bg-[color:var(--surface-2)]"
                         }`}
                       >
-                        <td className="py-3 px-4 text-sm text-foreground">
+                        <td className="py-3 px-4 text-sm text-[color:var(--txt-1)]">
                           {formatDateID(transaction.date as string)}
                         </td>
                         <td className="py-3 px-4">
@@ -443,7 +443,7 @@ export default function IncomePage() {
                           </Badge>
                         </td>
                         <td className="py-3 px-4">
-                          <span className="text-sm text-foreground">
+                          <span className="text-sm text-[color:var(--txt-1)]">
                             {transaction.category as string}
                           </span>
                         </td>
@@ -452,7 +452,7 @@ export default function IncomePage() {
                             +{formatIDR(transaction.amount as number)}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-sm text-foreground">
+                        <td className="py-3 px-4 text-sm text-[color:var(--txt-1)]">
                           {transaction.description as string}
                         </td>
                         <td className="py-3 px-4 text-center">

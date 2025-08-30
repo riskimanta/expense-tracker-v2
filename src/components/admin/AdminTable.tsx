@@ -100,7 +100,7 @@ export function AdminTable<T extends Record<string, unknown>>({
 
   if (isLoading) {
     return (
-      <Card className="rounded-xl border border-border bg-card">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]">
         <CardContent className="p-6">
           <div className="text-center py-12">
             <p className="text-[var(--txt-med)]">Loading...</p>
@@ -112,7 +112,7 @@ export function AdminTable<T extends Record<string, unknown>>({
 
   if (data.length === 0) {
     return (
-      <Card className="rounded-xl border border-border bg-card">
+      <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]">
         <CardContent className="p-6">
           <div className="text-center py-12">
             <p className="text-[var(--txt-med)]">{emptyMessage}</p>

@@ -33,17 +33,17 @@ export function BudgetMeter() {
       </div>
       
       <div className="space-y-2 text-right">
-        <div className="text-sm text-foreground">
-          <span className="text-[var(--needs)]">●</span> Needs <span className="text-muted-foreground">50%</span>
+        <div className="text-sm text-[color:var(--txt-1)]">
+          <span className="text-[var(--needs)]">●</span> Needs <span className="text-[color:var(--txt-2)]">50%</span>
         </div>
-        <div className="text-sm text-foreground">
-          <span className="text-[var(--wants)]">●</span> Wants <span className="text-muted-foreground">25%</span>
+        <div className="text-sm text-[color:var(--txt-1)]">
+          <span className="text-[var(--wants)]">●</span> Wants <span className="text-[color:var(--txt-2)]">25%</span>
         </div>
-        <div className="text-sm text-foreground">
-          <span className="text-[var(--savings)]">●</span> Savings <span className="text-muted-foreground">15%</span>
+        <div className="text-sm text-[color:var(--txt-1)]">
+          <span className="text-[var(--savings)]">●</span> Savings <span className="text-[color:var(--txt-2)]">15%</span>
         </div>
-        <div className="text-sm text-foreground">
-          <span className="text-[var(--invest)]">●</span> Invest <span className="text-muted-foreground">10%</span>
+        <div className="text-sm text-[color:var(--txt-1)]">
+          <span className="text-[var(--invest)]">●</span> Invest <span className="text-[color:var(--txt-2)]">10%</span>
         </div>
       </div>
     </div>

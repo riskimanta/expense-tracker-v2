@@ -75,7 +75,7 @@ export default function MonitoringPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-foreground">System Monitoring</h1>
+          <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">System Monitoring</h1>
           <p className="text-[var(--txt-med)] mt-1">Monitor system health and error tracking</p>
         </div>
         <div className="flex gap-2">
@@ -119,11 +119,11 @@ export default function MonitoringPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Errors</CardTitle>
-              <XCircle className="h-4 w-4 text-muted-foreground" />
+              <XCircle className="h-4 w-4 text-[color:var(--txt-2)]" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.total}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[color:var(--txt-2)]">
                 {stats.recentErrors} in last hour
               </p>
             </CardContent>
@@ -138,7 +138,7 @@ export default function MonitoringPage() {
               <div className="text-2xl font-bold text-red-600">
                 {stats.byLevel.critical || 0}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[color:var(--txt-2)]">
                 Immediate attention required
               </p>
             </CardContent>
@@ -153,7 +153,7 @@ export default function MonitoringPage() {
               <div className="text-2xl font-bold text-yellow-600">
                 {alerts.length}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[color:var(--txt-2)]">
                 Require investigation
               </p>
             </CardContent>
@@ -169,7 +169,7 @@ export default function MonitoringPage() {
                 {stats.total === 0 ? '100%' : 
                   Math.max(0, Math.round(100 - (stats.byLevel.critical || 0) * 10)) + '%'}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[color:var(--txt-2)]">
                 Based on error severity
               </p>
             </CardContent>
@@ -185,7 +185,7 @@ export default function MonitoringPage() {
               <CardContent className="p-6 text-center">
                 <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No Active Alerts</h3>
-                <p className="text-muted-foreground">
+                <p className="text-[color:var(--txt-2)]">
                   All systems are running smoothly!
                 </p>
               </CardContent>
@@ -201,12 +201,12 @@ export default function MonitoringPage() {
                         <Badge variant="outline" className={getLevelColor(alert.level)}>
                           {alert.level.toUpperCase()}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-[color:var(--txt-2)]">
                           Count: {alert.count}
                         </span>
                       </div>
                       <p className="font-medium mb-2">{alert.message}</p>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-4 text-sm text-[color:var(--txt-2)]">
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {alert.lastOccurrence.toLocaleString()}
@@ -240,7 +240,7 @@ export default function MonitoringPage() {
               <CardContent className="p-6 text-center">
                 <Info className="h-12 w-12 text-blue-500 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No Error Logs</h3>
-                <p className="text-muted-foreground">
+                <p className="text-[color:var(--txt-2)]">
                   System is running without errors!
                 </p>
               </CardContent>
@@ -256,7 +256,7 @@ export default function MonitoringPage() {
                         <Badge variant="outline" className={getLevelColor(log.level)}>
                           {log.level.toUpperCase()}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-[color:var(--txt-2)]">
                           {log.timestamp.toLocaleString()}
                         </span>
                       </div>
@@ -297,7 +297,7 @@ export default function MonitoringPage() {
                       {/* Stack Trace */}
                       {log.stack && (
                         <details className="mt-2">
-                          <summary className="cursor-pointer text-sm text-muted-foreground">
+                          <summary className="cursor-pointer text-sm text-[color:var(--txt-2)]">
                             Stack Trace
                           </summary>
                           <pre className="mt-2 p-2 bg-[color:var(--surface-2)] rounded text-xs overflow-x-auto">

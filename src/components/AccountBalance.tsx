@@ -32,12 +32,12 @@ const mapAccountType = (type: string) => {
 export function AccountBalance({ data }: AccountBalanceProps) {
 
   return (
-    <Card className="rounded-xl border border-border bg-card p-4">
+    <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-foreground">
+        <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
           Saldo Akun
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[color:var(--txt-2)]">
           Total saldo: {formatIDR(data.reduce((sum, acc) => sum + acc.balance, 0))}
         </p>
       </CardHeader>

@@ -250,7 +250,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-foreground">Users</h1>
+          <h1 className="text-3xl font-semibold text-[color:var(--txt-1)]">Users</h1>
           <p className="text-[var(--txt-med)] mt-1">Kelola user dan permission</p>
         </div>
         <Button onClick={handleCreate} className="bg-[var(--primary)] hover:bg-[var(--primary)]/90">
@@ -278,10 +278,10 @@ export default function AdminUsersPage() {
       >
         <form className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Nama</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Nama</label>
             <Input
               {...form.register('name')}
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="Masukkan nama lengkap"
             />
             {form.formState.errors.name && (
@@ -290,11 +290,11 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Email</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Email</label>
             <Input
               {...form.register('email')}
               type="email"
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="user@example.com"
             />
             {form.formState.errors.email && (
@@ -303,9 +303,9 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Role</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Role</label>
             <Select value={form.watch('role')} onValueChange={(value) => form.setValue('role', value as 'admin' | 'user')}>
-              <SelectTrigger className="bg-background border-border text-foreground focus:ring-[var(--primary)]">
+              <SelectTrigger className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] focus:ring-[var(--primary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -316,9 +316,9 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Status</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Status</label>
             <Select value={form.watch('status')} onValueChange={(value) => form.setValue('status', value as 'active' | 'inactive')}>
-              <SelectTrigger className="bg-background border-border text-foreground focus:ring-[var(--primary)]">
+              <SelectTrigger className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] focus:ring-[var(--primary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -340,10 +340,10 @@ export default function AdminUsersPage() {
       >
         <form className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Nama</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Nama</label>
             <Input
               {...form.register('name')}
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="Masukkan nama lengkap"
             />
             {form.formState.errors.name && (
@@ -352,11 +352,11 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Email</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Email</label>
             <Input
               {...form.register('email')}
               type="email"
-              className="bg-background border-border text-foreground placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
+              className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] placeholder:text-[var(--txt-low)] focus:ring-[var(--primary)]"
               placeholder="user@example.com"
             />
             {form.formState.errors.email && (
@@ -365,9 +365,9 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Role</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Role</label>
             <Select value={form.watch('role')} onValueChange={(value) => form.setValue('role', value as 'admin' | 'user')}>
-              <SelectTrigger className="bg-background border-border text-foreground focus:ring-[var(--primary)]">
+              <SelectTrigger className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] focus:ring-[var(--primary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -378,9 +378,9 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Status</label>
+            <label className="text-sm font-medium text-[color:var(--txt-1)]">Status</label>
             <Select value={form.watch('status')} onValueChange={(value) => form.setValue('status', value as 'active' | 'inactive')}>
-              <SelectTrigger className="bg-background border-border text-foreground focus:ring-[var(--primary)]">
+              <SelectTrigger className="bg-[color:var(--bg)] border-[color:var(--border)] text-[color:var(--txt-1)] focus:ring-[var(--primary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

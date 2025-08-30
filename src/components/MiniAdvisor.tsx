@@ -47,12 +47,12 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
   }
 
   return (
-    <Card className="rounded-xl border border-border bg-card p-4">
+    <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-foreground">
+        <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
           Bisa Beli Nggak? 💡
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[color:var(--txt-2)]">
           Cek apakah kamu bisa beli barang impian
         </p>
       </CardHeader>
@@ -86,14 +86,14 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
                 }`}>
                   {result.message}
                 </h4>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-[color:var(--txt-2)] mt-1">
                   {result.reason}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-[color:var(--txt-2)] mt-1">
                   {result.recommendation}
                 </p>
                 {result.safeDate && (
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-[color:var(--txt-2)] mt-1">
                     Estimasi aman: {formatDateID(result.safeDate)}
                   </p>
                 )}
@@ -102,7 +102,7 @@ export function MiniAdvisor({ safeToSpend, onCheck }: MiniAdvisorProps) {
           </div>
         )}
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-[color:var(--txt-2)]">
           💡 Sisa aman bulan ini: {formatIDR(safeToSpend)}
         </div>
       </CardContent>

@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="id" {...attr}>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className="min-h-screen bg-[color:var(--bg)] text-[color:var(--txt-1)] antialiased">
         <Providers>
           <ToastProvider>
             <TopNav />

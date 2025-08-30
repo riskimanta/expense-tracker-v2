@@ -40,7 +40,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
       case 'transfer':
         return 'text-[var(--warning)]'
       default:
-        return 'text-foreground'
+        return 'text-[color:var(--txt-1)]'
     }
   }
 
@@ -58,9 +58,9 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
   }
 
   return (
-    <Card className="rounded-xl border border-border bg-card p-4">
+    <Card className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-foreground">
+        <CardTitle className="text-lg font-semibold text-[color:var(--txt-1)]">
           Transaksi Terbaru
         </CardTitle>
         <p className="text-sm text-[color:var(--txt-2)]">
@@ -78,7 +78,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground truncate">
+                    <p className="text-sm font-medium text-[color:var(--txt-1)] truncate">
                       {transaction.description}
                     </p>
                     <div className="flex items-center space-x-2 text-xs text-[color:var(--txt-2)]">
